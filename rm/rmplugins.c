@@ -67,7 +67,7 @@ static gint rm_plugins_load_plugin(char *name)
 	gchar *lib_name;
 
 	keyfile = g_key_file_new();
-	g_key_file_load_from_file (keyfile, name, G_KEY_FILE_NONE, NULL);
+	g_key_file_load_from_file(keyfile, name, G_KEY_FILE_NONE, NULL);
 
 	module_name = g_key_file_get_string(keyfile, "Plugin", "Module", NULL);
 
@@ -86,7 +86,7 @@ static gint rm_plugins_load_plugin(char *name)
 	}
 	init_plugin = tmp;
 
-	plugin = g_slice_alloc0 (sizeof(RmPlugin));
+	plugin = g_slice_alloc0(sizeof(RmPlugin));
 
 	init_plugin(plugin);
 
@@ -135,7 +135,7 @@ gboolean rm_plugins_has_file_extension(const char *file, const char *ext)
 		return FALSE;
 	}
 
-	return (strncmp(file + len, ext, ext_len ) == 0);
+	return(strncmp(file + len, ext, ext_len) == 0);
 }
 
 /**
@@ -204,7 +204,7 @@ void rm_plugins_bind_loaded_plugins(void)
 			continue;
 		}
 
-		if (rm_strv_contains((const gchar * const *) active_plugins, plugin->module_name)) {
+		if (rm_strv_contains((const gchar*const*)active_plugins, plugin->module_name)) {
 			if (!plugin->enabled) {
 				rm_plugins_enable(plugin);
 			}
@@ -269,7 +269,7 @@ void rm_plugins_disable(RmPlugin *plugin)
 	active_plugins = g_settings_get_strv(profile->settings, "active-plugins");
 	active_plugins = rm_strv_remove(active_plugins, plugin->module_name);
 
-	g_settings_set_strv(profile->settings, "active-plugins", (const gchar * const *) active_plugins);
+	g_settings_set_strv(profile->settings, "active-plugins", (const gchar*const*)active_plugins);
 }
 
 /**
@@ -295,5 +295,5 @@ void rm_plugins_enable(RmPlugin *plugin)
 	active_plugins = g_settings_get_strv(profile->settings, "active-plugins");
 	active_plugins = rm_strv_add(active_plugins, plugin->module_name);
 
-	g_settings_set_strv(profile->settings, "active-plugins", (const gchar * const *) active_plugins);
+	g_settings_set_strv(profile->settings, "active-plugins", (const gchar*const*)active_plugins);
 }

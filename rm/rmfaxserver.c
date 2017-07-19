@@ -93,7 +93,7 @@ gpointer rm_faxserver_thread(gpointer data)
 
 		if (len == 0) {
 			g_close(file_id, &error);
-		 	g_debug("%s(): Print job received on socket (%s)", __FUNCTION__, file_name);
+			g_debug("%s(): Print job received on socket (%s)", __FUNCTION__, file_name);
 
 			rm_object_emit_fax_process(file_name);
 		}

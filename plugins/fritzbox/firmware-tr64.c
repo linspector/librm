@@ -83,18 +83,18 @@ void firmware_tr64_get_service(RmProfile *profile)
  */
 gchar *firmware_tr64_create_response(gchar *nonce, gchar *realm, gchar *user, gchar *password)
 {
-		/** secret = MD5( concat(uid, ":", realm, ":", pwd) ) */
-		gchar *secret = g_strconcat(user, ":", realm, ":", password, NULL);
-		gchar *secret_md5 = md5_simple(secret);
-		/** response = MD5( concat(secret, ":", sn) ) */
-		gchar *response = g_strconcat(secret_md5, ":", nonce, NULL);
-		gchar *response_md5 = md5_simple(response);
+	/** secret = MD5( concat(uid, ":", realm, ":", pwd) ) */
+	gchar *secret = g_strconcat(user, ":", realm, ":", password, NULL);
+	gchar *secret_md5 = md5_simple(secret);
+	/** response = MD5( concat(secret, ":", sn) ) */
+	gchar *response = g_strconcat(secret_md5, ":", nonce, NULL);
+	gchar *response_md5 = md5_simple(response);
 
-		return response_md5;
+	return response_md5;
 }
 
-#define SOUP_MSG_START	"<?xml version='1.0' encoding='utf-8'?>"\
-	            				"<s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
+#define SOUP_MSG_START  "<?xml version='1.0' encoding='utf-8'?>" \
+	"<s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
 
 #define SOUP_MSG_END "</s:Envelope>\r\n"
 #define SOUP_MSG_HEADER_START "<s:Header>"
@@ -181,7 +181,6 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 
 	status = xml_extract_tag(msg->response_body->data, "Status");
 	if (status && !strcmp(status, "Unauthenticated")) {
-
 #ifdef FIRMWARE_TR64_DEBUG
 		g_debug("%s(): Login required", __FUNCTION__);
 #endif
@@ -194,28 +193,28 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 		request = g_string_new(SOUP_MSG_START);
 
 		g_string_append_printf(request,
-									SOUP_MSG_HEADER_START
-										"<h:ClientAuth xmlns:h='http://soap-authentication.org/digest/2001/10/' s:mustUnderstand='1'>"
-											"<Nonce>%s</Nonce>"
-											"<Auth>%s</Auth>"
-											"<UserID>%s</UserID>"
-											"<Realm>%s</Realm>"
-										"</h:ClientAuth>"
-									SOUP_MSG_HEADER_END,
-									nonce, response, rm_router_get_login_user(profile), realm);
+				       SOUP_MSG_HEADER_START
+				       "<h:ClientAuth xmlns:h='http://soap-authentication.org/digest/2001/10/' s:mustUnderstand='1'>"
+				       "<Nonce>%s</Nonce>"
+				       "<Auth>%s</Auth>"
+				       "<UserID>%s</UserID>"
+				       "<Realm>%s</Realm>"
+				       "</h:ClientAuth>"
+				       SOUP_MSG_HEADER_END,
+				       nonce, response, rm_router_get_login_user(profile), realm);
 
-			g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
+		g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
 
-			va_list arg;
-			gchar *key;
+		va_list arg;
+		gchar *key;
 
-			va_start(arg, service);
-			while ((key = va_arg(arg, char *)) != NULL) {
-				gchar *val = va_arg(arg, char *);
-				g_string_append_printf(request, "<%s>%s</%s>", key, val, key);
-			}
-			va_end(arg);
-			g_string_append_printf(request, "</u:%s>" SOUP_MSG_BODY_END SOUP_MSG_END, action);
+		va_start(arg, service);
+		while ((key = va_arg(arg, char *)) != NULL) {
+			gchar *val = va_arg(arg, char *);
+			g_string_append_printf(request, "<%s>%s</%s>", key, val, key);
+		}
+		va_end(arg);
+		g_string_append_printf(request, "</u:%s>" SOUP_MSG_BODY_END SOUP_MSG_END, action);
 
 		g_object_unref(msg);
 		msg = soup_message_new_from_uri(SOUP_METHOD_POST, uri);
@@ -518,13 +517,13 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 	}
 
 	switch (port) {
-	case PORT_ISDNALL...PORT_ISDN8:
+	case PORT_ISDNALL ... PORT_ISDN8:
 		prefix = g_strdup("ISDN: ");
 		break;
-	case PORT_ANALOG1...PORT_ANALOG3:
+	case PORT_ANALOG1 ... PORT_ANALOG3:
 		prefix = g_strdup("POTS: ");
 		break;
-	case PORT_DECT1...PORT_DECT6:
+	case PORT_DECT1 ... PORT_DECT6:
 	default:
 		prefix = g_strdup("DECT: ");
 		break;
@@ -635,7 +634,7 @@ gboolean firmware_tr64_is_available(RmProfile *profile)
 	firmware_tr64_security_port = firmware_tr64_get_security_port(profile);
 
 #ifdef FIRMWARE_TR64_DEBUG
-		g_debug("%s(): Security port %d", __FUNCTION__, firmware_tr64_security_port);
+	g_debug("%s(): Security port %d", __FUNCTION__, firmware_tr64_security_port);
 #endif
 
 	return firmware_tr64_security_port != 0;

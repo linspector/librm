@@ -38,10 +38,10 @@
 
 /** Call-by-call number table */
 RmCallByCallEntry rm_call_by_call_table[] = {
-	{"49", "0100", 6},
-	{"49", "010", 5},
-	{"31", "16", 4},
-	{ "", "", 0},
+	{ "49", "0100", 6 },
+	{ "49", "010", 5 },
+	{ "31", "16", 4 },
+	{ "", "", 0 },
 };
 
 /**
@@ -185,7 +185,7 @@ gchar *rm_number_format(RmProfile *profile, const gchar *number, RmNumberFormats
 		 * tmp = 494012345678
 		 * number_format = NUMBER_FORMAT_INTERNATIONAL
 		 */
-		if (!strncmp(tmp, my_country_code, strlen(my_country_code)))  {
+		if (!strncmp(tmp, my_country_code, strlen(my_country_code))) {
 			/* national number */
 			tmp = tmp + strlen(my_country_code);
 			number_format = RM_NUMBER_FORMAT_NATIONAL;
@@ -315,7 +315,7 @@ gchar *rm_number_full(const gchar *number, gboolean country_code_prefix)
 		}
 
 		my_country_code = rm_router_get_country_code(rm_profile_get_active());
-		if (!strncmp(number + 2, my_country_code, strlen(my_country_code)))  {
+		if (!strncmp(number + 2, my_country_code, strlen(my_country_code))) {
 			out = g_strdup_printf("0%s", number + 4);
 		} else {
 			out = g_strdup(number);

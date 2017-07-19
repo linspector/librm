@@ -62,8 +62,8 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "getpage", "../html/login_sid.xml",
-	                            NULL);
+				    "getpage", "../html/login_sid.xml",
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -125,9 +125,9 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 
 		url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 		msg = soup_form_request_new(SOUP_METHOD_POST, url,
-		                            "login:command/response", response,
-		                            "getpage", "../html/login_sid.xml",
-		                            NULL);
+					    "login:command/response", response,
+					    "getpage", "../html/login_sid.xml",
+					    NULL);
 		g_free(url);
 
 		soup_session_send_message(rm_soup_session, msg);
@@ -390,7 +390,7 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 	}
 	numbers[counter] = NULL;
 
-	g_settings_set_strv(profile->settings, "numbers", (const gchar * const *)numbers);
+	g_settings_set_strv(profile->settings, "numbers", (const gchar*const*)numbers);
 
 	if (type != -1) {
 		g_debug("Setting controllers to %d", type);
@@ -418,17 +418,17 @@ gboolean fritzbox_get_settings_04_74(RmProfile *profile)
 	}
 
 	gchar *request = g_strconcat("../html/",
-	                             profile->router_info->lang,
-	                             "/menus/menu2.html", NULL);
+				     profile->router_info->lang,
+				     "/menus/menu2.html", NULL);
 
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_GET, url,
-	                            "getpage", request,
-	                            "var:lang", profile->router_info->lang,
-	                            "var:pagename", "fondevices",
-	                            "var:menu", "home",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", request,
+				    "var:lang", profile->router_info->lang,
+				    "var:pagename", "fondevices",
+				    "var:menu", "home",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 	g_free(request);
 
@@ -460,12 +460,12 @@ gboolean fritzbox_get_settings_04_74(RmProfile *profile)
 
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_GET, url,
-	                            "getpage", "../html/de/menus/menu2.html",
-	                            "var:lang", profile->router_info->lang,
-	                            "var:pagename", "sipoptionen",
-	                            "var:menu", "fon",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", "../html/de/menus/menu2.html",
+				    "var:lang", profile->router_info->lang,
+				    "var:pagename", "sipoptionen",
+				    "var:menu", "fon",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -515,12 +515,12 @@ gboolean fritzbox_get_settings_04_74(RmProfile *profile)
 	/* Extract Fax information */
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "getpage", "../html/de/menus/menu2.html",
-	                            "var:lang", profile->router_info->lang,
-	                            "var:pagename", "fon1fxi",
-	                            "var:menu", "fon",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", "../html/de/menus/menu2.html",
+				    "var:lang", profile->router_info->lang,
+				    "var:pagename", "fon1fxi",
+				    "var:menu", "fon",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -576,12 +576,12 @@ gboolean fritzbox_get_settings_04_74(RmProfile *profile)
 	/* Extract default dial port */
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "getpage", "../html/de/menus/menu2.html",
-	                            "var:lang", profile->router_info->lang,
-	                            "var:pagename", "dial",
-	                            "var:menu", "fon",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", "../html/de/menus/menu2.html",
+				    "var:lang", profile->router_info->lang,
+				    "var:pagename", "dial",
+				    "var:menu", "fon",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -668,12 +668,12 @@ gboolean fritzbox_load_journal_04_74(RmProfile *profile, gchar **data_ptr)
 	/* Create POST request */
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "getpage", "../html/de/menus/menu2.html",
-	                            "var:lang", profile->router_info->lang,
-	                            "var:pagename", "foncalls",
-	                            "var:menu", "fon",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", "../html/de/menus/menu2.html",
+				    "var:lang", profile->router_info->lang,
+				    "var:pagename", "foncalls",
+				    "var:menu", "fon",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -687,9 +687,9 @@ gboolean fritzbox_load_journal_04_74(RmProfile *profile, gchar **data_ptr)
 	/* Create POST request */
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "getpage", "../html/de/FRITZ!Box_Anrufliste.csv",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "getpage", "../html/de/FRITZ!Box_Anrufliste.csv",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	/* Queue message to session */
@@ -715,12 +715,12 @@ gboolean fritzbox_clear_journal_04_74(RmProfile *profile)
 
 	url = g_strdup_printf("http://%s/cgi-bin/webcm", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "sid", profile->router_info->session_id,
-	                            "getpage", "../html/de/menus/menu2.html",
-	                            "var:pagename", "foncalls",
-	                            "var:menu", "fon",
-	                            "telcfg:settings/ClearJournal", "",
-	                            NULL);
+				    "sid", profile->router_info->session_id,
+				    "getpage", "../html/de/menus/menu2.html",
+				    "var:pagename", "foncalls",
+				    "var:menu", "fon",
+				    "telcfg:settings/ClearJournal", "",
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);

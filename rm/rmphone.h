@@ -55,7 +55,7 @@ struct _RmPhone {
 	gpointer priv;
 };
 
-#define RM_PHONE(x) (RmPhone *)(x)
+#define RM_PHONE(x) (RmPhone*)(x)
 
 void rm_phone_register(RmPhone *phone);
 void rm_phone_unregister(RmPhone *phone);

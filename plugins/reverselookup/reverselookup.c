@@ -74,7 +74,7 @@ static gboolean extract_element(gchar **in, xmlNode *a_node, gchar **out)
 					GRegex *whitespace = g_regex_new("[ ]{2,}", G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 
 					//g_debug("%s(): name = '%s'", __FUNCTION__, name);
-					tmp = g_regex_replace_literal(whitespace, (gchar*) name, -1, 0, " ", 0, NULL);
+					tmp = g_regex_replace_literal(whitespace, (gchar*)name, -1, 0, " ", 0, NULL);
 					//g_debug("%s(): tmp = '%s'", __FUNCTION__, tmp);
 
 					*out = g_strdup(g_strstrip(tmp));
@@ -126,7 +126,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 #endif
 	SoupURI *uri = soup_uri_new(url);
 	msg = soup_message_new_from_uri(SOUP_METHOD_GET, uri);
-	soup_message_headers_append (msg->request_headers, "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
+	soup_message_headers_append(msg->request_headers, "User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
 
 	soup_session_send_message(rl_session, msg);
 	soup_uri_free(uri);
@@ -206,11 +206,11 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 	result = TRUE;
 
 	rl_tmp = g_strdup_printf("%s;%s;%s;%s;%s\n",
-		number,
-		rl_contact->name,
-		rl_contact->street,
-		rl_contact->zip,
-		rl_contact->city);
+				 number,
+				 rl_contact->name,
+				 rl_contact->street,
+				 rl_contact->zip,
+				 rl_contact->city);
 
 	file = g_build_filename(rm_get_user_cache_dir(), "reverselookup", number, NULL);
 	rm_file_save(file, rl_tmp, strlen(rl_tmp));
@@ -223,7 +223,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 	g_free(tmp_file);
 #endif
 
-end:
+ end:
 	if (rdata) {
 		g_free(rdata);
 	}
@@ -260,7 +260,7 @@ GSList *get_lookup_list(const gchar *country_code)
 	}
 
 	/* Extract country code list from hashtable */
-	list = g_hash_table_lookup(lookup_table, (gpointer) atol(country_code));
+	list = g_hash_table_lookup(lookup_table, (gpointer)atol(country_code));
 
 	return list;
 }
@@ -284,7 +284,7 @@ gchar *get_country_code(const gchar *full_number)
 		strncpy(sub_string, full_number, index);
 		sub_string[index] = '\0';
 
-		if (g_hash_table_lookup(lookup_table, (gpointer) atol(sub_string))) {
+		if (g_hash_table_lookup(lookup_table, (gpointer)atol(sub_string))) {
 			return g_strdup(sub_string);
 		}
 	}
@@ -485,7 +485,7 @@ static void country_code_add(xmlnode *node)
 	}
 	lookup_list = g_slist_reverse(lookup_list);
 
-	g_hash_table_insert(lookup_table, (gpointer) atol(code), lookup_list);
+	g_hash_table_insert(lookup_table, (gpointer)atol(code), lookup_list);
 }
 
 static void lookup_read_cache(gchar *dir_name)

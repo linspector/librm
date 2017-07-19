@@ -68,7 +68,6 @@ void rm_os_execute(const gchar *uri)
 	g_debug("%s(): %s/%s", __FUNCTION__, g_app_info_get_display_name(info), g_app_info_get_executable(info));
 	if (!g_app_info_launch(info, list, NULL, &error)) {
 		g_warning("%s(): %s", __FUNCTION__, error->message);
-
 	}
 
 	g_list_free(list);

@@ -456,7 +456,7 @@ gchar *rm_ftp_get_file(RmFtp *client, const gchar *file, gsize *len)
  * @file: file to upload
  * @path: remote path
  * @data: file data
-  * @size: file size
+ * @size: file size
  *
  * Put file on FTP
  *

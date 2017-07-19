@@ -37,7 +37,7 @@
 gpointer rm_contact_copy_numbers(gconstpointer src, gpointer data)
 {
 	RmPhoneNumber *copy = NULL;
-	RmPhoneNumber *src_number = (RmPhoneNumber *)src;
+	RmPhoneNumber *src_number = (RmPhoneNumber*)src;
 
 	copy = g_slice_new0(RmPhoneNumber);
 
@@ -116,8 +116,8 @@ RmContact *rm_contact_dup(RmContact *src)
  */
 gint rm_contact_name_compare(gconstpointer a, gconstpointer b)
 {
-	RmContact *contact_a = (RmContact *)a;
-	RmContact *contact_b = (RmContact *)b;
+	RmContact *contact_a = (RmContact*)a;
+	RmContact *contact_b = (RmContact*)b;
 
 	return strcasecmp(contact_a->name, contact_b->name);
 }

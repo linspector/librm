@@ -47,7 +47,8 @@
  *
  * Returns: modified input string
  */
-static void rm_settings_replace_dots(gchar *str) {
+static void rm_settings_replace_dots(gchar *str)
+{
 	while (*str) {
 		if (*str == '.') {
 			*str = G_DIR_SEPARATOR;
@@ -64,7 +65,8 @@ static void rm_settings_replace_dots(gchar *str) {
  *
  * Returns: modified input string
  */
-static void rm_settings_remove_prefix(gchar *str) {
+static void rm_settings_remove_prefix(gchar *str)
+{
 	gchar *pos;
 	gchar *end;
 

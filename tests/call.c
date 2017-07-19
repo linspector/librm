@@ -47,7 +47,7 @@ static void test_rm_call_full_number(void)
 
 int main(int argc, char **argv)
 {
-	g_test_init (&argc, &argv, NULL);
+	g_test_init(&argc, &argv, NULL);
 
 	g_test_add_func("/call/scramble", test_scramble_call);
 	g_test_add_func("/call/canonize", test_rm_call_canonize_number);

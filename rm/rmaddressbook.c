@@ -164,11 +164,11 @@ gboolean rm_addressbook_can_save(RmAddressBook *book)
  * Checks if number @b is within contact @a.
  *
  * Returns: 0 if present, -1 otherwise
-*/
+ */
 static gint rm_addressbook_number_in_contact(gconstpointer a, gconstpointer b)
 {
-	RmContact *contact = (RmContact *)a;
-	gchar *number = (gchar *)b;
+	RmContact *contact = (RmContact*)a;
+	gchar *number = (gchar*)b;
 	GSList *list;
 
 	for (list = contact->numbers; list != NULL; list = list->next) {

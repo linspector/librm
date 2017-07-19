@@ -49,7 +49,7 @@ static void test_action_regex(action_fixture *af, gconstpointer user_data)
 
 int main(int argc, char **argv)
 {
-	g_test_init (&argc, &argv, NULL);
+	g_test_init(&argc, &argv, NULL);
 
 	g_test_add("/action/add", action_fixture, "", test_action_init, test_action_add, test_action_shutdown);
 	g_test_add("/action/regex", action_fixture, "", test_action_init, test_action_regex, test_action_shutdown);

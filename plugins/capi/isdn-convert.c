@@ -116,7 +116,7 @@ static short alaw2linear(unsigned char alaw_byte)
 		t <<= seg - 1;
 	}
 
-	return ((alaw_byte & 0x80) ? t : - t);
+	return((alaw_byte & 0x80) ? t : -t);
 }
 
 /**
@@ -124,7 +124,7 @@ static short alaw2linear(unsigned char alaw_byte)
  */
 void create_table_buffer(void)
 {
-	signed char *_linear16_2_law = (signed char *)&linear16_2_law[32768];
+	signed char *_linear16_2_law = (signed char*)&linear16_2_law[32768];
 	long index;
 	int buf_size_in = 0;
 	int buf_size_out = 0;
@@ -137,7 +137,7 @@ void create_table_buffer(void)
 	}
 
 	for (index = 0; index < 65535; index++) {
-		_linear16_2_law[index - 32768] = bit_inverse(linear2alaw((short) index - 32768));
+		_linear16_2_law[index - 32768] = bit_inverse(linear2alaw((short)index - 32768));
 	}
 
 	for (index = 0; index < 256; index++) {
@@ -218,15 +218,15 @@ void convert_isdn_to_audio(struct capi_connection *connection, unsigned char *in
 		}
 
 		sample = lut_analyze[in_byte];
-		if (abs((int) sample - 128) > max) {
-			max = abs((int) sample - 128);
+		if (abs((int)sample - 128) > max) {
+			max = abs((int)sample - 128);
 		}
 
-		to_process = (int) floor((double)(index + 1) * ratio_in) - (int) floor((double) index * ratio_in);
+		to_process = (int)floor((double)(index + 1) * ratio_in) - (int)floor((double)index * ratio_in);
 
 		for (j = 0; j < to_process; j++) {
-			out_buf[out_ptr++] = lut_in[(int) in_byte * 2];
-			out_buf[out_ptr++] = lut_in[(int) in_byte * 2 + 1];
+			out_buf[out_ptr++] = lut_in[(int)in_byte * 2];
+			out_buf[out_ptr++] = lut_in[(int)in_byte * 2 + 1];
 		}
 	}
 
@@ -241,7 +241,7 @@ void convert_isdn_to_audio(struct capi_connection *connection, unsigned char *in
 	}
 
 	if (connection) {
-		connection->line_level_in_state = connection->line_level_in_state * (1.0 - ll_ratio) + ((double) max / 128) * ll_ratio;
+		connection->line_level_in_state = connection->line_level_in_state * (1.0 - ll_ratio) + ((double)max / 128) * ll_ratio;
 	}
 
 	*out_buf_len = out_ptr;
@@ -270,7 +270,7 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 	out_ptr = 0;
 
 	for (index = 0; index < in_buf_len; index += 2) {
-		to_process = (int) floor((double)(out_ptr + 1) * ratio_out) - (int) floor((double) out_ptr * ratio_out);
+		to_process = (int)floor((double)(out_ptr + 1) * ratio_out) - (int)floor((double)out_ptr * ratio_out);
 
 		for (j = 0; j < to_process; j++) {
 			int tmp = (int)(in_buf[index]) | ((int)(in_buf[index + 1]) << 8);
@@ -281,8 +281,8 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 			}
 
 			sample_u8 = lut_analyze[sample];
-			if (abs((int) sample_u8 - 128) > max) {
-				max = abs((int) sample_u8 - 128);
+			if (abs((int)sample_u8 - 128) > max) {
+				max = abs((int)sample_u8 - 128);
 			}
 
 			if (connection != NULL) {
@@ -306,7 +306,7 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 		ll_ratio = 1.0;
 	}
 
-	connection->line_level_out_state = connection->line_level_out_state * (1.0 - ll_ratio) + ((double) max / 128) * ll_ratio;
+	connection->line_level_out_state = connection->line_level_out_state * (1.0 - ll_ratio) + ((double)max / 128) * ll_ratio;
 
 	*out_buf_len = out_ptr;
 }

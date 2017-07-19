@@ -73,7 +73,7 @@ gchar *rm_connection_get_duration_time(RmConnection *connection)
 		time = 0.0f;
 	}
 
-	elapsed = (gint) time;
+	elapsed = (gint)time;
 	seconds = elapsed % 60;
 	minutes = (elapsed / 60) % 60;
 	hours = elapsed / (60 * 60);

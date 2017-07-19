@@ -54,7 +54,7 @@ static void marshal_VOID__POINTER_POINTER(GClosure *closure, GValue *return_valu
 {
 	typedef void (*GMarshalFunc_VOID_POINTER_POINTER)(gpointer data1, gpointer arg_1, gpointer arg_2, gpointer data2);
 	register GMarshalFunc_VOID_POINTER_POINTER callback;
-	register GCClosure *cc = (GCClosure*) closure;
+	register GCClosure *cc = (GCClosure*)closure;
 	register gpointer data1, data2;
 
 	g_return_if_fail(n_param_values == 3);
@@ -81,103 +81,103 @@ static void marshal_VOID__POINTER_POINTER(GClosure *closure, GValue *return_valu
 static void rm_object_create_signals(GObjectClass *g_object_class)
 {
 	rm_object_signals[RM_ACB_JOURNAL_LOADED] = g_signal_new(
-	            "journal-loaded",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, journal_loaded),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__POINTER,
-	            G_TYPE_NONE,
-	            1,
-	            G_TYPE_POINTER);
+		"journal-loaded",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, journal_loaded),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE,
+		1,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_CONNECTION_CHANGED] = g_signal_new(
-	            "connection-changed",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, connection_changed),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__UINT_POINTER,
-	            G_TYPE_NONE,
-	            2,
-	            G_TYPE_UINT,
-	            G_TYPE_POINTER);
+		"connection-changed",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, connection_changed),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__UINT_POINTER,
+		G_TYPE_NONE,
+		2,
+		G_TYPE_UINT,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_CONTACT_PROCESS] = g_signal_new(
-	            "contact-process",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, contact_process),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__POINTER,
-	            G_TYPE_NONE,
-	            1,
-	            G_TYPE_POINTER);
+		"contact-process",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, contact_process),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE,
+		1,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_FAX_PROCESS] = g_signal_new(
-	            "fax-process",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, fax_process),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__POINTER,
-	            G_TYPE_NONE,
-	            1,
-	            G_TYPE_POINTER);
+		"fax-process",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, fax_process),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE,
+		1,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_CONNECTION_STATUS] = g_signal_new(
-	            "connection-status",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, connection_status),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__UINT_POINTER,
-	            G_TYPE_NONE,
-	            2,
-	            G_TYPE_UINT,
-	            G_TYPE_POINTER);
+		"connection-status",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, connection_status),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__UINT_POINTER,
+		G_TYPE_NONE,
+		2,
+		G_TYPE_UINT,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_MESSAGE] = g_signal_new(
-	            "message",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, message),
-	            NULL,
-	            NULL,
-	            marshal_VOID__POINTER_POINTER,
-	            G_TYPE_NONE,
-	            2,
-	            G_TYPE_POINTER,
-	            G_TYPE_POINTER);
+		"message",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, message),
+		NULL,
+		NULL,
+		marshal_VOID__POINTER_POINTER,
+		G_TYPE_NONE,
+		2,
+		G_TYPE_POINTER,
+		G_TYPE_POINTER);
 
 	rm_object_signals[RM_ACB_CONTACTS_CHANGED] = g_signal_new(
-	            "contacts-changed",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, contacts_changed),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__VOID,
-	            G_TYPE_NONE,
-	            0,
-	            G_TYPE_NONE);
+		"contacts-changed",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, contacts_changed),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__VOID,
+		G_TYPE_NONE,
+		0,
+		G_TYPE_NONE);
 
 	rm_object_signals[RM_ACB_AUTHENTICATE] = g_signal_new(
-	            "authenticate",
-	            G_OBJECT_CLASS_TYPE(g_object_class),
-	            G_SIGNAL_RUN_FIRST,
-	            G_STRUCT_OFFSET(RmObjectClass, authenticate),
-	            NULL,
-	            NULL,
-	            g_cclosure_marshal_VOID__POINTER,
-	            G_TYPE_NONE,
-	            1,
-	            G_TYPE_POINTER);
+		"authenticate",
+		G_OBJECT_CLASS_TYPE(g_object_class),
+		G_SIGNAL_RUN_FIRST,
+		G_STRUCT_OFFSET(RmObjectClass, authenticate),
+		NULL,
+		NULL,
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE,
+		1,
+		G_TYPE_POINTER);
 }
 
 /**

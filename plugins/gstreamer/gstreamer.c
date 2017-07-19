@@ -79,7 +79,7 @@ static GSList *gstreamer_detect_devices(void)
 		audio_device->name = g_strdup("Standard");
 		audio_device->type = RM_AUDIO_OUTPUT;
 		devices = g_slist_prepend(devices, audio_device);
- 
+
 		audio_device = g_slice_new0(RmAudioDevice);
 		audio_device->internal_name = g_strdup("autoaudiosrc");
 		audio_device->name = g_strdup("Standard");
@@ -259,19 +259,19 @@ static void *gstreamer_open(gchar *output)
 		g_assert(source != NULL);
 
 		g_object_set(G_OBJECT(source),
-			"is-live", 1,
-			"format", 3,
-			"block", 1,
-			"max-bytes", 160,
-			NULL);
+			     "is-live", 1,
+			     "format", 3,
+			     "block", 1,
+			     "max-bytes", 160,
+			     NULL);
 
 		filter = gst_element_factory_make("capsfilter", "filter");
 
 		filtercaps = gst_caps_new_simple("audio/x-raw",
-			"format", G_TYPE_STRING, "S16LE",
-			"channels", G_TYPE_INT, gstreamer_channels,
-			"rate", G_TYPE_INT, gstreamer_sample_rate,
-			NULL);
+						 "format", G_TYPE_STRING, "S16LE",
+						 "channels", G_TYPE_INT, gstreamer_channels,
+						 "rate", G_TYPE_INT, gstreamer_sample_rate,
+						 NULL);
 
 		g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
@@ -294,7 +294,7 @@ static void *gstreamer_open(gchar *output)
 	}
 
 	/* Create input pipeline */
-	if (audio_source != NULL ) {
+	if (audio_source != NULL) {
 		pipe = gst_pipeline_new("input");
 		g_assert(pipe != NULL);
 
@@ -302,19 +302,19 @@ static void *gstreamer_open(gchar *output)
 		g_assert(sink != NULL);
 
 		g_object_set(G_OBJECT(sink),
-			"drop", 1,
-			"max-buffers", 2,
-			"sync", 1,
-			"qos", 1,
-			NULL);
+			     "drop", 1,
+			     "max-buffers", 2,
+			     "sync", 1,
+			     "qos", 1,
+			     NULL);
 
 		filter = gst_element_factory_make("capsfilter", "filter");
 
 		filtercaps = gst_caps_new_simple("audio/x-raw",
-			"format", G_TYPE_STRING, "S16LE",
-			"channels", G_TYPE_INT, gstreamer_channels,
-			"rate", G_TYPE_INT, gstreamer_sample_rate,
-			NULL);
+						 "format", G_TYPE_STRING, "S16LE",
+						 "channels", G_TYPE_INT, gstreamer_channels,
+						 "rate", G_TYPE_INT, gstreamer_sample_rate,
+						 NULL);
 
 		//g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
@@ -360,7 +360,7 @@ static gsize gstreamer_write(void *priv, guchar *data, gsize size)
 	}
 
 	tmp = g_malloc0(size);
-	memcpy((char *) tmp, (char *) data, size);
+	memcpy((char*)tmp, (char*)data, size);
 
 	buffer = gst_buffer_new_wrapped(tmp, size);
 	gst_app_src_push_buffer(GST_APP_SRC(src), buffer);
@@ -373,7 +373,7 @@ static gsize gstreamer_read(void *priv, guchar *data, gsize size)
 	GstSample *sample = NULL;
 	struct pipes *pipes = priv;
 	GstElement *sink = pipes->in_bin;
-	unsigned int read =  0;
+	unsigned int read = 0;
 
 	if (!sink) {
 		return read;

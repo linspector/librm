@@ -512,7 +512,6 @@ void rm_router_process_journal(GSList *journal)
 
 	/* Emit "journal-loaded" signal */
 	rm_object_emit_journal_loaded(journal);
-
 }
 
 /**
@@ -742,9 +741,9 @@ GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 		gchar *num;
 
 		/* %2.2d.%2.2d.%4.4d-%2.2d-%2.2d-%s-%s.wav",
-			time_val->tm_mday, time_val->tm_mon, 1900 + time_val->tm_year,
-			time_val->tm_hour, time_val->tm_min, connection->source, connection->target);
-		*/
+		        time_val->tm_mday, time_val->tm_mon, 1900 + time_val->tm_year,
+		        time_val->tm_hour, time_val->tm_min, connection->source, connection->target);
+		 */
 
 		if (!strstr(file_name, ".wav")) {
 			continue;

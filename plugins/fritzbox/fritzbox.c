@@ -36,36 +36,36 @@
 /** Mapping between config value and port type */
 FritzBoxPhonePort fritzbox_phone_ports[PORT_MAX] = {
 	/* Analog */
-	{"name-analog1", "telcfg:settings/MSN/Port0/Name", PORT_ANALOG1, 1},
-	{"name-analog2", "telcfg:settings/MSN/Port1/Name", PORT_ANALOG2, 2},
-	{"name-analog3", "telcfg:settings/MSN/Port2/Name", PORT_ANALOG3, 3},
+	{ "name-analog1", "telcfg:settings/MSN/Port0/Name", PORT_ANALOG1, 1 },
+	{ "name-analog2", "telcfg:settings/MSN/Port1/Name", PORT_ANALOG2, 2 },
+	{ "name-analog3", "telcfg:settings/MSN/Port2/Name", PORT_ANALOG3, 3 },
 	/* ISDN */
-	{"name-isdn1", "telcfg:settings/NTHotDialList/Name1", PORT_ISDN1, 51},
-	{"name-isdn2", "telcfg:settings/NTHotDialList/Name2", PORT_ISDN2, 52},
-	{"name-isdn3", "telcfg:settings/NTHotDialList/Name3", PORT_ISDN3, 53},
-	{"name-isdn4", "telcfg:settings/NTHotDialList/Name4", PORT_ISDN4, 54},
-	{"name-isdn5", "telcfg:settings/NTHotDialList/Name5", PORT_ISDN5, 55},
-	{"name-isdn6", "telcfg:settings/NTHotDialList/Name6", PORT_ISDN6, 56},
-	{"name-isdn7", "telcfg:settings/NTHotDialList/Name7", PORT_ISDN7, 57},
-	{"name-isdn8", "telcfg:settings/NTHotDialList/Name8", PORT_ISDN8, 58},
+	{ "name-isdn1", "telcfg:settings/NTHotDialList/Name1", PORT_ISDN1, 51 },
+	{ "name-isdn2", "telcfg:settings/NTHotDialList/Name2", PORT_ISDN2, 52 },
+	{ "name-isdn3", "telcfg:settings/NTHotDialList/Name3", PORT_ISDN3, 53 },
+	{ "name-isdn4", "telcfg:settings/NTHotDialList/Name4", PORT_ISDN4, 54 },
+	{ "name-isdn5", "telcfg:settings/NTHotDialList/Name5", PORT_ISDN5, 55 },
+	{ "name-isdn6", "telcfg:settings/NTHotDialList/Name6", PORT_ISDN6, 56 },
+	{ "name-isdn7", "telcfg:settings/NTHotDialList/Name7", PORT_ISDN7, 57 },
+	{ "name-isdn8", "telcfg:settings/NTHotDialList/Name8", PORT_ISDN8, 58 },
 	/* DECT */
-	{"name-dect1", "telcfg:settings/Foncontrol/User1/Name", PORT_DECT1, 60},
-	{"name-dect2", "telcfg:settings/Foncontrol/User2/Name", PORT_DECT2, 61},
-	{"name-dect3", "telcfg:settings/Foncontrol/User3/Name", PORT_DECT3, 62},
-	{"name-dect4", "telcfg:settings/Foncontrol/User4/Name", PORT_DECT4, 63},
-	{"name-dect5", "telcfg:settings/Foncontrol/User5/Name", PORT_DECT5, 64},
-	{"name-dect6", "telcfg:settings/Foncontrol/User6/Name", PORT_DECT6, 65},
+	{ "name-dect1", "telcfg:settings/Foncontrol/User1/Name", PORT_DECT1, 60 },
+	{ "name-dect2", "telcfg:settings/Foncontrol/User2/Name", PORT_DECT2, 61 },
+	{ "name-dect3", "telcfg:settings/Foncontrol/User3/Name", PORT_DECT3, 62 },
+	{ "name-dect4", "telcfg:settings/Foncontrol/User4/Name", PORT_DECT4, 63 },
+	{ "name-dect5", "telcfg:settings/Foncontrol/User5/Name", PORT_DECT5, 64 },
+	{ "name-dect6", "telcfg:settings/Foncontrol/User6/Name", PORT_DECT6, 65 },
 	/* IP-Phone */
-	{"name-sip0", "telcfg:settings/VoipExtension0/Name", PORT_IP1, 620},
-	{"name-sip1", "telcfg:settings/VoipExtension1/Name", PORT_IP2, 621},
-	{"name-sip2", "telcfg:settings/VoipExtension2/Name", PORT_IP3, 622},
-	{"name-sip3", "telcfg:settings/VoipExtension3/Name", PORT_IP4, 623},
-	{"name-sip4", "telcfg:settings/VoipExtension4/Name", PORT_IP5, 624},
-	{"name-sip5", "telcfg:settings/VoipExtension5/Name", PORT_IP6, 625},
-	{"name-sip6", "telcfg:settings/VoipExtension6/Name", PORT_IP7, 626},
-	{"name-sip7", "telcfg:settings/VoipExtension7/Name", PORT_IP8, 627},
-	{"name-sip8", "telcfg:settings/VoipExtension8/Name", PORT_IP9, 628},
-	{"name-sip9", "telcfg:settings/VoipExtension9/Name", PORT_IP10, 629},
+	{ "name-sip0", "telcfg:settings/VoipExtension0/Name", PORT_IP1, 620 },
+	{ "name-sip1", "telcfg:settings/VoipExtension1/Name", PORT_IP2, 621 },
+	{ "name-sip2", "telcfg:settings/VoipExtension2/Name", PORT_IP3, 622 },
+	{ "name-sip3", "telcfg:settings/VoipExtension3/Name", PORT_IP4, 623 },
+	{ "name-sip4", "telcfg:settings/VoipExtension4/Name", PORT_IP5, 624 },
+	{ "name-sip5", "telcfg:settings/VoipExtension5/Name", PORT_IP6, 625 },
+	{ "name-sip6", "telcfg:settings/VoipExtension6/Name", PORT_IP7, 626 },
+	{ "name-sip7", "telcfg:settings/VoipExtension7/Name", PORT_IP8, 627 },
+	{ "name-sip8", "telcfg:settings/VoipExtension8/Name", PORT_IP9, 628 },
+	{ "name-sip9", "telcfg:settings/VoipExtension9/Name", PORT_IP10, 629 },
 };
 
 /** FRITZ!Box plugin settings */
@@ -280,14 +280,14 @@ void dialer_hangup(RmConnection *connection)
 
 RmPhone dialer_phone = {
 	NULL,
-    "Phone dialer",
-    dialer_dial,
-    NULL,
-    dialer_hangup,
-    NULL,
-    NULL,
-    NULL,
-    NULL
+	"Phone dialer",
+	dialer_dial,
+	NULL,
+	dialer_hangup,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void fritzbox_add_phone(gpointer name, gpointer user_data)

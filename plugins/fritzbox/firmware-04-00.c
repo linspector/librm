@@ -153,11 +153,11 @@ gboolean fritzbox_dial_number_04_00(RmProfile *profile, gint port, const gchar *
 	g_free(scramble);
 
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "telcfg:settings/UseClickToDial", "1",
-	                            "telcfg:settings/DialPort", port_str,
-	                            "telcfg:command/Dial", number,
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "telcfg:settings/UseClickToDial", "1",
+				    "telcfg:settings/DialPort", port_str,
+				    "telcfg:command/Dial", number,
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(port_str);
 	g_free(url);
 
@@ -196,11 +196,11 @@ gboolean fritzbox_hangup_04_00(RmProfile *profile, gint port, const gchar *numbe
 	g_debug("Hangup on port %s...", port_str);
 
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "telcfg:settings/UseClickToDial", "1",
-	                            "telcfg:settings/DialPort", port_str,
-	                            "telcfg:command/Hangup", number,
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "telcfg:settings/UseClickToDial", "1",
+				    "telcfg:settings/DialPort", port_str,
+				    "telcfg:command/Hangup", number,
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(port_str);
 	g_free(url);
 

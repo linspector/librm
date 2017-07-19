@@ -26,17 +26,17 @@
 
 G_BEGIN_DECLS
 
-#define PLUGIN(NAME)\
-	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin *plugin) {\
-		plugin->init = NAME##_plugin_init;\
-		plugin->shutdown = NAME##_plugin_shutdown;\
+#define PLUGIN(NAME) \
+	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin * plugin) { \
+		plugin->init = NAME ## _plugin_init; \
+		plugin->shutdown = NAME ## _plugin_shutdown; \
 	}
 
-#define PLUGIN_CONFIG(NAME)\
-	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin *plugin) {\
-		plugin->init = NAME##_plugin_init;\
-		plugin->shutdown = NAME##_plugin_shutdown;\
-		plugin->configure = NAME##_plugin_configure;\
+#define PLUGIN_CONFIG(NAME) \
+	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin * plugin) { \
+		plugin->init = NAME ## _plugin_init; \
+		plugin->shutdown = NAME ## _plugin_shutdown; \
+		plugin->configure = NAME ## _plugin_configure; \
 	}
 
 typedef struct _RmPlugin RmPlugin;

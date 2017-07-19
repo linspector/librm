@@ -155,7 +155,7 @@ struct capi_connection *sff_send(gchar *sff_file, gint modem, gint ecm, gint con
 	sff_data = rm_file_load(sff_file, &sff_len);
 	sff_pos = 0;
 
-	connection = capi_call(controller, src_no, trg_no, (guint) call_anonymous, SESSION_SFF, SFF_CIP, 4, 4, 4, b1, b2, b3);
+	connection = capi_call(controller, src_no, trg_no, (guint)call_anonymous, SESSION_SFF, SFF_CIP, 4, 4, 4, b1, b2, b3);
 	if (connection) {
 		struct fax_status *status = NULL;
 

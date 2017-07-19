@@ -55,7 +55,7 @@ static void wincred_store_password(RmProfile *profile, const gchar *name, const 
 	cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
 	cred.TargetName = cred_name;
 	cred.UserName = cred_name;
-	cred.CredentialBlob = (BYTE *) wide_password;
+	cred.CredentialBlob = (BYTE*)wide_password;
 	cred.CredentialBlobSize = sizeof(BYTE) * sizeof(WCHAR) * length;
 
 	CredWrite(&cred, 0);
@@ -86,7 +86,7 @@ static gchar *wincred_get_password(RmProfile *profile, const gchar *name)
 	g_free(cred_name);
 
 	if (result == TRUE) {
-		secret_password = g_strdup_printf("%S", (WCHAR *) cred->CredentialBlob);
+		secret_password = g_strdup_printf("%S", (WCHAR*)cred->CredentialBlob);
 
 		if (cred->CredentialBlobSize > 1) {
 			secret_password[ cred->CredentialBlobSize / 2 ] = '\0';

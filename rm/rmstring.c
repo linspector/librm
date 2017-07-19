@@ -51,7 +51,7 @@ gchar *rm_strcasestr(const gchar *haystack, const gchar *needle)
 
 	for (; *haystack; haystack++) {
 		if (g_ascii_strncasecmp(haystack, needle, n) == 0) {
-			return (gchar *) haystack;
+			return (gchar*)haystack;
 		}
 	}
 
@@ -146,7 +146,7 @@ gchar **rm_strv_add(gchar **strv, const gchar *str)
 	gint i;
 	gchar **new_strv;
 
-	if (rm_strv_contains((const gchar * const *)strv, str)) {
+	if (rm_strv_contains((const gchar*const*)strv, str)) {
 		return strv;
 	}
 

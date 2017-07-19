@@ -139,7 +139,7 @@ void rm_object_emit_connection_disconnect(RmConnection *connection)
 	/* Remove timer */
 	rm_connection_shutdown_duration_timer(connection);
 
- 	rm_object_emit_connection_changed(RM_CONNECTION_TYPE_DISCONNECT, connection);
+	rm_object_emit_connection_changed(RM_CONNECTION_TYPE_DISCONNECT, connection);
 }
 
 /**

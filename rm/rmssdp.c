@@ -118,7 +118,7 @@ static void rm_on_context_available(GUPnPContextManager *manager, GUPnPContext *
 
 	gupnp_context_manager_manage_control_point(rm_context_manager, cp);
 
-	g_object_unref (cp);
+	g_object_unref(cp);
 }
 
 /**

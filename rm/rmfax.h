@@ -73,7 +73,7 @@ typedef struct {
 	/*< private >*/
 	RmDevice *device;
 	gchar *name;
-	RmConnection *(*send)(gchar *tiff, const gchar *target, gboolean anonymous);
+	RmConnection *(*send)(gchar * tiff, const gchar * target, gboolean anonymous);
 	gboolean (*get_status)(RmConnection *connection, RmFaxStatus *fax_status);
 	gint (*pickup)(RmConnection *connection);
 	void (*hangup)(RmConnection *connection);

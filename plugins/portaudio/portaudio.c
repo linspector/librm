@@ -44,8 +44,8 @@ static gint port_sample_rate = 8000;
 static gint port_bits_per_sample = 16;
 
 #if defined(__i386__) || defined(__i486__) || defined(__i586__) || defined(__i686__) || defined(__x86_64__)
-#define pa_util_read_memory_barrier() __asm__ volatile("lfence":::"memory")
-#define pa_util_write_memory_barrier() __asm__ volatile("sfence":::"memory")
+#define pa_util_read_memory_barrier() __asm__ volatile ("lfence" ::: "memory")
+#define pa_util_write_memory_barrier() __asm__ volatile ("sfence" ::: "memory")
 #else
 #define pa_util_read_memory_barrier()
 #define pa_util_write_memory_barrier()
@@ -106,7 +106,7 @@ long pa_util_initialize_ring_buffer(pa_util_ring_buffer *ring_buffer, long bytes
 	}
 
 	ring_buffer->buffer_size = bytes;
-	ring_buffer->buffer = (char *) data;
+	ring_buffer->buffer = (char*)data;
 	pa_util_flush_ring_buffer(ring_buffer);
 
 	ring_buffer->big_mask = (bytes * 2) - 1;
@@ -124,7 +124,7 @@ long pa_util_get_ring_buffer_read_available(pa_util_ring_buffer *ring_buffer)
 {
 	pa_util_read_memory_barrier();
 
-	return ((ring_buffer->write_index - ring_buffer->read_index) & ring_buffer->big_mask);
+	return((ring_buffer->write_index - ring_buffer->read_index) & ring_buffer->big_mask);
 }
 
 /**
@@ -134,7 +134,7 @@ long pa_util_get_ring_buffer_read_available(pa_util_ring_buffer *ring_buffer)
  */
 long pa_util_get_ring_buffer_write_available(pa_util_ring_buffer *ring_buffer)
 {
-	return (ring_buffer->buffer_size - pa_util_get_ring_buffer_read_available(ring_buffer));
+	return(ring_buffer->buffer_size - pa_util_get_ring_buffer_read_available(ring_buffer));
 }
 
 /**
@@ -261,7 +261,7 @@ long pa_util_write_ring_buffer(pa_util_ring_buffer *ring_buffer, const void *dat
 	written = pa_util_get_ring_buffer_write_regions(ring_buffer, bytes, &data1, &size1, &data2, &size2);
 	if (size2 > 0) {
 		memcpy(data1, data, size1);
-		data = ((char *) data) + size1;
+		data = ((char*)data) + size1;
 		memcpy(data2, data, size2);
 	} else {
 		memcpy(data1, data, size1);
@@ -290,7 +290,7 @@ long pa_util_read_ring_buffer(pa_util_ring_buffer *ring_buffer, void *data, long
 	read = pa_util_get_ring_buffer_read_regions(ring_buffer, bytes, &data1, &size1, &data2, &size2);
 	if (size2 > 0) {
 		memcpy(data, data1, size1);
-		data = ((char *) data) + size1;
+		data = ((char*)data) + size1;
 		memcpy(data, data2, size2);
 	} else {
 		memcpy(data, data1, size1);
@@ -418,7 +418,7 @@ static int audio_cb(const void *input_buffer, void *output_buffer, unsigned long
 		int numRead = pa_util_read_ring_buffer(&private->out_fifo, output_buffer, bytes);
 
 		for (index = numRead; index < bytes; index++) {
-			((char *) output_buffer)[index] = 0;
+			((char*)output_buffer)[index] = 0;
 		}
 
 #ifdef USE_SPEEX
@@ -429,7 +429,7 @@ static int audio_cb(const void *input_buffer, void *output_buffer, unsigned long
 
 	if (input_buffer != NULL) {
 		/* Call echo cancellation */
-		ret = echo_cancellation(private, (short *) input_buffer, frames_per_buffer);
+		ret = echo_cancellation(private, (short*)input_buffer, frames_per_buffer);
 
 		if (ret == 0) {
 			/* If we have a valid frame, write it to the input fifo */
@@ -461,7 +461,7 @@ PaError init_fifo(pa_util_ring_buffer *ring_buffer, long frames, long bytes_per_
 		return paInsufficientMemory;
 	}
 
-	return (PaError) pa_util_initialize_ring_buffer(ring_buffer, bytes, buffer);
+	return (PaError)pa_util_initialize_ring_buffer(ring_buffer, bytes, buffer);
 }
 
 /**
@@ -497,7 +497,7 @@ unsigned long RoundUpToNextPowerOf2(unsigned long n)
 		bits++;
 	}
 
-	return (1 << bits);
+	return(1 << bits);
 }
 
 /**
@@ -518,14 +518,14 @@ int port_audio_close(void *priv)
 	if (private->out_stream) {
 		/*int nByteSize = private->out_fifo.buffer_size;
 
-		if (nByteSize > 0) {
-			bytesEmpty = pa_util_get_ring_buffer_write_available(&private->out_fifo);
+		   if (nByteSize > 0) {
+		        bytesEmpty = pa_util_get_ring_buffer_write_available(&private->out_fifo);
 
-			while (bytesEmpty < nByteSize) {
-				Pa_Sleep(10);
-				bytesEmpty = pa_util_get_ring_buffer_write_available(&private->out_fifo);
-			}
-		}*/
+		        while (bytesEmpty < nByteSize) {
+		                Pa_Sleep(10);
+		                bytesEmpty = pa_util_get_ring_buffer_write_available(&private->out_fifo);
+		        }
+		   }*/
 
 		if (!Pa_IsStreamStopped(private->out_stream)) {
 			Pa_AbortStream(private->out_stream);
@@ -660,9 +660,9 @@ static void *port_audio_open(void)
 	speex_preprocess_ctl(private->preprocess_state, SPEEX_PREPROCESS_SET_DEREVERB, &nTmp);
 #if 0
 	/*nTmp = 35;
-	speex_preprocess_ctl(private->preprocess_state, SPEEX_PREPROCESS_SET_PROB_START, &nTmp);
-	nTmp = 20;
-	speex_preprocess_ctl(private->preprocess_state, SPEEX_PREPROCESS_SET_PROB_CONTINUE, &nTmp);*/
+	   speex_preprocess_ctl(private->preprocess_state, SPEEX_PREPROCESS_SET_PROB_START, &nTmp);
+	   nTmp = 20;
+	   speex_preprocess_ctl(private->preprocess_state, SPEEX_PREPROCESS_SET_PROB_CONTINUE, &nTmp);*/
 #endif
 
 	err = init_fifo(&private->echo_fifo, num_frames, private->bytes_per_frame);
@@ -763,7 +763,7 @@ static gsize port_audio_write(void *priv, guchar *data, gsize size)
 		return 0;
 	}
 
-again:
+ again:
 	written = pa_util_write_ring_buffer(&private->out_fifo, data + offset, size - offset);
 	if (written != size - offset) {
 		int bytesEmpty = 0;
@@ -794,7 +794,7 @@ static gsize port_audio_read(void *priv, guchar *data, gsize size)
 	long avail;
 	int max = 5000;
 	long read;
-	char *ptr = (char *) data;
+	char *ptr = (char*)data;
 
 	while (total_bytes < size && --max > 0) {
 		avail = pa_util_get_ring_buffer_read_available(&private->in_fifo);

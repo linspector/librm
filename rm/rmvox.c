@@ -155,7 +155,7 @@ static gpointer rm_vox_playback_thread(gpointer user_data)
 		}
 
 		/* initializes bit stream */
-		speex_bits_read_from(&bits, (char *) playback->data + playback->offset, bytes);
+		speex_bits_read_from(&bits, (char*)playback->data + playback->offset, bytes);
 		playback->offset += bytes;
 
 		/* Deocde data */
@@ -177,14 +177,13 @@ static gpointer rm_vox_playback_thread(gpointer user_data)
 		}
 
 		/* Write data to audio device */
-		rm_audio_write(playback->audio, playback->audio_priv, (guchar *) output, frame_size * sizeof(gshort));
+		rm_audio_write(playback->audio, playback->audio_priv, (guchar*)output, frame_size * sizeof(gshort));
 
 		/* Increment current frame count and update ui */
 		playback->cnt++;
 
 		playback->fraction = playback->cnt * 100 / max_cnt;
 		playback->seconds = (gfloat)((gfloat)(frame_size * playback->cnt) / (gfloat)8000);
-
 	}
 #ifdef VOX_DEBUG
 	g_debug("%s(): End of vox", __FUNCTION__);
@@ -238,7 +237,7 @@ static gpointer rm_vox_sf_playback_thread(gpointer user_data)
 
 		num_read = sf_read_short(playback->sf, buffer, len);
 		/* Write data to audio device */
-		rm_audio_write(playback->audio, playback->audio_priv, (guchar *) buffer, num_read * 2);
+		rm_audio_write(playback->audio, playback->audio_priv, (guchar*)buffer, num_read * 2);
 
 		playback->cnt += 80;
 
@@ -494,7 +493,6 @@ gpointer rm_vox_init(gchar *data, gsize len, GError **error)
 			return NULL;
 		}
 	} else {
-
 		/* Initialize speex decoder */
 		mode = speex_lib_get_mode(0);
 

@@ -168,7 +168,7 @@ static inline gchar *md5(gchar *input)
 	gchar *bin = g_convert(input, -1, "UTF-16LE", "UTF-8", NULL, &written, &error);
 
 	if (error == NULL) {
-		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar *) bin, written);
+		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar*)bin, written);
 		g_free(bin);
 	} else {
 		g_debug("Error converting utf8 to utf16: '%s'", error->message);
@@ -189,7 +189,7 @@ static inline gchar *md5_simple(gchar *input)
 	gchar *ret = NULL;
 
 	if (error == NULL) {
-		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar *) input, -1);
+		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar*)input, -1);
 	} else {
 		g_debug("Error converting utf8 to utf16: '%s'", error->message);
 		g_error_free(error);

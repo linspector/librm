@@ -139,7 +139,7 @@ static void crypt_cfb_buf(const char key[8], unsigned char *buf, unsigned len, u
 
 	memcpy(temp, key, 8);
 	rm_crypt_unpack(temp);
-	setkey((const char *) temp);
+	setkey((const char*)temp);
 	memset(temp, 0, sizeof(temp));
 
 	memset(rm_crypt_cfb_iv, 0, sizeof(rm_crypt_cfb_iv));
@@ -149,12 +149,12 @@ static void crypt_cfb_buf(const char key[8], unsigned char *buf, unsigned len, u
 
 	while (len) {
 		memcpy(temp, rm_crypt_cfb_iv, sizeof(temp));
-		encrypt((char *) temp, 0);
+		encrypt((char*)temp, 0);
 		if (chunksize > len)
 			chunksize = len;
 		if (decrypt)
 			rm_crypt_cfb_shift(rm_crypt_cfb_iv, buf, chunksize);
-		rm_crypt_cfb_xor((unsigned char *) buf, temp, chunksize);
+		rm_crypt_cfb_xor((unsigned char*)buf, temp, chunksize);
 		if (!decrypt)
 			rm_crypt_cfb_shift(rm_crypt_cfb_iv, buf, chunksize);
 		len -= chunksize;

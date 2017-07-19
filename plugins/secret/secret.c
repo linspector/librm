@@ -36,9 +36,9 @@ const SecretSchema *secret_get_schema(void)
 	static const SecretSchema the_schema = {
 		"org.tabos.rm.Password", SECRET_SCHEMA_NONE,
 		{
-			{"profile", SECRET_SCHEMA_ATTRIBUTE_STRING},
-			{"name", SECRET_SCHEMA_ATTRIBUTE_STRING},
-			{"NULL", 0},
+			{ "profile", SECRET_SCHEMA_ATTRIBUTE_STRING },
+			{ "name", SECRET_SCHEMA_ATTRIBUTE_STRING },
+			{ "NULL", 0 },
 		}
 	};
 
@@ -58,10 +58,10 @@ static void secret_store_password(RmProfile *profile, const gchar *name, const g
 	GError *error = NULL;
 
 	secret_password_store_sync(SECRET_SCHEMA, SECRET_COLLECTION_DEFAULT,
-	                           "Router Manager password", password, NULL, &error,
-	                           "profile", profile ? profile->name : "fallback",
-	                           "name", name,
-	                           NULL);
+				   "Router Manager password", password, NULL, &error,
+				   "profile", profile ? profile->name : "fallback",
+				   "name", name,
+				   NULL);
 
 	if (error != NULL) {
 		/* ... handle the failure here */
@@ -85,9 +85,9 @@ static gchar *secret_get_password(RmProfile *profile, const gchar *name)
 {
 	GError *error = NULL;
 	gchar *password = secret_password_lookup_sync(SECRET_SCHEMA, NULL, &error,
-	                  "profile", profile ? profile->name : "fallback",
-	                  "name", name,
-	                  NULL);
+						      "profile", profile ? profile->name : "fallback",
+						      "name", name,
+						      NULL);
 
 	if (error != NULL) {
 		/* ... handle the failure here */
@@ -113,9 +113,9 @@ static gboolean secret_remove_password(RmProfile *profile, const gchar *name)
 {
 	GError *error = NULL;
 	gboolean removed = secret_password_clear_sync(SECRET_SCHEMA, NULL, &error,
-	                   "profile", profile ? profile->name : "fallback",
-	                   "name", name,
-	                   NULL);
+						      "profile", profile ? profile->name : "fallback",
+						      "name", name,
+						      NULL);
 
 	if (error != NULL) {
 		/* ... handle the failure here */

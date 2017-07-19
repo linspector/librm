@@ -32,11 +32,11 @@
 #define RING_SHORT_PERIOD 0.044
 #define RING_FADE_LENGTH 0.003
 #define RING_LENGTH 1.3
-#define RING_SHORT_LENGTH (RING_SHORT_PERIOD/2)
+#define RING_SHORT_LENGTH (RING_SHORT_PERIOD / 2)
 #define RING_FREQUENCY 1300
 #define RINGING_FREQUENCY 425
 
-static short seg_end[8] = {0xFF, 0x1FF, 0x3FF, 0x7FF, 0xFFF, 0x1FFF, 0x3FFF, 0x7FFF};
+static short seg_end[8] = { 0xFF, 0x1FF, 0x3FF, 0x7FF, 0xFFF, 0x1FFF, 0x3FFF, 0x7FFF };
 static unsigned char *audio_lut_generate = NULL;
 static gboolean effect_thread_stop = TRUE;
 
@@ -78,7 +78,7 @@ static unsigned char linear2alaw(int val)
 	seg = search(val, seg_end, 8);
 
 	if (seg >= 8) {
-		return (0x7F ^ mask);
+		return(0x7F ^ mask);
 	} else {
 		val_a = seg << SEG_SHIFT;
 		if (seg < 2) {
@@ -87,7 +87,7 @@ static unsigned char linear2alaw(int val)
 			val_a |= (val >> (seg + 3)) & QUANT_MASK;
 		}
 
-		return (val_a ^ mask);
+		return(val_a ^ mask);
 	}
 }
 
@@ -232,7 +232,7 @@ static int make_lut(unsigned char **lut_generate)
 {
 	int index;
 
-	if (!(*lut_generate = (unsigned char *) malloc(256))) {
+	if (!(*lut_generate = (unsigned char*)malloc(256))) {
 		return -1;
 	}
 

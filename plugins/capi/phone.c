@@ -55,12 +55,12 @@ gpointer capi_phone_input_thread(gpointer data)
 	while (session->input_thread_state == 1) {
 		int len;
 
-		len = rm_audio_read(audio, connection->audio, (guchar *) audio_buffer_rx, sizeof(audio_buffer_rx));
+		len = rm_audio_read(audio, connection->audio, (guchar*)audio_buffer_rx, sizeof(audio_buffer_rx));
 
 		/* Check if we have some audio data to process */
 		if (len > 0) {
 			/* convert audio data to isdn format */
-			convert_audio_to_isdn(connection, (guchar *) audio_buffer_rx, len, audio_buffer, &audio_buf_len, rec_buffer);
+			convert_audio_to_isdn(connection, (guchar*)audio_buffer_rx, len, audio_buffer, &audio_buf_len, rec_buffer);
 
 			isdn_lock();
 			DATA_B3_REQ(&cmsg, session->appl_id, 0, connection->ncci, audio_buffer, audio_buf_len, session->message_number++, 0);
@@ -120,12 +120,12 @@ void capi_phone_transfer(struct capi_connection *connection, _cmsg capi_message)
 	rm_audio_write(audio, connection->audio, audio_buffer, audio_buf_len);
 
 	guchar audio_buffer_rx[CAPI_PACKETS];
-	len = rm_audio_read(audio, connection->audio, (guchar *) audio_buffer_rx, sizeof(audio_buffer_rx));
+	len = rm_audio_read(audio, connection->audio, (guchar*)audio_buffer_rx, sizeof(audio_buffer_rx));
 
 	/* Check if we have some audio data to process */
 	if (len > 0) {
 		/* convert audio data to isdn format */
-		convert_audio_to_isdn(connection, (guchar *) audio_buffer_rx, len, audio_buffer, &audio_buf_len, rec_buffer);
+		convert_audio_to_isdn(connection, (guchar*)audio_buffer_rx, len, audio_buffer, &audio_buf_len, rec_buffer);
 
 		isdn_lock();
 		DATA_B3_REQ(&cmsg, session->appl_id, 0, connection->ncci, audio_buffer, audio_buf_len, session->message_number++, 0);
@@ -192,7 +192,7 @@ guint64 microsec_time(void)
 
 	gettimeofday(&time_val, 0);
 
-	return time_val.tv_sec * ((guint64) 1000000) + time_val.tv_usec;
+	return time_val.tv_sec * ((guint64)1000000) + time_val.tv_usec;
 }
 
 /**
@@ -298,7 +298,7 @@ int recording_write(struct recorder *recorder, short *buf, int size, int channel
 	}
 
 	if (start_pos < position) {
-		delta = (int) position - start_pos;
+		delta = (int)position - start_pos;
 		start_pos = position;
 		buf += delta;
 		size -= delta;
@@ -438,9 +438,9 @@ void capi_phone_record(struct capi_connection *connection, guchar record, const 
 		}
 
 		file = g_strdup_printf("%s/%2.2d.%2.2d.%2.2d-%2.2d-%2.2d-%s-%s.wav",
-		                       dir,
-		                       time_val->tm_mday, time_val->tm_mon + 1, time_val->tm_year - 100,
-		                       time_val->tm_hour, time_val->tm_min, connection->source, connection->target);
+				       dir,
+				       time_val->tm_mday, time_val->tm_mon + 1, time_val->tm_year - 100,
+				       time_val->tm_hour, time_val->tm_min, connection->source, connection->target);
 
 		recording_open(&connection->recorder, file);
 		g_free(file);
@@ -477,10 +477,10 @@ void capi_phone_hold(RmConnection *connection, gboolean hold)
 	isdn_lock();
 	if (hold == 1) {
 		/* Hold active connection */
-		FACILITY_REQ(&message, session->appl_id, 0, capi_connection->ncci, 3, (guchar *) fac);
+		FACILITY_REQ(&message, session->appl_id, 0, capi_connection->ncci, 3, (guchar*)fac);
 	} else {
 		/* Retrieve active connection */
-		FACILITY_REQ(&message, session->appl_id, 0, capi_connection->plci, 3, (guchar *) fac);
+		FACILITY_REQ(&message, session->appl_id, 0, capi_connection->plci, 3, (guchar*)fac);
 	}
 	isdn_unlock();
 }
@@ -541,14 +541,14 @@ void capi_phone_conference(RmConnection *connection_active, RmConnection *connec
 	fac[2] = 0x00;
 	fac[3] = 4;
 
-	((unsigned char *)ptr)[0] = hold->plci & 0xff;
-	((unsigned char *)ptr)[1] = (hold->plci >> 8) & 0xff;
-	((unsigned char *)ptr)[2] = (hold->plci >> 16) & 0xff;
-	((unsigned char *)ptr)[3] = (hold->plci >> 24) & 0xff;
+	((unsigned char*)ptr)[0] = hold->plci & 0xff;
+	((unsigned char*)ptr)[1] = (hold->plci >> 8) & 0xff;
+	((unsigned char*)ptr)[2] = (hold->plci >> 16) & 0xff;
+	((unsigned char*)ptr)[3] = (hold->plci >> 24) & 0xff;
 
 	isdn_lock();
 	/* Hold active connection */
-	FACILITY_REQ(&message, session->appl_id, 0, active->ncci, 3, (guchar *) fac);
+	FACILITY_REQ(&message, session->appl_id, 0, active->ncci, 3, (guchar*)fac);
 	isdn_unlock();
 }
 

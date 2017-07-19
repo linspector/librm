@@ -365,7 +365,7 @@ struct capi_connection *capi_call(
 	/* TargetNo */
 	called_party_number[0] = 1 + strlen(trg_no);
 	called_party_number[1] = 0x80;
-	strncpy((char *) &called_party_number[2], trg_no, sizeof(called_party_number) - 3);
+	strncpy((char*)&called_party_number[2], trg_no, sizeof(called_party_number) - 3);
 
 	/* MSN */
 	calling_party_number[1] = 0x00;
@@ -377,19 +377,19 @@ struct capi_connection *capi_call(
 
 	if (intern) {
 		calling_party_number[0] = 2 + 5;
-		strncpy((char *) &calling_party_number[3], "**981", sizeof(calling_party_number) - 4);
+		strncpy((char*)&calling_party_number[3], "**981", sizeof(calling_party_number) - 4);
 
-		strncpy((char *) bc, "\x03\xE0\x90\xA3", sizeof(bc));
+		strncpy((char*)bc, "\x03\xE0\x90\xA3", sizeof(bc));
 	} else {
 		calling_party_number[0] = 2 + strlen(src_no);
-		strncpy((char *) &calling_party_number[3], src_no, sizeof(calling_party_number) - 4);
+		strncpy((char*)&calling_party_number[3], src_no, sizeof(calling_party_number) - 4);
 
 		memset(bc, 0, sizeof(bc));
 	}
-	strncpy((char *) llc, "\x02\x80\x90", sizeof(llc));
+	strncpy((char*)llc, "\x02\x80\x90", sizeof(llc));
 
 	if (cip == 0x04) {
-		strncpy((char *) hlc, "\x02\x91\x81", sizeof(hlc));
+		strncpy((char*)hlc, "\x02\x91\x81", sizeof(hlc));
 	} else if (cip == 0x11) {
 		//strncpy((char *) hlc, "\x02\x91\x84", sizeof(hlc));
 		//strncpy((char *) bc, "\x03\x90\x90\xA3", sizeof(bc));
@@ -401,49 +401,49 @@ struct capi_connection *capi_call(
 	/* Request connect */
 	isdn_lock();
 	err = CONNECT_REQ(
-			/* CAPI Message */
-			&cmsg,
-			/* Application ID */
-			session->appl_id,
-			/* Message Number */
-			0,
-			/* Controller */
-			controller,
-			/* CIP (Voice/Fax/...) */
-			cip,
-			/* Called party number */
-			(unsigned char *) called_party_number,
-			/* Calling party number */
-			(unsigned char *) calling_party_number,
-			/* NULL */
-			NULL,
-			/* NULL */
-			NULL,
-			/* B1 Protocol */
-			b1_protocol,
-			/* B2 Protocol */
-			b2_protocol,
-			/* B3 Protocol */
-			b3_protocol,
-			/* B1 Configuration */
-			b1_configuration,
-			/* B2 Confguration */
-			b2_configuration,
-			/* B3 Configuration */
-			b3_configuration,
-			/* Rest... */
-			NULL,
-			/* BC */
-			(unsigned char *) bc,
-			/* LLC */
-			(unsigned char *) llc,
-			/* HLC */
-			(unsigned char *) hlc,
-			NULL,
-			NULL,
-			NULL,
-			NULL,
-			NULL);
+		/* CAPI Message */
+		&cmsg,
+		/* Application ID */
+		session->appl_id,
+		/* Message Number */
+		0,
+		/* Controller */
+		controller,
+		/* CIP (Voice/Fax/...) */
+		cip,
+		/* Called party number */
+		(unsigned char*)called_party_number,
+		/* Calling party number */
+		(unsigned char*)calling_party_number,
+		/* NULL */
+		NULL,
+		/* NULL */
+		NULL,
+		/* B1 Protocol */
+		b1_protocol,
+		/* B2 Protocol */
+		b2_protocol,
+		/* B3 Protocol */
+		b3_protocol,
+		/* B1 Configuration */
+		b1_configuration,
+		/* B2 Confguration */
+		b2_configuration,
+		/* B3 Configuration */
+		b3_configuration,
+		/* Rest... */
+		NULL,
+		/* BC */
+		(unsigned char*)bc,
+		/* LLC */
+		(unsigned char*)llc,
+		/* HLC */
+		(unsigned char*)hlc,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL);
 	isdn_unlock();
 
 	/* Error? */
@@ -512,7 +512,7 @@ static void capi_get_source_no(_cmsg *cmsg, char number[256])
 		pnX = INFO_IND_INFOELEMENT(cmsg);
 
 		if (pnX != NULL) {
-			len = (int) pnX[0];
+			len = (int)pnX[0];
 		}
 	} else {
 		len = *CONNECT_IND_CALLINGPARTYNUMBER(cmsg);
@@ -526,14 +526,14 @@ static void capi_get_source_no(_cmsg *cmsg, char number[256])
 		}
 
 		/*switch (pnX[1] & 112) {
-			case 32:
-				strcat(number, getLineAccesscode());
-				break;
-			case 64:
-				strcat(number, getLineAccesscode());
-				strcat(number, getAreacode());
-				break;
-		}*/
+		        case 32:
+		                strcat(number, getLineAccesscode());
+		                break;
+		        case 64:
+		                strcat(number, getLineAccesscode());
+		                strcat(number, getAreacode());
+		                break;
+		   }*/
 
 		/* get number */
 		if (pnX[2] & 128) {
@@ -568,7 +568,7 @@ static void capi_get_target_no(_cmsg *cmsg, char number[256])
 	if (x == NULL) {
 		x = INFO_IND_INFOELEMENT(cmsg);
 		if (x != NULL) {
-			len = (int) x[0];
+			len = (int)x[0];
 		}
 	} else {
 		len = *CONNECT_IND_CALLEDPARTYNUMBER(cmsg);
@@ -587,13 +587,13 @@ static void capi_get_target_no(_cmsg *cmsg, char number[256])
 
 		/* get number */
 		/*if (strncmp((char *) x + 2, getCountrycode(), 2) == 0) {
-			number[strlen(number) + (size_t) x[0]] = 0;
-			number[strlen(number) + (size_t) x[0] - 1] = 0;
-			strcpy(number, "0");
-			memcpy(number + 1, x + 2 + 2, len - 3);
-		} else*/ {
-			number[strlen(number) + (size_t) x[0]] = 0;
-			number[strlen(number) + (size_t) x[0] - 1] = 0;
+		        number[strlen(number) + (size_t) x[0]] = 0;
+		        number[strlen(number) + (size_t) x[0] - 1] = 0;
+		        strcpy(number, "0");
+		        memcpy(number + 1, x + 2 + 2, len - 3);
+		   } else*/{
+			number[strlen(number) + (size_t)x[0]] = 0;
+			number[strlen(number) + (size_t)x[0] - 1] = 0;
 			memcpy(number + strlen(number), x + 2, (size_t)(x[0] - 1));
 		}
 	}
@@ -715,7 +715,7 @@ static void capi_enable_dtmf(struct capi_connection *connection)
 	/* Message length */
 	facility[0] = 10;
 	/* DTMF ON: 0x01, DTMF OFF: 0x02 */
-	facility[1] = (_cbyte) 0x01;
+	facility[1] = (_cbyte)0x01;
 	/* NULL */
 	facility[2] = 0x00;
 	/* DTMF Duration */
@@ -739,7 +739,7 @@ static void capi_enable_dtmf(struct capi_connection *connection)
 
 	/* 0x01 = DTMF selector */
 	isdn_lock();
-	FACILITY_REQ(&message, session->appl_id, 0/*isdn->message_number++*/, connection->plci, 0x01, (unsigned char *) facility);
+	FACILITY_REQ(&message, session->appl_id, 0 /*isdn->message_number++*/, connection->plci, 0x01, (unsigned char*)facility);
 	isdn_unlock();
 }
 
@@ -778,7 +778,7 @@ void capi_send_dtmf_code(struct capi_connection *connection, unsigned char dtmf)
 	/* Message length */
 	facility[0] = 0x08;
 	/* Send DTMF 0x03 */
-	facility[1] = (_cbyte) 0x03;
+	facility[1] = (_cbyte)0x03;
 	/* NULL */
 	facility[2] = 0x00;
 	/* DTMF Duration */
@@ -798,7 +798,7 @@ void capi_send_dtmf_code(struct capi_connection *connection, unsigned char dtmf)
 
 	/* 0x01 = DTMF selector */
 	isdn_lock();
-	FACILITY_REQ(&message, session->appl_id, 0/*isdn->message_number++*/, connection->ncci, 0x01, (unsigned char *) facility);
+	FACILITY_REQ(&message, session->appl_id, 0 /*isdn->message_number++*/, connection->ncci, 0x01, (unsigned char*)facility);
 	isdn_unlock();
 }
 
@@ -823,14 +823,14 @@ void capi_send_display_message(struct capi_connection *connection, char *text)
 	/* Complete length */
 	facility[0] = len + 2;
 	/* Send DTMF 0x03 */
-	facility[1] = (_cbyte) 0x28;
+	facility[1] = (_cbyte)0x28;
 	/* Message length */
 	facility[0] = len;
 
-	strncpy((char *) facility + 3, text, len);
+	strncpy((char*)facility + 3, text, len);
 
 	isdn_lock();
-	INFO_REQ(&message, session->appl_id, 0, connection->plci, (unsigned char *) "", (unsigned char *) "", (unsigned char *) "", (unsigned char *) "", (unsigned char *) facility, NULL);
+	INFO_REQ(&message, session->appl_id, 0, connection->plci, (unsigned char*)"", (unsigned char*)"", (unsigned char*)"", (unsigned char*)"", (unsigned char*)facility, NULL);
 	isdn_unlock();
 }
 
@@ -891,7 +891,6 @@ static int capi_indication(_cmsg capi_message)
 			connection->target = g_strdup(target_phone_number);
 
 			capi_resp_connection(plci, 0);
-
 		}
 
 		break;
@@ -973,7 +972,7 @@ static int capi_indication(_cmsg capi_message)
 
 		/* Answer the info message */
 		isdn_lock();
-		CONNECT_B3_RESP(&cmsg1, session->appl_id, session->message_number++, ncci, 0, (_cstruct) NULL);
+		CONNECT_B3_RESP(&cmsg1, session->appl_id, session->message_number++, ncci, 0, (_cstruct)NULL);
 		isdn_unlock();
 
 		if (connection->state == STATE_CONNECT_ACTIVE) {
@@ -1063,18 +1062,18 @@ static int capi_indication(_cmsg capi_message)
 		switch (FACILITY_IND_FACILITYSELECTOR(&capi_message)) {
 		case 0x0001:
 			/* DTMF */
-			capi_get_dtmf_code(connection, (unsigned char) FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1]);
+			capi_get_dtmf_code(connection, (unsigned char)FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1]);
 			break;
 		case 0x0003:
 			/* Supplementary Services */
-			nTmp = (unsigned int)(((unsigned int) FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1]) | ((unsigned int) FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[3] << 8));
+			nTmp = (unsigned int)(((unsigned int)FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1]) | ((unsigned int)FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[3] << 8));
 
 			g_debug("%x %x %x %x %x %x", FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[0],
-			        FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1],
-			        FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[2],
-			        FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[3],
-			        FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[4],
-			        FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[5]);
+				FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[1],
+				FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[2],
+				FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[3],
+				FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[4],
+				FACILITY_IND_FACILITYINDICATIONPARAMETER(&capi_message)[5]);
 			if (nTmp == 0x0203) {
 				/* Retrieve */
 				g_debug("FACILITY: RETRIEVE");
@@ -1169,7 +1168,7 @@ static int capi_indication(_cmsg capi_message)
 			break;
 		case 0x0027:
 			/* Notification Indicator */
-			switch ((unsigned int) info_element[0]) {
+			switch ((unsigned int)info_element[0]) {
 			case 0:
 				g_debug("CAPI_INFO - NI - CALL SUSPENDED (%d)", info_element[0]);
 				break;
@@ -1197,7 +1196,7 @@ static int capi_indication(_cmsg capi_message)
 		case 0x0029:
 			/* DateTime */
 			g_debug("CAPI_INFO - DATE/TIME (%02d/%02d/%02d %02d:%02d)",
-			        info_element[0], info_element[1], info_element[2], info_element[3], info_element[4]);
+				info_element[0], info_element[1], info_element[2], info_element[3], info_element[4]);
 			break;
 		case 0x002C:
 			/* Keypad facility */
@@ -1211,8 +1210,8 @@ static int capi_indication(_cmsg capi_message)
 			g_debug("CAPI_INFO - CALLER PARTY NUMBER");
 
 			/*for (tmp = 0; tmp < sizeof(info_element); tmp++) {
-				g_debug("InfoElement (%d): %x (%c)", tmp, info_element[tmp], info_element[tmp]);
-			}*/
+			        g_debug("InfoElement (%d): %x (%c)", tmp, info_element[tmp], info_element[tmp]);
+			   }*/
 			break;
 		}
 		case 0x0070:
@@ -1344,14 +1343,14 @@ static int capi_indication(_cmsg capi_message)
 		g_debug("IND: DISCONNECT_B3");
 		ncci = DISCONNECT_B3_IND_NCCI(&capi_message);
 		plci = ncci & 0x0000ffff;
-		ncpi = (unsigned char *)DISCONNECT_B3_IND_NCPI(&capi_message);
+		ncpi = (unsigned char*)DISCONNECT_B3_IND_NCPI(&capi_message);
 
 		/*if (ncpi) {
-			g_debug("rate: %d", get_word(&ncpi[1]));
-			g_debug("resolution: %d", get_word(&ncpi[3]) & 1);
-		} else {
-			g_debug("no ncpi");
-		}*/
+		        g_debug("rate: %d", get_word(&ncpi[1]));
+		        g_debug("resolution: %d", get_word(&ncpi[3]) & 1);
+		   } else {
+		        g_debug("no ncpi");
+		   }*/
 
 		isdn_lock();
 		DISCONNECT_B3_RESP(&cmsg1, session->appl_id, session->message_number++, ncci);
@@ -1626,7 +1625,7 @@ static gpointer capi_loop(void *user_data)
  */
 static int get_capi_profile(unsigned controller, struct capi_profile *host)
 {
-	int ret_val = CAPI20_GET_PROFILE(controller, (unsigned char *) host);
+	int ret_val = CAPI20_GET_PROFILE(controller, (unsigned char*)host);
 
 	if (ret_val == 0) {
 	}
@@ -1709,7 +1708,7 @@ static int capi_init(int controller)
 		}
 
 		g_debug("CAPI 2.0: B-Channels %d, DTMF %d, FAX %d/%d, Transp %d, SuppServ %d",
-            channels, dtmf, fax, fax_ext, transp, supp_serv);
+			channels, dtmf, fax, fax_ext, transp, supp_serv);
 		g_debug("CAPI 2.0: Echo: %d, Intern: %d, extrn: %d", echo, intern, extrn);
 
 		//pnManu = ( unsigned char * ) profile.manu;
@@ -1729,7 +1728,7 @@ static int capi_init(int controller)
 	}
 	if (capi20_get_version(0, buffer)) {
 		g_debug("CAPI 2.0: Version %d.%d/%d.%d",
-		        buffer[0], buffer[1], buffer[2], buffer[3]);
+			buffer[0], buffer[1], buffer[2], buffer[3]);
 	}
 #endif
 
@@ -1791,7 +1790,7 @@ struct session *capi_session_init(const char *host, gint controller)
 	if (host != NULL) {
 //#if HAVE_CAPI_36
 		capi20ext_set_driver("fritzbox");
-		capi20ext_set_host((char *) host);
+		capi20ext_set_host((char*)host);
 		capi20ext_set_port(5031);
 		capi20ext_set_tracelevel(0);
 //#else
@@ -1862,7 +1861,7 @@ gboolean capi_session_connect(gpointer user_data)
 	RmProfile *profile = rm_profile_get_active();
 	gboolean retry = TRUE;
 
-again:
+ again:
 	g_debug("%s(): called", __FUNCTION__);
 	session = capi_session_init(rm_router_get_host(profile), g_settings_get_int(profile->settings, "phone-controller") + 1);
 	if (!session && retry) {

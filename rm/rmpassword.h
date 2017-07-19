@@ -39,7 +39,7 @@ typedef struct {
 	/*< private >*/
 	const gchar *name;
 	void (*set)(RmProfile *profile, const gchar *name, const gchar *password);
-	gchar *(*get)(RmProfile *profile, const gchar *name);
+	gchar *(*get)(RmProfile * profile, const gchar * name);
 	gboolean (*remove)(RmProfile *profile, const gchar *name);
 } RmPasswordManager;
 

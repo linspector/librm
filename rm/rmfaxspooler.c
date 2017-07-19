@@ -53,14 +53,14 @@ struct event_translate {
 
 /** text values of file monitor events */
 struct event_translate rm_event_translation_table[] = {
-	{G_FILE_MONITOR_EVENT_CHANGED , "file changed"},
-	{G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT, "file changes finished"},
-	{G_FILE_MONITOR_EVENT_DELETED, "file deleted"},
-	{G_FILE_MONITOR_EVENT_CREATED, "file created"},
-	{G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED, "file attrbutes changed"},
-	{G_FILE_MONITOR_EVENT_PRE_UNMOUNT, "file system about to be unmounted"},
-	{G_FILE_MONITOR_EVENT_UNMOUNTED, "file system unmounted"},
-	{G_FILE_MONITOR_EVENT_MOVED, "file moved"},
+	{ G_FILE_MONITOR_EVENT_CHANGED, "file changed" },
+	{ G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT, "file changes finished" },
+	{ G_FILE_MONITOR_EVENT_DELETED, "file deleted" },
+	{ G_FILE_MONITOR_EVENT_CREATED, "file created" },
+	{ G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED, "file attrbutes changed" },
+	{ G_FILE_MONITOR_EVENT_PRE_UNMOUNT, "file system about to be unmounted" },
+	{ G_FILE_MONITOR_EVENT_UNMOUNTED, "file system unmounted" },
+	{ G_FILE_MONITOR_EVENT_MOVED, "file moved" },
 };
 
 /**
@@ -109,7 +109,7 @@ gboolean rm_faxspooler_has_file_extension(const char *file, const char *ext)
 		return FALSE;
 	}
 
-	return (strncmp(file + len, ext, ext_len) == 0);
+	return(strncmp(file + len, ext, ext_len) == 0);
 }
 
 /**
@@ -155,7 +155,7 @@ static void rm_faxspooler_changed_cb(GFileMonitor *monitor, GFile *file, GFile *
 	g_debug("%s(): Print job received on spooler", __FUNCTION__);
 	rm_object_emit_fax_process(file_name);
 
-end:
+ end:
 	g_free(file_name);
 }
 
@@ -220,7 +220,7 @@ gboolean rm_faxspooler_init(void)
 		return FALSE;
 	}
 
-	dir = g_dir_open(spooler_dir,  0, &file_error);
+	dir = g_dir_open(spooler_dir, 0, &file_error);
 	if (!dir) {
 		g_warning("%s(): Could not access spooler directory. Is user in group fax?\n%s", __FUNCTION__, file_error ? file_error->message : "");
 		g_free(spooler_dir);

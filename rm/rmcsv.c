@@ -87,7 +87,7 @@ gpointer rm_csv_parse_data(const gchar *data, const gchar *header, RmCsvParseLin
 		g_strfreev(split);
 	}
 
-end:
+ end:
 	g_strfreev(lines);
 
 	/* Return ptr */

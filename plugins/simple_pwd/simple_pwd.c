@@ -67,7 +67,7 @@ static gchar *simple_pwd_get_password(RmProfile *profile, const gchar *name)
 	enc_password = g_key_file_get_string(simple_pwd_keyfile, SIMPLE_PWD_GROUP, name, &error);
 
 	if (enc_password) {
-		password = (gchar*) rm_password_decode(enc_password);
+		password = (gchar*)rm_password_decode(enc_password);
 		g_free(enc_password);
 	} else {
 		g_warning("%s(): Failed to get password: %s", __FUNCTION__, error ? error->message : "");

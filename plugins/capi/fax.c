@@ -36,7 +36,7 @@
 #include <rm/rm.h>
 #include <sff.h>
 
-static int8_t *_linear16_2_law = (int8_t *) &linear16_2_law[32768];
+static int8_t *_linear16_2_law = (int8_t*)&linear16_2_law[32768];
 static uint16_t *_law_2_linear16 = &law_2_linear16[0];
 
 static gint log_level = 0;
@@ -158,15 +158,15 @@ static gint phase_handler_d(t30_state_t *state, void *user_data, gint result)
 	g_debug("Phase D handler (0x%X) %s", result, t30_frametype(result));
 	g_debug(" - pages transferred %d", status->sending ? stats.pages_tx : stats.pages_rx);
 	/*g_debug(" - image size %d x %d", stats.width, stats.length);
-	g_debug(" - bad rows %d", stats.bad_rows);
-	g_debug(" - longest bad row run %d", stats.longest_bad_row_run);
-	g_debug(" - image size %d", stats.image_size);*/
+	   g_debug(" - bad rows %d", stats.bad_rows);
+	   g_debug(" - longest bad row run %d", stats.longest_bad_row_run);
+	   g_debug(" - image size %d", stats.image_size);*/
 
 	status->phase = PHASE_D;
 	/*status->ecm = stats.error_correcting_mode;
-	status->bad_rows = stats.bad_rows;
-	status->encoding = stats.encoding;
-	status->bitrate = stats.bit_rate;*/
+	   status->bad_rows = stats.bad_rows;
+	   status->encoding = stats.encoding;
+	   status->bitrate = stats.bit_rate;*/
 
 	if (status->sending) {
 		status->page_current = (stats.pages_in_file >= stats.pages_tx + 1 ? stats.pages_tx + 1 : stats.pages_tx);
@@ -204,14 +204,14 @@ static void phase_handler_e(t30_state_t *state, void *user_data, gint result)
 	transferred = status->sending ? stats.pages_tx : stats.pages_rx;
 	g_debug(" - pages transferred %d", transferred);
 	/*g_debug(" - image resolution %d x %d", stats.x_resolution, stats.y_resolution);
-	g_debug(" - compression type %d", stats.encoding);
-	g_debug(" - coding method %s", t4_encoding_to_str(stats.encoding));*/
+	   g_debug(" - compression type %d", stats.encoding);
+	   g_debug(" - coding method %s", t4_encoding_to_str(stats.encoding));*/
 
 	status->phase = PHASE_E;
 	/*status->ecm = stats.error_correcting_mode;
-	status->bad_rows = stats.bad_rows;
-	status->encoding = stats.encoding;
-	status->bitrate = stats.bit_rate;*/
+	   status->bad_rows = stats.bad_rows;
+	   status->encoding = stats.encoding;
+	   status->bitrate = stats.bit_rate;*/
 
 	status->page_current = (status->sending ? stats.pages_tx : stats.pages_rx);
 	//status->page_total = stats.pages_in_file;
@@ -250,7 +250,7 @@ static int get_tiff_total_pages(const char *file)
 	}
 
 	max = 0;
-	while (TIFFSetDirectory(tiff_file, (tdir_t) max)) {
+	while (TIFFSetDirectory(tiff_file, (tdir_t)max)) {
 		max++;
 	}
 
@@ -340,74 +340,74 @@ gint spandsp_init(const gchar *tiff_file, gboolean sending, gchar modem, gchar e
 		t30_set_supported_compressions(t30, T30_SUPPORT_T4_1D_COMPRESSION | T30_SUPPORT_T4_2D_COMPRESSION | T30_SUPPORT_T6_COMPRESSION);
 #endif
 
-		t30_set_ecm_capability(t30, ecm);
-	}
+					       t30_set_ecm_capability(t30, ecm);
+					       }
 
-	t30_set_supported_t30_features(t30, T30_SUPPORT_IDENTIFICATION | T30_SUPPORT_SELECTIVE_POLLING | T30_SUPPORT_SUB_ADDRESSING);
-	t30_set_supported_resolutions(t30, supported_resolutions);
-	t30_set_supported_image_sizes(t30, supported_image_sizes);
+					       t30_set_supported_t30_features(t30, T30_SUPPORT_IDENTIFICATION | T30_SUPPORT_SELECTIVE_POLLING | T30_SUPPORT_SUB_ADDRESSING);
+					       t30_set_supported_resolutions(t30, supported_resolutions);
+					       t30_set_supported_image_sizes(t30, supported_image_sizes);
 
-	/* spandsp loglevel */
-	if (log_level >= 1) {
-		log_state = t30_get_logging_state(t30);
-		span_log_set_level(log_state, 0xFFFFFF);
+		                               /* spandsp loglevel */
+					       if (log_level >= 1) {
+			log_state = t30_get_logging_state(t30);
+			span_log_set_level(log_state, 0xFFFFFF);
 
-		if (!logging) {
-			logging = spandsp_msg_log;
+			if (!logging) {
+				logging = spandsp_msg_log;
+			}
+
+			span_log_set_message_handler(log_state, logging);
 		}
 
-		span_log_set_message_handler(log_state, logging);
-	}
+					       if (lsi) {
+			t30_set_tx_ident(t30, lsi);
+		}
+					       if (local_header_info) {
+			t30_set_tx_page_header_info(t30, local_header_info);
+		}
 
-	if (lsi) {
-		t30_set_tx_ident(t30, lsi);
-	}
-	if (local_header_info) {
-		t30_set_tx_page_header_info(t30, local_header_info);
-	}
+					       if (sending == TRUE) {
+			t30_set_tx_file(t30, tiff_file, -1, -1);
+			status->page_total = get_tiff_total_pages(tiff_file);
+		} else {
+			t30_set_rx_file(t30, tiff_file, -1);
+		}
 
-	if (sending == TRUE) {
-		t30_set_tx_file(t30, tiff_file, -1, -1);
-		status->page_total = get_tiff_total_pages(tiff_file);
-	} else {
-		t30_set_rx_file(t30, tiff_file, -1);
-	}
+					       t30_set_phase_b_handler(t30, phase_handler_b, (void*)connection);
+					       t30_set_phase_d_handler(t30, phase_handler_d, (void*)connection);
+					       t30_set_phase_e_handler(t30, phase_handler_e, (void*)connection);
 
-	t30_set_phase_b_handler(t30, phase_handler_b, (void *) connection);
-	t30_set_phase_d_handler(t30, phase_handler_d, (void *) connection);
-	t30_set_phase_e_handler(t30, phase_handler_e, (void *) connection);
+					       t30_set_real_time_frame_handler(t30, real_time_frame_handler, (void*)connection);
 
-	t30_set_real_time_frame_handler(t30, real_time_frame_handler, (void *) connection);
-
-	return 0;
-}
+					       return 0;
+					       }
 
 /**
  * \brief Close spandsp
  * \param fax_state fax state
  * \return error code
  */
-gint spandsp_close(fax_state_t *fax_state)
-{
-	struct fax_status *status = NULL;
-	struct session *session = capi_get_session();
-	gint i;
+					       gint spandsp_close(fax_state_t * fax_state)
+		{
+			struct fax_status *status = NULL;
+			struct session *session = capi_get_session();
+			gint i;
 
-	g_debug("Close");
-	if (fax_state != NULL) {
-		fax_release(fax_state);
-	} else {
-		for (i = 0; i < CAPI_CONNECTIONS; i++) {
-			status = session->connection[i].priv;
+			g_debug("Close");
+			if (fax_state != NULL) {
+				fax_release(fax_state);
+			} else {
+				for (i = 0; i < CAPI_CONNECTIONS; i++) {
+					status = session->connection[i].priv;
 
-			if (status != NULL) {
-				fax_release(status->fax_state);
+					if (status != NULL) {
+						fax_release(status->fax_state);
+					}
+				}
 			}
-		}
-	}
 
-	return 0;
-}
+			return 0;
+		}
 
 /**
  * \brief TX direction
@@ -416,21 +416,21 @@ gint spandsp_close(fax_state_t *fax_state)
  * \param len length of buffer
  * \return error code
  */
-gint spandsp_tx(fax_state_t *fax_state, uint8_t *buf, size_t len)
-{
-	int16_t buf_in[CAPI_PACKETS];
-	uint8_t *alaw;
-	gint err, i;
+					       gint spandsp_tx(fax_state_t * fax_state, uint8_t * buf, size_t len)
+		{
+			int16_t buf_in[CAPI_PACKETS];
+			uint8_t *alaw;
+			gint err, i;
 
-	err = fax_tx(fax_state, buf_in, CAPI_PACKETS);
-	alaw = buf;
+			err = fax_tx(fax_state, buf_in, CAPI_PACKETS);
+			alaw = buf;
 
-	for (i = 0; i != len; ++i, ++alaw) {
-		*alaw = _linear16_2_law[(int16_t) buf_in[i]];
-	}
+			for (i = 0; i != len; ++i, ++alaw) {
+				*alaw = _linear16_2_law[(int16_t)buf_in[i]];
+			}
 
-	return err;
-}
+			return err;
+		}
 
 /**
  * \brief Process rx data through spandsp
@@ -439,50 +439,50 @@ gint spandsp_tx(fax_state_t *fax_state, uint8_t *buf, size_t len)
  * \param len length of buffer
  * \return error code
  */
-gint spandsp_rx(fax_state_t *fax_state, uint8_t *buf, size_t len)
-{
-	int16_t buf_in[CAPI_PACKETS];
-	int16_t *wave;
-	gint err, i;
+					       gint spandsp_rx(fax_state_t * fax_state, uint8_t * buf, size_t len)
+		{
+			int16_t buf_in[CAPI_PACKETS];
+			int16_t *wave;
+			gint err, i;
 
-	wave = buf_in;
+			wave = buf_in;
 
-	for (i = 0; i != len; ++i, ++wave) {
-		*wave = _law_2_linear16[(uint8_t) buf[i]];
-	}
+			for (i = 0; i != len; ++i, ++wave) {
+				*wave = _law_2_linear16[(uint8_t)buf[i]];
+			}
 
-	err = fax_rx(fax_state, buf_in, CAPI_PACKETS);
+			err = fax_rx(fax_state, buf_in, CAPI_PACKETS);
 
-	return err;
-}
+			return err;
+		}
 
 /**
  * \brief Receive/Transmit fax state
  * \param connection capi connection pointer
  * \param capi_message current capi message
  */
-void fax_transfer(struct capi_connection *connection, _cmsg capi_message)
-{
-	struct fax_status *status = connection->priv;
-	struct session *session = capi_get_session();
-	_cmsg cmsg;
-	guint8 alaw_buffer_tx[CAPI_PACKETS];
-	gint32 len = DATA_B3_IND_DATALENGTH(&capi_message);
+					       void fax_transfer(struct capi_connection *connection, _cmsg capi_message)
+		{
+			struct fax_status *status = connection->priv;
+			struct session *session = capi_get_session();
+			_cmsg cmsg;
+			guint8 alaw_buffer_tx[CAPI_PACKETS];
+			gint32 len = DATA_B3_IND_DATALENGTH(&capi_message);
 
-	/* RX/TX spandsp */
-	spandsp_rx(status->fax_state, DATA_B3_IND_DATA(&capi_message), len);
-	//isdn_lock();
-	DATA_B3_RESP(&cmsg, session->appl_id, session->message_number++, connection->ncci, DATA_B3_IND_DATAHANDLE(&capi_message));
-	//isdn_unlock();
+			/* RX/TX spandsp */
+			spandsp_rx(status->fax_state, DATA_B3_IND_DATA(&capi_message), len);
+			//isdn_lock();
+			DATA_B3_RESP(&cmsg, session->appl_id, session->message_number++, connection->ncci, DATA_B3_IND_DATAHANDLE(&capi_message));
+			//isdn_unlock();
 
 
-	/* Send data to remote */
-	len = CAPI_PACKETS;
-	spandsp_tx(status->fax_state, alaw_buffer_tx, len);
-	//isdn_lock();
-	DATA_B3_REQ(&cmsg, session->appl_id, 0, connection->ncci, (void *) alaw_buffer_tx, len, session->message_number++, 0);
-	//isdn_unlock();
-}
+			/* Send data to remote */
+			len = CAPI_PACKETS;
+			spandsp_tx(status->fax_state, alaw_buffer_tx, len);
+			//isdn_lock();
+			DATA_B3_REQ(&cmsg, session->appl_id, 0, connection->ncci, (void*)alaw_buffer_tx, len, session->message_number++, 0);
+			//isdn_unlock();
+		}
 
 /**
  * \brief Send Fax
@@ -497,46 +497,46 @@ void fax_transfer(struct capi_connection *connection, _cmsg capi_message)
  * \param call_anonymous Send fax anonymous
  * \return error code
  */
-struct capi_connection *fax_send(gchar *tiff_file, gint modem, gint ecm, gint controller, gint cip, const gchar *src_no, const gchar *trg_no, const gchar *lsi, const gchar *local_header_info, gint call_anonymous)
-{
-	struct fax_status *status;
-	struct capi_connection *connection;
+					       struct capi_connection *fax_send(gchar * tiff_file, gint modem, gint ecm, gint controller, gint cip, const gchar * src_no, const gchar * trg_no, const gchar * lsi, const gchar * local_header_info, gint call_anonymous)
+		{
+			struct fax_status *status;
+			struct capi_connection *connection;
 
-	g_debug("tiff: %s, modem: %d, ecm: %s, controller: %d, src: %s, trg: %s, ident: %s, header: %s, anonymous: %d)", tiff_file, modem, ecm ? "on" : "off", controller, src_no, trg_no, (lsi != NULL ? lsi : "(null)"), (local_header_info != NULL ? local_header_info : "(null)"), call_anonymous);
+			g_debug("tiff: %s, modem: %d, ecm: %s, controller: %d, src: %s, trg: %s, ident: %s, header: %s, anonymous: %d)", tiff_file, modem, ecm ? "on" : "off", controller, src_no, trg_no, (lsi != NULL ? lsi : "(null)"), (local_header_info != NULL ? local_header_info : "(null)"), call_anonymous);
 
-	//status = g_slice_new0(struct fax_status);
-	status = malloc(sizeof(struct fax_status));
-	memset(status, 0, sizeof(struct fax_status));
+			//status = g_slice_new0(struct fax_status);
+			status = malloc(sizeof(struct fax_status));
+			memset(status, 0, sizeof(struct fax_status));
 
-	status->phase = IDLE;
-	status->error_code = -1;
-	status->sending = 1;
-	status->manual_hookup = 0;
-	status->modem = modem;
-	status->ecm = ecm;
-	snprintf(status->header, sizeof(status->header), "%s", local_header_info);
-	snprintf(status->ident, sizeof(status->ident), "%s", lsi);
-	snprintf(status->src_no, sizeof(status->src_no), "%s", src_no);
-	snprintf(status->trg_no, sizeof(status->trg_no), "%s", trg_no);
-	snprintf(status->tiff_file, sizeof(status->tiff_file), "%s", tiff_file);
+			status->phase = IDLE;
+			status->error_code = -1;
+			status->sending = 1;
+			status->manual_hookup = 0;
+			status->modem = modem;
+			status->ecm = ecm;
+			snprintf(status->header, sizeof(status->header), "%s", local_header_info);
+			snprintf(status->ident, sizeof(status->ident), "%s", lsi);
+			snprintf(status->src_no, sizeof(status->src_no), "%s", src_no);
+			snprintf(status->trg_no, sizeof(status->trg_no), "%s", trg_no);
+			snprintf(status->tiff_file, sizeof(status->tiff_file), "%s", tiff_file);
 
-	connection = capi_call(controller, src_no, trg_no, (guint) call_anonymous, SESSION_FAX, cip, 1, 1, 0, NULL, NULL, NULL);
-	if (connection) {
-		connection->priv = status;
-		spandsp_init(status->tiff_file, TRUE, status->modem, status->ecm, status->ident, status->header, connection);
-	}
+			connection = capi_call(controller, src_no, trg_no, (guint)call_anonymous, SESSION_FAX, cip, 1, 1, 0, NULL, NULL, NULL);
+			if (connection) {
+				connection->priv = status;
+				spandsp_init(status->tiff_file, TRUE, status->modem, status->ecm, status->ident, status->header, connection);
+			}
 
-	return connection;
-}
+			return connection;
+		}
 
 /**
  * \brief Set fax debug level
  * \param level debug level
  */
-void fax_set_log_level(gint level)
-{
-	log_level = level;
-}
+					       void fax_set_log_level(gint level)
+		{
+			log_level = level;
+		}
 
 /**
  * \brief Receive Fax
@@ -548,80 +548,80 @@ void fax_set_log_level(gint level)
  * \param manual_hookup: Hook up manually
  * \return error code
  */
-gint fax_receive(struct capi_connection *connection, const gchar *tiff_file, gint modem, gint ecm, const gchar *src_no, gchar *trg_no, gint manual_hookup)
-{
-	struct fax_status *status = NULL;
-	gint ret = -2;
+					       gint fax_receive(struct capi_connection *connection, const gchar *tiff_file, gint modem, gint ecm, const gchar *src_no, gchar *trg_no, gint manual_hookup)
+		{
+			struct fax_status *status = NULL;
+			gint ret = -2;
 
-	g_debug("tiff: %s, modem: %d, ecm: %s, src: %s, manual: %s)", tiff_file, modem, ecm ? "on" : "off", src_no, manual_hookup ? "on" : "off");
+			g_debug("tiff: %s, modem: %d, ecm: %s, src: %s, manual: %s)", tiff_file, modem, ecm ? "on" : "off", src_no, manual_hookup ? "on" : "off");
 
-	if (!connection) {
-		return ret;
-	}
+			if (!connection) {
+				return ret;
+			}
 
-	status = malloc(sizeof(struct fax_status));
-	memset(status, 0, sizeof(struct fax_status));
+			status = malloc(sizeof(struct fax_status));
+			memset(status, 0, sizeof(struct fax_status));
 
-	status->phase = IDLE;
-	status->sending = 0;
-	status->modem = modem;
-	status->ecm = ecm;
-	status->manual_hookup = manual_hookup;
-	status->error_code = -1;
+			status->phase = IDLE;
+			status->sending = 0;
+			status->modem = modem;
+			status->ecm = ecm;
+			status->manual_hookup = manual_hookup;
+			status->error_code = -1;
 
-	snprintf(status->src_no, sizeof(status->src_no), "%s", src_no);
-	snprintf(status->tiff_file, sizeof(status->tiff_file), "%s", tiff_file);
+			snprintf(status->src_no, sizeof(status->src_no), "%s", src_no);
+			snprintf(status->tiff_file, sizeof(status->tiff_file), "%s", tiff_file);
 
-	connection->priv = status;
+			connection->priv = status;
 
-	spandsp_init(status->tiff_file, FALSE, status->modem, status->ecm, status->ident, status->header, connection);
+			spandsp_init(status->tiff_file, FALSE, status->modem, status->ecm, status->ident, status->header, connection);
 
-	snprintf(trg_no, sizeof(status->trg_no), "%s", status->trg_no);
+			snprintf(trg_no, sizeof(status->trg_no), "%s", status->trg_no);
 
-	return 0;
-}
+			return 0;
+		}
 
 /**
  * \brief Workaround for spandsp tx problem
  * \param connection capi connection
  */
-void fax_spandsp_workaround(struct capi_connection *connection)
-{
-	struct fax_status *status = connection->priv;
-	gint index;
+					       void fax_spandsp_workaround(struct capi_connection *connection)
+		{
+			struct fax_status *status = connection->priv;
+			gint index;
 
-	if (status->phase < PHASE_E) {
-		g_debug("Spandsp is not yet completed - give it a little more time...");
+			if (status->phase < PHASE_E) {
+				g_debug("Spandsp is not yet completed - give it a little more time...");
 
-		for (index = 0; index < 32768; index++) {
-			uint8_t buf[CAPI_PACKETS];
+				for (index = 0; index < 32768; index++) {
+					uint8_t buf[CAPI_PACKETS];
 
-			memset(buf, 128, CAPI_PACKETS);
-			spandsp_rx(status->fax_state, buf, CAPI_PACKETS);
-			spandsp_tx(status->fax_state, buf, CAPI_PACKETS);
+					memset(buf, 128, CAPI_PACKETS);
+					spandsp_rx(status->fax_state, buf, CAPI_PACKETS);
+					spandsp_tx(status->fax_state, buf, CAPI_PACKETS);
 
-			if (status->phase >= PHASE_E) {
-				return;
+					if (status->phase >= PHASE_E) {
+						return;
+					}
+				}
+
+				g_debug("Workaround failed, phase is still: %d", status->phase);
 			}
 		}
-
-		g_debug("Workaround failed, phase is still: %d", status->phase);
-	}
-}
 
 /**
  * \brief Cleanup private fax structure from capi connection
  * \param connection capi connection
  */
-void fax_clean(struct capi_connection *connection)
-{
-	struct fax_status *status = connection->priv;
+					       void fax_clean(struct capi_connection *connection)
+		{
+			struct fax_status *status = connection->priv;
 
-	spandsp_close(status->fax_state);
+			spandsp_close(status->fax_state);
 
-	free(status);
-	connection->priv = NULL;
-}
+			free(status);
+			connection->priv = NULL;
+		}
 
 /**
  * \brief Dial number via fax
@@ -630,129 +630,129 @@ void fax_clean(struct capi_connection *connection)
  * \param suppress suppress number flag
  * \return capi connection pointer
  */
-RmConnection *capi_fax_dial(gchar *tiff, const gchar *trg_no, gboolean suppress)
-{
-	RmProfile *profile = rm_profile_get_active();
-	gint modem = g_settings_get_int(profile->settings, "fax-bitrate");
-	gboolean ecm = g_settings_get_boolean(profile->settings, "fax-ecm");
-	gint controller = g_settings_get_int(profile->settings, "fax-controller") + 1;
-	gint cip = g_settings_get_int(profile->settings, "fax-cip");
-	const gchar *src_no = g_settings_get_string(profile->settings, "fax-number");
-	const gchar *header = g_settings_get_string(profile->settings, "fax-header");
-	const gchar *ident = g_settings_get_string(profile->settings, "fax-ident");
-	struct capi_connection *capi_connection = NULL;
-	RmConnection *connection = NULL;
-	gchar *target;
+					       RmConnection *capi_fax_dial(gchar * tiff, const gchar * trg_no, gboolean suppress)
+		{
+			RmProfile *profile = rm_profile_get_active();
+			gint modem = g_settings_get_int(profile->settings, "fax-bitrate");
+			gboolean ecm = g_settings_get_boolean(profile->settings, "fax-ecm");
+			gint controller = g_settings_get_int(profile->settings, "fax-controller") + 1;
+			gint cip = g_settings_get_int(profile->settings, "fax-cip");
+			const gchar *src_no = g_settings_get_string(profile->settings, "fax-number");
+			const gchar *header = g_settings_get_string(profile->settings, "fax-header");
+			const gchar *ident = g_settings_get_string(profile->settings, "fax-ident");
+			struct capi_connection *capi_connection = NULL;
+			RmConnection *connection = NULL;
+			gchar *target;
 
-	if (RM_EMPTY_STRING(src_no)) {
-		rm_object_emit_message("Dial error", "Source MSN not set, cannot dial");
-		return NULL;
-	}
+			if (RM_EMPTY_STRING(src_no)) {
+				rm_object_emit_message("Dial error", "Source MSN not set, cannot dial");
+				return NULL;
+			}
 
-	target = rm_number_canonize(trg_no);
+			target = rm_number_canonize(trg_no);
 
-	if (cip == 1) {
-		cip = FAX_CIP;
-		g_debug("Using 'ISDN Fax' id");
-	} else {
-		cip = SPEECH_CIP;
-		g_debug("Using 'Analog Fax' id");
-	}
+			if (cip == 1) {
+				cip = FAX_CIP;
+				g_debug("Using 'ISDN Fax' id");
+			} else {
+				cip = SPEECH_CIP;
+				g_debug("Using 'Analog Fax' id");
+			}
 
-	/* if (g_settings_get_boolean(profile->settings, "fax-sff")) { */
-	/* 	g_warning("%s(): TODO", __FUNCTION__); */
-	/* 	capi_connection = sff_send(tiff, modem, ecm, controller, src_no, target, ident, header, suppress); */
-	/* } else { */
-		capi_connection = fax_send(tiff, modem, ecm, controller, cip, src_no, target, ident, header, suppress);
-	/* } */
-	g_free(target);
+			/* if (g_settings_get_boolean(profile->settings, "fax-sff")) { */
+			/*      g_warning("%s(): TODO", __FUNCTION__); */
+			/*      capi_connection = sff_send(tiff, modem, ecm, controller, src_no, target, ident, header, suppress); */
+			/* } else { */
+			capi_connection = fax_send(tiff, modem, ecm, controller, cip, src_no, target, ident, header, suppress);
+			/* } */
+			g_free(target);
 
-	if (capi_connection) {
-		connection = rm_connection_add(&capi_fax, capi_connection->id, RM_CONNECTION_TYPE_OUTGOING, src_no, trg_no);
-		connection->priv = capi_connection;
-	}
+			if (capi_connection) {
+				connection = rm_connection_add(&capi_fax, capi_connection->id, RM_CONNECTION_TYPE_OUTGOING, src_no, trg_no);
+				connection->priv = capi_connection;
+			}
 
-	return connection;
-}
+			return connection;
+		}
 
-gboolean capi_fax_get_status(RmConnection *connection, RmFaxStatus *status)
-{
-	struct capi_connection *capi_connection = connection->priv;
-	struct fax_status *fax_status = capi_connection->priv;
+					       gboolean capi_fax_get_status(RmConnection * connection, RmFaxStatus * status)
+		{
+			struct capi_connection *capi_connection = connection->priv;
+			struct fax_status *fax_status = capi_connection->priv;
 
-	if (!fax_status) {
-		return TRUE;
-	}
+			if (!fax_status) {
+				return TRUE;
+			}
 
-	switch (fax_status->phase) {
-	case PHASE_B:
-		status->phase = RM_FAX_PHASE_IDENTIFY;
-		break;
-	case PHASE_D:
-		status->phase = RM_FAX_PHASE_SIGNALLING;
-		break;
-	case PHASE_E:
-		status->phase = RM_FAX_PHASE_RELEASE;
-		break;
-	default:
-		status->phase = RM_FAX_PHASE_CALL;
-		break;
-	}
+			switch (fax_status->phase) {
+			case PHASE_B:
+				status->phase = RM_FAX_PHASE_IDENTIFY;
+				break;
+			case PHASE_D:
+				status->phase = RM_FAX_PHASE_SIGNALLING;
+				break;
+			case PHASE_E:
+				status->phase = RM_FAX_PHASE_RELEASE;
+				break;
+			default:
+				status->phase = RM_FAX_PHASE_CALL;
+				break;
+			}
 
-	status->remote_ident = rm_convert_utf8(fax_status->remote_ident, -1);
-	status->page_current = fax_status->page_current;
-	status->page_total = fax_status->page_total;
-	status->error_code = fax_status->error_code;
+			status->remote_ident = rm_convert_utf8(fax_status->remote_ident, -1);
+			status->page_current = fax_status->page_current;
+			status->page_total = fax_status->page_total;
+			status->error_code = fax_status->error_code;
 
-	status->remote_number = g_strdup(fax_status->trg_no);
-	status->local_ident = rm_convert_utf8(fax_status->header, -1);
-	status->local_number = g_strdup(fax_status->src_no);
-	status->bitrate = fax_status->bitrate;
+			status->remote_number = g_strdup(fax_status->trg_no);
+			status->local_ident = rm_convert_utf8(fax_status->header, -1);
+			status->local_number = g_strdup(fax_status->src_no);
+			status->bitrate = fax_status->bitrate;
 
-	/* Percentage of current page */
-	status->percentage = (float) fax_status->bytes_sent / (float) fax_status->bytes_total;
+			/* Percentage of current page */
+			status->percentage = (float)fax_status->bytes_sent / (float)fax_status->bytes_total;
 
-	/* Percentage of complete fax */
-	status->percentage *= fax_status->page_current;
-	status->percentage /= fax_status->page_total;
+			/* Percentage of complete fax */
+			status->percentage *= fax_status->page_current;
+			status->percentage /= fax_status->page_total;
 
-	if (isnan(status->percentage)) {
-		status->percentage = 0.0f;
-	} else if (status->percentage > 1.0f) {
-		status->percentage = 1.0f;
-	}
+			if (isnan(status->percentage)) {
+				status->percentage = 0.0f;
+			} else if (status->percentage > 1.0f) {
+				status->percentage = 1.0f;
+			}
 
 #if 0
-	g_debug("%s(): Ident = '%s'", __FUNCTION__, status->remote_ident);
-	g_debug("%s(): bytes sent = %d, bytes total = %d", __FUNCTION__, fax_status->bytes_sent, fax_status->bytes_total);
-	g_debug("%s(): page current = %d, page total = %d", __FUNCTION__, status->page_current, status->page_total);
-	g_debug("%s(): error code = %d, percentage = %f", __FUNCTION__, status->error_code, status->percentage);
+			g_debug("%s(): Ident = '%s'", __FUNCTION__, status->remote_ident);
+			g_debug("%s(): bytes sent = %d, bytes total = %d", __FUNCTION__, fax_status->bytes_sent, fax_status->bytes_total);
+			g_debug("%s(): page current = %d, page total = %d", __FUNCTION__, status->page_current, status->page_total);
+			g_debug("%s(): error code = %d, percentage = %f", __FUNCTION__, status->error_code, status->percentage);
 #endif
 
-	return TRUE;
-}
+			return TRUE;
+		}
 
-void capi_fax_hangup(RmConnection *connection)
-{
-	struct capi_connection *capi_connection = connection->priv;
+					       void capi_fax_hangup(RmConnection * connection)
+		{
+			struct capi_connection *capi_connection = connection->priv;
 
-	capi_hangup(capi_connection);
-}
+			capi_hangup(capi_connection);
+		}
 
-RmFax capi_fax = {
-	NULL,
-	"CAPI Fax",
-	capi_fax_dial,
-	capi_fax_get_status,
-	NULL,
-	capi_fax_hangup,
-	NULL,
-};
+					       RmFax capi_fax = {
+			NULL,
+			"CAPI Fax",
+			capi_fax_dial,
+			capi_fax_get_status,
+			NULL,
+			capi_fax_hangup,
+			NULL,
+		};
 
-void capi_fax_init(RmDevice *device)
-{
-	g_debug("%s(): called", __FUNCTION__);
+					       void capi_fax_init(RmDevice * device)
+		{
+			g_debug("%s(): called", __FUNCTION__);
 
-	capi_fax.device = device;
-	rm_fax_register(&capi_fax);
-}
+			capi_fax.device = device;
+			rm_fax_register(&capi_fax);
+		}

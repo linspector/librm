@@ -178,7 +178,7 @@ static int pulse_get_device_list(struct pulse_device_list *input, struct pulse_d
 	 * Now we'll enter into an infinite loop until we get the data we receive
 	 * or if there's an error
 	 */
-	for (; ;) {
+	for (;; ) {
 		/**
 		 * We can't do anything until PA is ready, so just iterate the mainloop
 		 * and continue
@@ -402,7 +402,7 @@ static gsize pulse_audio_write(void *priv, guchar *buf, gsize len)
 		return -1;
 	}
 
-	if (pa_simple_write(pipes->simple_out, buf, (size_t) len, &error) < 0) {
+	if (pa_simple_write(pipes->simple_out, buf, (size_t)len, &error) < 0) {
 		g_debug("Failed: %s", pa_strerror(error));
 	}
 

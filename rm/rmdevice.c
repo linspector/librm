@@ -59,7 +59,7 @@ gboolean rm_device_handles_number(RmDevice *device, gchar *number)
 	if (settings) {
 		gchar **numbers = g_settings_get_strv(settings, "numbers");
 
-		ret = rm_strv_contains((const gchar *const*)numbers, number);
+		ret = rm_strv_contains((const gchar*const*)numbers, number);
 
 		g_object_unref(settings);
 	}
@@ -83,10 +83,10 @@ void rm_device_set_numbers(RmDevice *device, gchar **numbers)
 		return;
 	}
 
-	settings = rm_settings_new_profile("org.tabos.rm.profile.devicenumbers", device->settings_name, (gchar*) rm_profile_get_name(rm_profile_get_active()));
+	settings = rm_settings_new_profile("org.tabos.rm.profile.devicenumbers", device->settings_name, (gchar*)rm_profile_get_name(rm_profile_get_active()));
 
 	if (settings) {
-		g_settings_set_strv(settings, "numbers", (const gchar * const *)numbers);
+		g_settings_set_strv(settings, "numbers", (const gchar*const*)numbers);
 
 		g_object_unref(settings);
 	}

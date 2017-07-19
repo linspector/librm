@@ -185,7 +185,7 @@ gboolean callmonitor_connect(gpointer user_data)
 		return FALSE;
 	}
 
-again:
+ again:
 #ifdef CALLMONITOR_DEBUG
 	g_debug("Trying to connect to '%s' on port 1012", hostname);
 #endif

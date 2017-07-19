@@ -89,10 +89,10 @@ static void rm_log_handler(const gchar *log_domain, GLogLevelFlags log_level, co
 		g_free(time);
 		g_date_time_unref(datetime);
 
-#if GLIB_CHECK_VERSION(2,49,0)
+#if GLIB_CHECK_VERSION(2, 49, 0)
 		g_string_append_printf(output, " %s\n", message);
 
-		const GLogField fields[] = {{"MESSAGE", output->str, -1}};
+		const GLogField fields[] = { { "MESSAGE", output->str, -1 } };
 		gchar *fmt_str = g_log_writer_format_fields(log_level, fields, G_N_ELEMENTS(fields), TRUE);
 
 		g_string_free(output, TRUE);

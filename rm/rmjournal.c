@@ -79,13 +79,13 @@ gboolean rm_journal_save_as(GSList *journal, gchar *file_name)
 
 		gchar *name = g_convert(call->remote->name, -1, "iso-8859-1", "UTF-8", NULL, NULL, NULL);
 		fprintf(file, "%d;%s;%s;%s;%s;%s;%s\n",
-		        call->type,
-		        call->date_time,
-		        name,
-		        call->remote->number,
-		        call->local->name,
-		        call->local->number,
-		        call->duration);
+			call->type,
+			call->date_time,
+			name,
+			call->remote->number,
+			call->local->name,
+			call->local->number,
+			call->duration);
 		g_free(name);
 	}
 
@@ -201,8 +201,8 @@ GSList *rm_journal_load(GSList *journal)
  */
 gint rm_journal_sort_by_date(gconstpointer a, gconstpointer b)
 {
-	RmCallEntry *call_a = (RmCallEntry *) a;
-	RmCallEntry *call_b = (RmCallEntry *) b;
+	RmCallEntry *call_a = (RmCallEntry*)a;
+	RmCallEntry *call_b = (RmCallEntry*)b;
 	gchar *number_a = NULL;
 	gchar *number_b = NULL;
 	gchar part_time_a[7];

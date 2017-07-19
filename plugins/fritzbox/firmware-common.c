@@ -302,7 +302,7 @@ gchar **strv_remove_duplicates(gchar **numbers)
 	gint ret_idx = 1;
 
 	for (idx = 0; idx < len; idx++) {
-		if (!ret || !rm_strv_contains((const gchar * const *)ret, numbers[idx])) {
+		if (!ret || !rm_strv_contains((const gchar*const*)ret, numbers[idx])) {
 			ret = g_realloc(ret, (ret_idx + 1) * sizeof(char *));
 			ret[ret_idx - 1] = g_strdup(numbers[idx]);
 			ret[ret_idx] = NULL;
@@ -432,9 +432,9 @@ gboolean fritzbox_logout(RmProfile *profile, gboolean force)
 	//                            NULL);
 	url = g_strdup_printf("http://%s/home/home.lua", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_POST, url,
-	                            "sid", profile->router_info->session_id,
-	                            "logout", "1",
-	                            NULL);
+				    "sid", profile->router_info->session_id,
+				    "logout", "1",
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -691,7 +691,7 @@ static GSList *fritzbox_parse_voice_data(GSList *journal, const gchar *data, gsi
 		}
 
 		snprintf(date_time, sizeof(date_time), "%2.2d.%2.2d.%2.2d %2.2d:%2.2d", voice_data->day, voice_data->month, voice_data->year,
-		         voice_data->hour, voice_data->minute);
+			 voice_data->hour, voice_data->minute);
 		call = rm_call_entry_new(RM_CALL_ENTRY_TYPE_VOICE, date_time, "", voice_data->remote_number, "", voice_data->local_number, "0:01", g_strdup(voice_data->file));
 		journal = rm_journal_add_call_entry(journal, call);
 	}
@@ -901,12 +901,12 @@ gchar *fritzbox_get_ip(RmProfile *profile)
 	g_free(url);
 
 	request = g_strdup(
-	              "<?xml version='1.0' encoding='utf-8'?>"
-	              " <s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
-	              " <s:Body>"
-	              " <u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\" />"
-	              " </s:Body>"
-	              " </s:Envelope>\r\n");
+		"<?xml version='1.0' encoding='utf-8'?>"
+		" <s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
+		" <s:Body>"
+		" <u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\" />"
+		" </s:Body>"
+		" </s:Envelope>\r\n");
 
 	soup_message_set_request(msg, "text/xml; charset=\"utf-8\"", SOUP_MEMORY_STATIC, request, strlen(request));
 	headers = msg->request_headers;
@@ -955,12 +955,12 @@ gboolean fritzbox_reconnect(RmProfile *profile)
 	g_free(url);
 
 	request = g_strdup(
-	              "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-	              " <s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-	              " <s:Body>"
-	              " <u:ForceTermination xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\" />"
-	              " </s:Body>"
-	              " </s:Envelope>\r\n");
+		"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+		" <s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+		" <s:Body>"
+		" <u:ForceTermination xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\" />"
+		" </s:Body>"
+		" </s:Envelope>\r\n");
 
 	soup_message_set_request(msg, "text/xml; charset=\"utf-8\"", SOUP_MEMORY_STATIC, request, strlen(request));
 	headers = msg->request_headers;

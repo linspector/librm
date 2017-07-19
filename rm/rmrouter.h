@@ -30,8 +30,8 @@
 
 G_BEGIN_DECLS
 
-#define ROUTER_ENABLE_TELNET	"#96*5*"
-#define ROUTER_ENABLE_CAPI	"#96*3*"
+#define ROUTER_ENABLE_TELNET    "#96*5*"
+#define ROUTER_ENABLE_CAPI      "#96*3*"
 
 /**
  * RmPhoneNumberType:
@@ -53,7 +53,7 @@ typedef enum {
 	RM_PHONE_NUMBER_TYPE_PAGER,
 } RmPhoneNumberType;
 
-#define ROUTER_DIAL_PORT_AUTO	-1
+#define ROUTER_DIAL_PORT_AUTO   -1
 
 /**
  * RmPhoneInfo:
@@ -94,9 +94,9 @@ typedef struct {
 	gboolean (*clear_journal)(RmProfile *profile);
 	gboolean (*dial_number)(RmProfile *profile, gint port, const gchar *number);
 	gboolean (*hangup)(RmProfile *profile, gint port, const gchar *number);
-	gchar *(*load_fax)(RmProfile *profile, const gchar *filename, gsize *len);
-	gchar *(*load_voice)(RmProfile *profile, const gchar *filename, gsize *len);
-	gchar *(*get_ip)(RmProfile *profile);
+	gchar *(*load_fax)(RmProfile * profile, const gchar * filename, gsize * len);
+	gchar *(*load_voice)(RmProfile * profile, const gchar * filename, gsize * len);
+	gchar *(*get_ip)(RmProfile * profile);
 	gboolean (*reconnect)(RmProfile *profile);
 	gboolean (*delete_fax)(RmProfile *profile, const gchar *filename);
 	gboolean (*delete_voice)(RmProfile *profile, const gchar *filename);

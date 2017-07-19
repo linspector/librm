@@ -54,38 +54,38 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	/* Extract data */
 	url = g_strdup_printf("https://%s/query.lua", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_GET, url,
-								"LKZPrefix", "telcfg:settings/Location/LKZPrefix",
-								"LKZ", "telcfg:settings/Location/LKZ",
-								"OKZPrefix", "telcfg:settings/Location/OKZPrefix",
-								"OKZ", "telcfg:settings/Location/OKZ",
-								"Port0", "telcfg:settings/MSN/Port0/Name",
-								"Port1", "telcfg:settings/MSN/Port1/Name",
-								"Port2", "telcfg:settings/MSN/Port2/Name",
-								"TAM", "tam:settings/TAM/list(Name)",
-								"ISDNName0", "telcfg:settings/NTHotDialList/Name0",
-								"ISDNName1", "telcfg:settings/NTHotDialList/Name1",
-								"ISDNName2", "telcfg:settings/NTHotDialList/Name2",
-								"ISDNName3", "telcfg:settings/NTHotDialList/Name3",
-								"ISDNName4", "telcfg:settings/NTHotDialList/Name4",
-								"ISDNName5", "telcfg:settings/NTHotDialList/Name5",
-								"ISDNName6", "telcfg:settings/NTHotDialList/Name6",
-								"ISDNName7", "telcfg:settings/NTHotDialList/Name7",
-								"DECT", "telcfg:settings/Foncontrol/User/list(Name,Type,Intern)",
-								"MSN", "telcfg:settings/MSN/list(MSN,Name)",
-								"FaxMailActive", "telcfg:settings/FaxMailActive",
-								"storage", "ctlusb:settings/storage-part0",
-								"FaxMSN0", "telcfg:settings/FaxMSN0",
-								"FaxKennung", "telcfg:settings/FaxKennung",
-								"DialPort", "telcfg:settings/DialPort",
-								"TamStick", "tam:settings/UseStick",
-								"SIP", "telcfg:settings/SIP/list(MSN,Name)",
-								"SIP2", "sip:settings/sip/list(activated,displayname,registrar,outboundproxy,providername,ID,gui_readonly,webui_trunk_id,msn)",
-								"IPP", "telcfg:settings/VoipExtension/list(Name,Number)",
-								"FON", "telcfg:settings/Foncontrol/User/list(Name,Type,Intern)",
-								"Journal", "telcfg:settings/list(Journal)",
-								"J", "telcfg:settings/Journal/listwindow(0,6,Type,Date,Number,Port,Duration,Route,RouteType,Name,NumberType,PortName)",
-	                            "sid", profile->router_info->session_id,
-	                            NULL);
+				    "LKZPrefix", "telcfg:settings/Location/LKZPrefix",
+				    "LKZ", "telcfg:settings/Location/LKZ",
+				    "OKZPrefix", "telcfg:settings/Location/OKZPrefix",
+				    "OKZ", "telcfg:settings/Location/OKZ",
+				    "Port0", "telcfg:settings/MSN/Port0/Name",
+				    "Port1", "telcfg:settings/MSN/Port1/Name",
+				    "Port2", "telcfg:settings/MSN/Port2/Name",
+				    "TAM", "tam:settings/TAM/list(Name)",
+				    "ISDNName0", "telcfg:settings/NTHotDialList/Name0",
+				    "ISDNName1", "telcfg:settings/NTHotDialList/Name1",
+				    "ISDNName2", "telcfg:settings/NTHotDialList/Name2",
+				    "ISDNName3", "telcfg:settings/NTHotDialList/Name3",
+				    "ISDNName4", "telcfg:settings/NTHotDialList/Name4",
+				    "ISDNName5", "telcfg:settings/NTHotDialList/Name5",
+				    "ISDNName6", "telcfg:settings/NTHotDialList/Name6",
+				    "ISDNName7", "telcfg:settings/NTHotDialList/Name7",
+				    "DECT", "telcfg:settings/Foncontrol/User/list(Name,Type,Intern)",
+				    "MSN", "telcfg:settings/MSN/list(MSN,Name)",
+				    "FaxMailActive", "telcfg:settings/FaxMailActive",
+				    "storage", "ctlusb:settings/storage-part0",
+				    "FaxMSN0", "telcfg:settings/FaxMSN0",
+				    "FaxKennung", "telcfg:settings/FaxKennung",
+				    "DialPort", "telcfg:settings/DialPort",
+				    "TamStick", "tam:settings/UseStick",
+				    "SIP", "telcfg:settings/SIP/list(MSN,Name)",
+				    "SIP2", "sip:settings/sip/list(activated,displayname,registrar,outboundproxy,providername,ID,gui_readonly,webui_trunk_id,msn)",
+				    "IPP", "telcfg:settings/VoipExtension/list(Name,Number)",
+				    "FON", "telcfg:settings/Foncontrol/User/list(Name,Type,Intern)",
+				    "Journal", "telcfg:settings/list(Journal)",
+				    "J", "telcfg:settings/Journal/listwindow(0,6,Type,Date,Number,Port,Duration,Route,RouteType,Name,NumberType,PortName)",
+				    "sid", profile->router_info->session_id,
+				    NULL);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -265,7 +265,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 		json_reader_end_element(reader);
 	}
-	g_settings_set_strv(profile->settings, "numbers", (const gchar * const *)numbers);
+	g_settings_set_strv(profile->settings, "numbers", (const gchar*const*)numbers);
 
 	json_reader_end_member(reader);
 
@@ -298,6 +298,6 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	/* The end - exit */
 	fritzbox_logout(profile, FALSE);
 
- 	return TRUE;
+	return TRUE;
 }
 

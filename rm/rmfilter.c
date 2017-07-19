@@ -271,7 +271,7 @@ gboolean rm_filter_rule_match(RmFilter *filter, RmCallEntry *call)
 	}
 
 	/* Result check */
-	return (result == 0x3F);
+	return(result == 0x3F);
 }
 
 /**
@@ -285,8 +285,8 @@ gboolean rm_filter_rule_match(RmFilter *filter, RmCallEntry *call)
  */
 gint rm_filter_sort_by_name(gconstpointer a, gconstpointer b)
 {
-	RmFilter *filter_a = (RmFilter *)a;
-	RmFilter *filter_b = (RmFilter *)b;
+	RmFilter *filter_a = (RmFilter*)a;
+	RmFilter *filter_b = (RmFilter*)b;
 
 	return strcmp(filter_a->name, filter_b->name);
 }
@@ -450,7 +450,7 @@ static void rm_filter_load(RmProfile *profile)
 
 			type = g_key_file_get_integer(keyfile, groups[idx], "type", NULL);
 			subtype = g_key_file_get_integer(keyfile, groups[idx], "subtype", NULL);
-			entry =  g_key_file_get_string(keyfile, groups[idx], "entry", NULL);
+			entry = g_key_file_get_string(keyfile, groups[idx], "entry", NULL);
 			rm_filter_rule_add(filter, type, subtype, entry);
 
 			filter->file = g_strdup(tmp);

@@ -82,7 +82,7 @@ static void rm_profile_save(void)
 	}
 	profiles[counter] = NULL;
 
-	g_settings_set_strv(rm_settings, "profiles", (const gchar * const *)profiles);
+	g_settings_set_strv(rm_settings, "profiles", (const gchar*const*)profiles);
 
 	g_strfreev(profiles);
 }
@@ -444,7 +444,7 @@ void rm_profile_set_addressbook(RmProfile *profile, RmAddressBook *book)
 /**
  * rm_profile_get_audio:
  * @profile: a #RmProfile
-*
+ *
  * Get audio for selected profile.
  */
 RmAudio *rm_profile_get_audio(RmProfile *profile)
