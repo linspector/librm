@@ -1,0 +1,1 @@
+option('enable-documentation', type: 'boolean', value: 'false', description : 'Build API reference and tools documentation')

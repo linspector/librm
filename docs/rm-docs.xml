@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index">
+  <bookinfo>
+    <title>Router Manager Reference Manual</title>
+    <releaseinfo>
+      This document is for the Router Manager library, version &version;.
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" url="https://www.tabos.org/docs/rm/">https://www.tabos.org/docs/rm/</ulink>.
+    </releaseinfo>
+  </bookinfo>
+
+  <chapter>
+    <title>Router Manager Overview</title>
+        <xi:include href="xml/rmaction.xml"/>
+    <xi:include href="xml/rmaddressbook.xml"/>
+    <xi:include href="xml/rmaudio.xml"/>
+    <xi:include href="xml/rmcallentry.xml"/>
+    <xi:include href="xml/rmconnection.xml"/>
+    <xi:include href="xml/rmcontact.xml"/>
+    <xi:include href="xml/rmcsv.xml"/>
+    <xi:include href="xml/rmdevice.xml"/>
+    <xi:include href="xml/rmfax.xml"/>
+    <xi:include href="xml/rmfaxserver.xml"/>
+    <xi:include href="xml/rmfaxspooler.xml"/>
+    <xi:include href="xml/rmfile.xml"/>
+    <xi:include href="xml/rmfilter.xml"/>
+    <xi:include href="xml/rmftp.xml"/>
+    <xi:include href="xml/rmjournal.xml"/>
+    <xi:include href="xml/rmlog.xml"/>
+    <xi:include href="xml/rmlookup.xml"/>
+    <xi:include href="xml/rmmain.xml"/>
+    <xi:include href="xml/rmnetmonitor.xml"/>
+    <xi:include href="xml/rmnetwork.xml"/>
+    <xi:include href="xml/rmnotification.xml"/>
+    <xi:include href="xml/rmnumber.xml"/>
+    <xi:include href="xml/rmobject.xml"/>
+    <xi:include href="xml/rmobjectemit.xml"/>
+    <xi:include href="xml/rmosdep.xml"/>
+    <xi:include href="xml/rmpassword.xml"/>
+    <xi:include href="xml/rmphone.xml"/>
+    <xi:include href="xml/rmplugins.xml"/>
+    <xi:include href="xml/rmprofile.xml"/>
+    <xi:include href="xml/rmrouter.xml"/>
+    <xi:include href="xml/rmrouterinfo.xml"/>
+    <xi:include href="xml/rmsettings.xml"/>
+    <xi:include href="xml/rmssdp.xml"/>
+    <xi:include href="xml/rmstring.xml"/>
+    <xi:include href="xml/rmvox.xml"/>
+    <xi:include href="xml/rmxml.xml"/>
+
+  </chapter>
+  <!-- enable this when you use gobject types
+  <chapter id="object-tree">
+    <title>Object Hierarchy</title>
+    <xi:include href="xml/tree_index.sgml"/>
+  </chapter>
+  -->
+  <index id="api-index-full">
+    <title>API Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+  <index id="deprecated-api-index" role="deprecated">
+    <title>Index of deprecated API</title>
+    <xi:include href="xml/api-index-deprecated.xml"><xi:fallback /></xi:include>
+  </index>
+  <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+</book>
