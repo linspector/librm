@@ -131,6 +131,15 @@ gboolean rm_strv_contains(const gchar * const *strv, const gchar *str)
 #endif
 }
 
+/**
+ * rm_strv_add:
+ * @strv: string vector
+ * @str: new string
+ *
+ * Add str to strv
+ *
+ * Returns: newly created strv
+ */
 gchar **rm_strv_add(gchar **strv, const gchar *str)
 {
 	guint len = g_strv_length(strv);
@@ -153,6 +162,15 @@ gchar **rm_strv_add(gchar **strv, const gchar *str)
 	return new_strv;
 }
 
+/**
+ * rm_strv_remove:
+ * @strv: string vector
+ * @str: string to remove
+ *
+ * Remove str from strv
+ *
+ * Returns: newly created strv
+ */
 gchar **rm_strv_remove(gchar **strv, const gchar *str)
 {
 	guint len = g_strv_length(strv);

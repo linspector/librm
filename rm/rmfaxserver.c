@@ -31,6 +31,16 @@
 #include <rmfaxserver.h>
 #include <rmmain.h>
 
+/**
+ * SECTION:rmfaxserver
+ * @title: RmFaxServer
+ * @short_description: Fax server listening on port 9100 for incoming fax transmissions.
+ * @stability: Stable
+ *
+ * Provides a fax server listening on local host port 9100 for incoming fax transmissions. It is
+ * currently used on system where fax spooling is not available, e.g. Windows.
+ */
+
 #define BUFFER_LENGTH 1024
 
 /**

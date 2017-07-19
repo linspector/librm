@@ -37,7 +37,7 @@
  */
 
 /** Call-by-call number table */
-struct rm_call_by_call_entry rm_call_by_call_table[] = {
+RmCallByCallEntry rm_call_by_call_table[] = {
 	{"49", "0100", 6},
 	{"49", "010", 5},
 	{"31", "16", 4},
@@ -92,7 +92,7 @@ gchar *rm_number_scramble(const gchar *number)
 gint rm_call_by_call_prefix_length(const gchar *number)
 {
 	gchar *my_country_code = rm_router_get_country_code(rm_profile_get_active());
-	struct rm_call_by_call_entry *entry;
+	RmCallByCallEntry *entry;
 
 	if (RM_EMPTY_STRING(my_country_code)) {
 		g_free(my_country_code);
@@ -147,7 +147,7 @@ gchar *rm_number_canonize(const gchar *number)
  *
  * Returns: real number
  */
-gchar *rm_number_format(RmProfile *profile, const gchar *number, enum rm_number_format output_format)
+gchar *rm_number_format(RmProfile *profile, const gchar *number, RmNumberFormats output_format)
 {
 	gchar *tmp;
 	gchar *canonized;

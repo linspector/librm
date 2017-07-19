@@ -33,12 +33,7 @@
 #include <fax.h>
 #include <isdn-convert.h>
 
-#include <rm/rmconnection.h>
-#include <rm/rmstring.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmfax.h>
-#include <rm/rmprofile.h>
-#include <rm/rmnumber.h>
+#include <rm/rm.h>
 #include <sff.h>
 
 static int8_t *_linear16_2_law = (int8_t *) &linear16_2_law[32768];
@@ -691,16 +686,16 @@ gboolean capi_fax_get_status(RmConnection *connection, RmFaxStatus *status)
 
 	switch (fax_status->phase) {
 	case PHASE_B:
-		status->phase = FAX_PHASE_IDENTIFY;
+		status->phase = RM_FAX_PHASE_IDENTIFY;
 		break;
 	case PHASE_D:
-		status->phase = FAX_PHASE_SIGNALLING;
+		status->phase = RM_FAX_PHASE_SIGNALLING;
 		break;
 	case PHASE_E:
-		status->phase = FAX_PHASE_RELEASE;
+		status->phase = RM_FAX_PHASE_RELEASE;
 		break;
 	default:
-		status->phase = FAX_PHASE_CALL;
+		status->phase = RM_FAX_PHASE_CALL;
 		break;
 	}
 

@@ -22,7 +22,7 @@
 
 #include <glib.h>
 
-#include <rm/rmcsv.h>
+#include <rm/rm.h>
 #include <csv.h>
 
 #define CSV_AREACODES "\"Country\",\"Country Code\",\"Area\",\"Area Code\""

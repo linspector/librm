@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_FILTER_H
-#define __RM_FILTER_H
+#ifndef __RM_FILTER_H__
+#define __RM_FILTER_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <rm/rmcallentry.h>
 
@@ -49,13 +53,25 @@ enum {
 	RM_FILTER_CALL_FAX,
 };
 
+/**
+ * RmFilterRule:
+ *
+ * The #RmFilterRule-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gint type;
 	gint sub_type;
 	gchar *entry;
 } RmFilterRule;
 
+/**
+ * RmFilter:
+ *
+ * The #RmFilter-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gchar *name;
 	gchar *file;
 	gboolean compare_or;

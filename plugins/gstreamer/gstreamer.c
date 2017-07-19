@@ -24,10 +24,7 @@
 #include <gst/app/gstappsrc.h>
 #include <gst/app/gstappsink.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmplugins.h>
-#include <rm/rmaudio.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 /** predefined backup values */
 static gint gstreamer_channels = 2;

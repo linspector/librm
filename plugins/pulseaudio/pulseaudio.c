@@ -27,10 +27,7 @@
 #include <pulse/simple.h>
 #include <pulse/error.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmplugins.h>
-#include <rm/rmaudio.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 struct pulse_pipes {
 	pa_simple *simple_in;

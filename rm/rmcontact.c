@@ -157,14 +157,14 @@ RmContact *rm_contact_find_by_number(gchar *number)
 	}
 
 	switch (type) {
-	case PHONE_NUMBER_WORK:
-	case PHONE_NUMBER_FAX_WORK:
-	case PHONE_NUMBER_PAGER:
+	case RM_PHONE_NUMBER_TYPE_WORK:
+	case RM_PHONE_NUMBER_TYPE_FAX_WORK:
+	case RM_PHONE_NUMBER_TYPE_PAGER:
 		type = 1;
 		break;
-	case PHONE_NUMBER_HOME:
-	case PHONE_NUMBER_FAX_HOME:
-	case PHONE_NUMBER_MOBILE:
+	case RM_PHONE_NUMBER_TYPE_HOME:
+	case RM_PHONE_NUMBER_TYPE_FAX_HOME:
+	case RM_PHONE_NUMBER_TYPE_MOBILE:
 	default:
 		type = 0;
 		break;

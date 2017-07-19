@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_ROUTER_H
-#define __RM_ROUTER_H
+#ifndef __RM_ROUTER_H__
+#define __RM_ROUTER_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <gio/gio.h>
 
@@ -29,30 +33,57 @@ G_BEGIN_DECLS
 #define ROUTER_ENABLE_TELNET	"#96*5*"
 #define ROUTER_ENABLE_CAPI	"#96*3*"
 
-enum phone_number_type {
-	PHONE_NUMBER_HOME,
-	PHONE_NUMBER_WORK,
-	PHONE_NUMBER_MOBILE,
-	PHONE_NUMBER_FAX_HOME,
-	PHONE_NUMBER_FAX_WORK,
-	PHONE_NUMBER_PAGER,
-};
+/**
+ * RmPhoneNumberType:
+ * @RM_PHONE_NUMBER_TYPE_HOME: home number
+ * @RM_PHONE_NUMBER_TYPE_WORK: work number
+ * @RM_PHONE_NUMBER_TYPE_MOBILE: mobile number
+ * @RM_PHONE_NUMBER_TYPE_FAX_HOME: home fax number
+ * @RM_PHONE_NUMBER_TYPE_FAX_WORK: work fax number
+ * @RM_PHONE_NUMBER_TYPE_PAGER: pager number
+ *
+ * The type of a phone number.
+ */
+typedef enum {
+	RM_PHONE_NUMBER_TYPE_HOME,
+	RM_PHONE_NUMBER_TYPE_WORK,
+	RM_PHONE_NUMBER_TYPE_MOBILE,
+	RM_PHONE_NUMBER_TYPE_FAX_HOME,
+	RM_PHONE_NUMBER_TYPE_FAX_WORK,
+	RM_PHONE_NUMBER_TYPE_PAGER,
+} RmPhoneNumberType;
 
-enum rm_router_dial_port {
-	ROUTER_DIAL_PORT_AUTO = -1,
-};
+#define ROUTER_DIAL_PORT_AUTO	-1
 
+/**
+ * RmPhoneInfo:
+ *
+ * The #RmPhoneInfo-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gchar *name;
 	gint type;
 } RmPhoneInfo;
 
+/**
+ * RmPhoneNumber:
+ *
+ * The #RmPhoneNumber-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
-	enum phone_number_type type;
+	/*< private >*/
+	RmPhoneNumberType type;
 	gchar *number;
 } RmPhoneNumber;
 
+/**
+ * RmRouter:
+ *
+ * The #RmRouter-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	const gchar *name;
 	gboolean (*present)(RmRouterInfo *router_info);
 	void (*set_active)(RmProfile *profile);
@@ -108,8 +139,8 @@ void rm_router_process_journal(GSList *journal);
 
 gboolean rm_router_register(RmRouter *router);
 
-gchar *rm_router_load_fax(RmProfile *profile, const gchar *filename, gsize *len);
-gchar *rm_router_load_voice(RmProfile *profile, const gchar *filename, gsize *len);
+gchar *rm_router_load_fax(RmProfile *profile, const gchar *name, gsize *len);
+gchar *rm_router_load_voice(RmProfile *profile, const gchar *name, gsize *len);
 
 gboolean rm_router_info_free(RmRouterInfo *info);
 gboolean rm_router_is_cable(RmProfile *profile);
@@ -118,9 +149,6 @@ GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal);
 GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal);
 
 void rm_router_free_phone_list(GSList *phone_list);
-
-gint rm_router_get_phone_port(RmProfile *profile);
-void rm_router_set_phone_port(RmProfile *profile, gint port);
 
 gboolean rm_router_get_suppress_state(RmProfile *profile);
 

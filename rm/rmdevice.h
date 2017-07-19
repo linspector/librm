@@ -17,31 +17,54 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_DEVICE_H
-#define __RM_DEVICE_H
+#ifndef __RM_DEVICE_H__
+#define __RM_DEVICE_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
 typedef struct _RmDevice RmDevice;
 
-typedef enum _RmDeviceType {
+/**
+ * RmDeviceType:
+ * @RM_DEVICE_TYPE_PHONE: phone device
+ * @RM_DEVICE_TYPE_FAX: fax device
+ *
+ * Type of device.
+ */
+typedef enum {
 	RM_DEVICE_TYPE_PHONE,
 	RM_DEVICE_TYPE_FAX
 } RmDeviceType;
 
+/**
+ * RmDevice:
+ *
+ * The #RmDevice-struct contains only private fileds and should not be directly accessed.
+ */
 struct _RmDevice {
+	/*< private >*/
 	gchar *name;
 	gchar *settings_name;
 };
 
-struct _RmDeviceCast {
+/**
+ * RmDeviceCast:
+ *
+ * The #RmDeviceCast-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct {
+	/*< private >*/
 	RmDevice *device;
 	RmDeviceType type;
 
 	gpointer priv;
-};
+} RmDeviceCast;
 
-#define RM_DEVICE(x) (((struct _RmDeviceCast *)(x))->device)
+#define RM_DEVICE(x) (((RmDeviceCast*)(x))->device)
 
 gboolean rm_device_handles_number(RmDevice *device, gchar *number);
 void rm_device_set_numbers(RmDevice *device, gchar **numbers);

@@ -37,7 +37,10 @@
 
 /**
  * rm_device_handles_number:
+ * @device: a #RmDevice
  * @number: check if number is handled by a device
+ *
+ * Checks wether the devices is responsible for this number
  *
  * Returns: %TRUE if number is handled by a phone device, otherwise %FALSE
  */
@@ -64,6 +67,13 @@ gboolean rm_device_handles_number(RmDevice *device, gchar *number)
 	return ret;
 }
 
+/**
+ * rm_device_set_numbers:
+ * @device: a #RmDevice
+ * @numbers: phone numbers
+ *
+ * Set numbers which should be handled by device
+ */
 void rm_device_set_numbers(RmDevice *device, gchar **numbers)
 {
 	GSettings *settings;
@@ -82,6 +92,12 @@ void rm_device_set_numbers(RmDevice *device, gchar **numbers)
 	}
 }
 
+/**
+ * rm_device_get_numbers:
+ * @device: a #RmDevice
+ *
+ * Get phone numbers which are handled by device
+ */
 gchar **rm_device_get_numbers(RmDevice *device)
 {
 	GSettings *settings;

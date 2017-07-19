@@ -20,6 +20,10 @@
 #ifndef __RMFAXSERVER_H__
 #define __RMFAXSERVER_H__
 
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
+
 G_BEGIN_DECLS
 
 gboolean rm_faxserver_init(void);

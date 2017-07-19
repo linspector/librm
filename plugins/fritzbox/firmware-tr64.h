@@ -20,7 +20,7 @@
 #ifndef FIRMWARE_TR64_H
 #define FIRMWARE_TR64_H
 
-#include <rm/rmrouter.h>
+#include <rm/rm.h>
 
 G_BEGIN_DECLS
 

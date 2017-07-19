@@ -26,18 +26,7 @@
 
 #include <libsoup/soup.h>
 
-#include <rm/rmlog.h>
-#include <rm/rmrouter.h>
-#include <rm/rmnetwork.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmftp.h>
-#include <rm/rmstring.h>
-#include <rm/rmmain.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmfile.h>
-#include <rm/rmjournal.h>
-#include <rm/rmmain.h>
-#include <rm/rmosdep.h>
+#include <rm/rm.h>
 
 #include "fritzbox.h"
 #include "firmware-common.h"

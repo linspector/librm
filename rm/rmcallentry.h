@@ -20,13 +20,30 @@
 #ifndef __RM_CALLENTRY_H__
 #define __RM_CALLENTRY_H__
 
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
+
 #include <rm/rmcontact.h>
 #include <rm/rmprofile.h>
 
 G_BEGIN_DECLS
 
-/** Supported call entry types */
-enum rm_call_entry_types {
+/**
+ * RmCallEntryTypes:
+ * @RM_CALL_ENTRY_TYPE_ALL: All call entries
+ * @RM_CALL_ENTRY_TYPE_INCOMING: Incoming call
+ * @RM_CALL_ENTRY_TYPE_MISSED: Missed call
+ * @RM_CALL_ENTRY_TYPE_OUTGOING: Outgoing call
+ * @RM_CALL_ENTRY_TYPE_VOICE: Voice box call
+ * @RM_CALL_ENTRY_TYPE_FAX: Fax call
+ * @RM_CALL_ENTRY_TYPE_FAX_REPORT: Fax report call
+ * @RM_CALL_ENTRY_TYPE_RECORD: Voice record call
+ * @RM_CALL_ENTRY_TYPE_BLOCKED: Blocked call
+ *
+ * Supported call entry type listed in journal
+ */
+typedef enum {
 	RM_CALL_ENTRY_TYPE_ALL,
 	RM_CALL_ENTRY_TYPE_INCOMING,
 	RM_CALL_ENTRY_TYPE_MISSED,
@@ -36,9 +53,16 @@ enum rm_call_entry_types {
 	RM_CALL_ENTRY_TYPE_FAX_REPORT,
 	RM_CALL_ENTRY_TYPE_RECORD,
 	RM_CALL_ENTRY_TYPE_BLOCKED
-};
+} RmCallEntryTypes;
+
+/**
+ * RmCallEntry:
+ *
+ * The #RmCallEntry-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
-	enum rm_call_entry_types type;
+	/*< private >*/
+	RmCallEntryTypes type;
 	gchar *date_time;
 	gchar *duration;
 
@@ -49,7 +73,7 @@ typedef struct {
 	gchar *priv;
 } RmCallEntry;
 
-RmCallEntry *rm_call_entry_new(enum rm_call_entry_types type, const gchar *date_time, const gchar *remote_name, const gchar *remote_number, const gchar *local_name, const gchar *local_number, const gchar *duration, gpointer priv);
+RmCallEntry *rm_call_entry_new(RmCallEntryTypes type, const gchar *date_time, const gchar *remote_name, const gchar *remote_number, const gchar *local_name, const gchar *local_number, const gchar *duration, gpointer priv);
 void rm_call_entry_free(gpointer data);
 
 G_END_DECLS

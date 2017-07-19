@@ -31,6 +31,16 @@
 #include <rm/rmnumber.h>
 #include <rm/rmjournal.h>
 
+/**
+ * SECTION:rmrouter
+ * @title: RmRouter
+ * @short_description: Router related functions (login, get settings, ...)
+ * @stability: Stable
+ *
+ * Router related function to interact in an easy way. As it uses router plugins it can
+ * be used with different router vendors.
+ */
+
 /** Active router structure */
 static RmRouter *active_router = NULL;
 /** Global router plugin list */
@@ -39,10 +49,12 @@ static GSList *rm_router_list = NULL;
 static gboolean rm_router_login_blocked = FALSE;
 
 /**
- * \brief Free one phone list entry
- * \param data pointer to phone structure
+ * rm_router_free_phone_info:
+ * @data: pointer to phone info structure
+ *
+ * Free one phone info list entry.
  */
-static void free_phone_list(gpointer data)
+static void rm_router_free_phone_info(gpointer data)
 {
 	RmPhoneInfo *phone = data;
 
@@ -50,18 +62,23 @@ static void free_phone_list(gpointer data)
 }
 
 /**
- * \brief Free full phone list
- * \param phone_list phone list
+ * rm_router_free_phone_list:
+ * @phone_list: phone list
+ *
+ * Free full phone list.
  */
 void rm_router_free_phone_list(GSList *phone_list)
 {
-	g_slist_free_full(phone_list, free_phone_list);
+	g_slist_free_full(phone_list, rm_router_free_phone_info);
 }
 
 /**
- * \brief Get array of phone numbers
- * \param profile profile structure
- * \return phone number array
+ * rm_router_get_numbers:
+ * @profile: a #RmProfile
+ *
+ * Get array of phone numbers.
+ *
+ * Returns: phone number array
  */
 gchar **rm_router_get_numbers(RmProfile *profile)
 {
@@ -69,9 +86,12 @@ gchar **rm_router_get_numbers(RmProfile *profile)
 }
 
 /**
- * \brief Check if router is present
- * \param router_info router information structure
- * \return present state
+ * rm_router_present:
+ * @router_info: a #RmRouterInfo
+ *
+ * Check if router is present.
+ *
+ * Returns: present state
  */
 gboolean rm_router_present(RmRouterInfo *router_info)
 {
@@ -94,6 +114,12 @@ gboolean rm_router_present(RmRouterInfo *router_info)
 	return FALSE;
 }
 
+/**
+ * rm_router_set_active:
+ * @profile: a #RmProfile
+ *
+ * Set profile as active.
+ */
 void rm_router_set_active(RmProfile *profile)
 {
 	if (active_router) {
@@ -103,9 +129,12 @@ void rm_router_set_active(RmProfile *profile)
 }
 
 /**
- * \brief Login to router
- * \param profile profile information structure
- * \return login state
+ * rm_router_login:
+ * @profile: a #RmProfile
+ *
+ * Login to router.
+ *
+ * Returns: login state
  */
 gboolean rm_router_login(RmProfile *profile)
 {
@@ -131,7 +160,9 @@ gboolean rm_router_login(RmProfile *profile)
 }
 
 /**
- * \brief Release router login blocked
+ * rm_router_release_lock:
+ *
+ * Release router login blocked
  */
 void rm_router_release_lock(void)
 {
@@ -140,7 +171,11 @@ void rm_router_release_lock(void)
 }
 
 /**
- * \brief Check whether router login is blocked
+ * rm_router_is_locked:
+ *
+ * Check whether router login is blocked
+ *
+ * Returns: locked state
  */
 gboolean rm_router_is_locked(void)
 {
@@ -149,9 +184,12 @@ gboolean rm_router_is_locked(void)
 }
 
 /**
- * \brief Router logout
- * \param profile profile information structure
- * \return logout state
+ * rm_router_logout:
+ * @profile: a #RmProfile
+ *
+ * Router logout.
+ *
+ * Returns: logout state
  */
 gboolean rm_router_logout(RmProfile *profile)
 {
@@ -159,9 +197,12 @@ gboolean rm_router_logout(RmProfile *profile)
 }
 
 /**
- * \brief Get router host
- * \param profile profile information structure
- * \return router host or "" if no profile is active
+ * rm_router_get_host:
+ * @profile: a #RmProfile
+ *
+ * Get router host
+ *
+ * Returns: router host or "" if no profile is active
  */
 gchar *rm_router_get_host(RmProfile *profile)
 {
@@ -169,9 +210,12 @@ gchar *rm_router_get_host(RmProfile *profile)
 }
 
 /**
- * \brief Get login password
- * \param profile router information structure
- * \return login password
+ * rm_router_get_login_password:
+ * @profile: a #RmProfile
+ *
+ * Get login password.
+ *
+ * Returns: login password
  */
 gchar *rm_router_get_login_password(RmProfile *profile)
 {
@@ -179,9 +223,12 @@ gchar *rm_router_get_login_password(RmProfile *profile)
 }
 
 /**
- * \brief Get login user
- * \param profile router information structure
- * \return login user
+ * rm_router_get_login_user:
+ * @profile: a #RmProfile
+ *
+ * Get login user
+ *
+ * Returns: login user
  */
 gchar *rm_router_get_login_user(RmProfile *profile)
 {
@@ -189,9 +236,12 @@ gchar *rm_router_get_login_user(RmProfile *profile)
 }
 
 /**
- * \brief Get router FTP password
- * \param profile router information structure
- * \return router ftp password
+ * rm_router_get_ftp_password:
+ * @profile: a #RmProfile
+ *
+ * Get router FTP password.
+ *
+ * Returns: router ftp password
  */
 gchar *rm_router_get_ftp_password(RmProfile *profile)
 {
@@ -199,19 +249,25 @@ gchar *rm_router_get_ftp_password(RmProfile *profile)
 }
 
 /**
- * \brief Get router FTP user
- * \param profile router information structure
- * \return router ftp user
+ * rm_router_get_ftp_user:
+ * @profile: a #RmProfile
+ *
+ * Get router FTP user.
+ *
+ * Returns: router ftp user
  */
 gchar *rm_router_get_ftp_user(RmProfile *profile)
 {
 	return g_settings_get_string(profile->settings, "ftp-user");
 }
 
-/*
- * \brief Get international access code
- * \param profile router information structure
- * \return international access code
+/**
+ * rm_router_get_international_access_code:
+ * @profile: a #RmProfile
+ *
+ * Get international access code
+ *
+ * Returns: international access code
  */
 gchar *rm_router_get_international_access_code(RmProfile *profile)
 {
@@ -222,10 +278,13 @@ gchar *rm_router_get_international_access_code(RmProfile *profile)
 	return g_settings_get_string(profile->settings, "international-access-code");
 }
 
-/*
- * \brief Get national call prefix
- * \param profile router information structure
- * \return national call prefix
+/**
+ * rm_router_get_national_prefix:
+ * @profile: a #RmProfile
+ *
+ * Get national call prefix
+ *
+ * Returns: national call prefix
  */
 gchar *rm_router_get_national_prefix(RmProfile *profile)
 {
@@ -236,10 +295,13 @@ gchar *rm_router_get_national_prefix(RmProfile *profile)
 	return g_settings_get_string(profile->settings, "national-access-code");
 }
 
-/*
- * \brief Get router area code
- * \param profile router information structure
- * \return area code
+/**
+ * rm_router_get_area_code:
+ * @profile: a #RmProfile
+ *
+ * Get router area code
+ *
+ * Returns: area code
  */
 gchar *rm_router_get_area_code(RmProfile *profile)
 {
@@ -250,10 +312,13 @@ gchar *rm_router_get_area_code(RmProfile *profile)
 	return g_settings_get_string(profile->settings, "area-code");
 }
 
-/*
- * \brief Get router country code
- * \param profile router information structure
- * \return country code
+/**
+ * rm_router_get_country_code:
+ * @profile: a #RmProfile
+ *
+ * Get router country code
+ *
+ * Returns: country code
  */
 gchar *rm_router_get_country_code(RmProfile *profile)
 {
@@ -265,9 +330,12 @@ gchar *rm_router_get_country_code(RmProfile *profile)
 }
 
 /**
- * \brief Get router settings
- * \param profile profile information structure
- * \return router settings
+ * rm_router_get_settings:
+ * @profile: a #RmProfile
+ *
+ * Get router settings
+ *
+ * Returns: router settings
  */
 gboolean rm_router_get_settings(RmProfile *profile)
 {
@@ -275,9 +343,12 @@ gboolean rm_router_get_settings(RmProfile *profile)
 }
 
 /**
- * \brief Get router name
- * \param profile profile information structure
- * \return router name
+ * rm_router_get_name:
+ * @profile: a #RmProfile
+ *
+ * Get router name
+ *
+ * Returns: router name
  */
 const gchar *rm_router_get_name(RmProfile *profile)
 {
@@ -289,9 +360,12 @@ const gchar *rm_router_get_name(RmProfile *profile)
 }
 
 /**
- * \brief Get router version
- * \param profile profile information structure
- * \return router version
+ * rm_router_get_version:
+ * @profile: a #RmProfile
+ *
+ * Get router version
+ *
+ * Returns: router version
  */
 const gchar *rm_router_get_version(RmProfile *profile)
 {
@@ -303,18 +377,25 @@ const gchar *rm_router_get_version(RmProfile *profile)
 }
 
 /**
- * \brief Get router journal
- * \param profile profile information structure
- * \return get journal return state
+ * rm_router_load_journal:
+ * @profile: a #RmProfile
+ *
+ * Get router journal
+ *
+ * Returns: get journal return state
  */
 gboolean rm_router_load_journal(RmProfile *profile)
 {
 	return active_router ? active_router->load_journal(profile) : FALSE;
 }
+
 /**
- * \brief Clear router journal
- * \param profile profile information structure
- * \return clear journal return state
+ * rm_router_clear_journal:
+ * @profile: a #RmProfile
+ *
+ * Clear router journal
+ *
+ * Returns: clear journal return state
  */
 gboolean rm_router_clear_journal(RmProfile *profile)
 {
@@ -322,11 +403,14 @@ gboolean rm_router_clear_journal(RmProfile *profile)
 }
 
 /**
- * \brief Dial number
- * \param profile profile information structure
- * \param port dial port
- * \param number number to dial
- * \return return state of dial function
+ * rm_router_dial_number:
+ * @profile: a #RmProfile
+ * @port: dial port
+ * @number: number to dial
+ *
+ * Dial number
+ *
+ * Returns: return state of dial function
  */
 gboolean rm_router_dial_number(RmProfile *profile, gint port, const gchar *number)
 {
@@ -340,11 +424,14 @@ gboolean rm_router_dial_number(RmProfile *profile, gint port, const gchar *numbe
 }
 
 /**
- * \brief Hangup call
- * \param profile profile information structure
- * \param port dial port
- * \param number number to dial
- * \return return state of hangup function
+ * rm_router_hangup:
+ * @profile: a #RmProfile
+ * @port: dial port
+ * @number: number to dial
+ *
+ * Hangup call
+ *
+ * Returns: return state of hangup function
  */
 gboolean rm_router_hangup(RmProfile *profile, gint port, const gchar *number)
 {
@@ -352,8 +439,12 @@ gboolean rm_router_hangup(RmProfile *profile, gint port, const gchar *number)
 }
 
 /**
- * \brief Register new router
- * \param router new router structure
+ * rm_router_register:
+ * @router: a #RmRouter
+ *
+ * Register new router
+ *
+ * Returns: %TRUE
  */
 gboolean rm_router_register(RmRouter *router)
 {
@@ -363,8 +454,11 @@ gboolean rm_router_register(RmRouter *router)
 }
 
 /**
- * \brief Initialize router (if available set internal router structure)
- * \return TRUE on success, otherwise FALSE
+ * rm_router_init:
+ *
+ * Initialize router (if available set internal router structure)
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_router_init(void)
 {
@@ -377,8 +471,9 @@ gboolean rm_router_init(void)
 }
 
 /**
- * \brief Shutdown router
- * \return TRUE
+ * rm_router_shutdown:
+ *
+ * Shutdown router
  */
 void rm_router_shutdown(void)
 {
@@ -393,8 +488,10 @@ void rm_router_shutdown(void)
 }
 
 /**
- * \brief Router needs to process a new loaded journal (emit journal-process signal and journal-loaded)
- * \param journal journal list
+ * rm_router_process_journal:
+ * @journal: journal list
+ *
+ * Router needs to process a new loaded journal (emit journal-process signal and journal-loaded)
  */
 void rm_router_process_journal(GSList *journal)
 {
@@ -419,23 +516,29 @@ void rm_router_process_journal(GSList *journal)
 }
 
 /**
- * \brief Load fax file
- * \param profile profile structure
- * \param filename fax filename
- * \param len pointer to store data length to
- * \return fax data
+ * rm_router_load_fax:
+ * @profile: a #RmProfile
+ * @name: fax filename
+ * @len: pointer to store data length to
+ *
+ * Load fax file
+ *
+ * Returns: fax data
  */
-gchar *rm_router_load_fax(RmProfile *profile, const gchar *filename, gsize *len)
+gchar *rm_router_load_fax(RmProfile *profile, const gchar *name, gsize *len)
 {
-	return active_router->load_fax(profile, filename, len);
+	return active_router->load_fax(profile, name, len);
 }
 
 /**
- * \brief Load voice file
- * \param profile profile structure
- * \param name voice filename
- * \param len pointer to store data length to
- * \return voice data
+ * rm_router_load_voice:
+ * @profile: a #RmProfile
+ * @name: voice filename
+ * @len: pointer to store data length to
+ *
+ * Load voice file
+ *
+ * Returns: voice data
  */
 gchar *rm_router_load_voice(RmProfile *profile, const gchar *name, gsize *len)
 {
@@ -443,9 +546,12 @@ gchar *rm_router_load_voice(RmProfile *profile, const gchar *name, gsize *len)
 }
 
 /**
- * \brief Get external IP address
- * \param profile profile structure
- * \return IP address
+ * rm_router_get_ip:
+ * @profile: a #RmProfile
+ *
+ * Get external IP address
+ *
+ * Returns: IP address
  */
 gchar *rm_router_get_ip(RmProfile *profile)
 {
@@ -453,9 +559,12 @@ gchar *rm_router_get_ip(RmProfile *profile)
 }
 
 /**
- * \brief Reconnect network connection
- * \param profile profile structure
- * \param TRUE on success, otherwise FALSE
+ * rm_router_reconnect:
+ * @profile: a #RmProfile
+ *
+ * Reconnect network connection
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_router_reconnect(RmProfile *profile)
 {
@@ -463,10 +572,13 @@ gboolean rm_router_reconnect(RmProfile *profile)
 }
 
 /**
- * \brief Delete fax file on router
- * \param profile profile structure
- * \param filename fax filename to delete
- * \param TRUE on success, otherwise FALSE
+ * rm_router_delete_fax:
+ * @profile: a #RmProfile
+ * @filename: fax filename to delete
+ *
+ * Delete fax file on router
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_router_delete_fax(RmProfile *profile, const gchar *filename)
 {
@@ -474,10 +586,13 @@ gboolean rm_router_delete_fax(RmProfile *profile, const gchar *filename)
 }
 
 /**
- * \brief Delete voice file on router
- * \param profile profile structure
- * \param filename voice filename to delete
- * \param TRUE on success, otherwise FALSE
+ * rm_router_delete_voice:
+ * @profile: a #RmProfile
+ * @filename: voice filename to delete
+ *
+ * Delete voice file on router
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_router_delete_voice(RmProfile *profile, const gchar *filename)
 {
@@ -485,9 +600,12 @@ gboolean rm_router_delete_voice(RmProfile *profile, const gchar *filename)
 }
 
 /**
- * \brief Free router info structure
- * \param info router_info structure
- * \return TRUE if structure is freed, otherwise FALSE
+ * rm_router_info_free:
+ * @info: a #RmRouterInfo
+ *
+ * Free router info structure
+ *
+ * Returns: %TRUE if structure is freed, otherwise %FALSE
  */
 gboolean rm_router_info_free(RmRouterInfo *info)
 {
@@ -516,9 +634,12 @@ gboolean rm_router_info_free(RmRouterInfo *info)
 }
 
 /**
- * \brief Check if router is using cable as annex
- * \param profile profile structure
- * \return TRUE if cable is used, otherwise FALSE
+ * rm_router_is_cable:
+ * @profile: a #RmProfile
+ *
+ * Check if router is using cable as annex
+ *
+ * Returns: %TRUE if cable is used, otherwise %FALSE
  */
 gboolean rm_router_is_cable(RmProfile *profile)
 {
@@ -532,10 +653,13 @@ gboolean rm_router_is_cable(RmProfile *profile)
 }
 
 /**
- * \brief Load fax reports and add them to the journal
- * \param profile profile structure
- * \param journal journal list pointer
- * \return new journal list with attached fax reports
+ * rm_router_load_fax_reports:
+ * @profile: a #RmProfile
+ * @journal: journal list pointer
+ *
+ * Load fax reports and add them to the journal
+ *
+ * Returns: new journal list with attached fax reports
  */
 GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
 {
@@ -585,18 +709,20 @@ GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
 }
 
 /**
- * \brief Load voice records and add them to the journal
- * \param profile profile structure
- * \param journal journal list pointer
- * \return new journal list with attached fax reports
+ * rm_router_load_voice_records:
+ * @profile: a #RmProfile
+ * @journal: journal list pointer
+ *
+ * Load voice records and add them to the journal
+ *
+ * Returns: new journal list with attached voice records
  */
 GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 {
 	GDir *dir;
 	GError *error = NULL;
 	const gchar *file_name;
-	const gchar *user_plugins = g_get_user_data_dir();
-	gchar *dir_name = g_build_filename(user_plugins, RM_NAME, G_DIR_SEPARATOR_S, NULL);
+	gchar *dir_name = g_build_filename(rm_get_user_plugins_dir(), G_DIR_SEPARATOR_S, NULL);
 
 	if (!dir_name) {
 		return journal;
@@ -648,15 +774,26 @@ GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 }
 
 /**
- * \brief Get number suppress state
- * \param profile router information structure
- * \return suppress state
+ * rm_router_get_suppress_state:
+ * @profile: a #RmProfile
+ *
+ * Get number suppress state
+ *
+ * Returns: suppress state
  */
 gboolean rm_router_get_suppress_state(RmProfile *profile)
 {
 	return g_settings_get_boolean(profile->settings, "suppress");
 }
 
+/**
+ * rm_router_need_ftp:
+ * @profile: a #RmProfile
+ *
+ * Checks wether router needs ftp or is capable of TR-064
+ *
+ * Returns: %TRUE if ftp support is needed
+ */
 gboolean rm_router_need_ftp(RmProfile *profile)
 {
 	g_debug("%s(): called", __FUNCTION__);

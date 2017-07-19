@@ -17,14 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_CSV_H_
-#define __RM_CSV_H_
+#ifndef __RM_CSV_H__
+#define __RM_CSV_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
-typedef gpointer (*rm_csv_parse_line_func)(gpointer ptr, gchar **split);
+/**
+ * RmCsvParseLineFunc:
+ * @ptr: pointer to csv data
+ * @split: string array
+ *
+ * Parses a line within csv data
+ *
+ * Returns: new pointer to parsed data
+ */
+typedef gpointer (*RmCsvParseLineFunc)(gpointer ptr, gchar **split);
 
-gpointer rm_csv_parse_data(const gchar *data, const gchar *header, rm_csv_parse_line_func csv_parse_line, gpointer ptr);
+gpointer rm_csv_parse_data(const gchar *data, const gchar *header, RmCsvParseLineFunc csv_parse_line, gpointer ptr);
 
 G_END_DECLS
 

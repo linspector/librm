@@ -402,8 +402,10 @@ void rm_profile_set_login_password(RmProfile *profile, const gchar *password)
 /**
  * rm_profile_get_addressbook:
  * @profile: a #RmProfile
-*
+ *
  * Get address book for selected profile.
+ *
+ * Returns: a #RmAddressBook
  */
 RmAddressBook *rm_profile_get_addressbook(RmProfile *profile)
 {
@@ -427,6 +429,13 @@ RmAddressBook *rm_profile_get_addressbook(RmProfile *profile)
 	return book;
 }
 
+/**
+ * rm_profile_set_addressbook:
+ * @profile: a #RmProfile
+ * @book: a #RmAddressBook
+ *
+ * Sets preferred addressbook within profile.
+ */
 void rm_profile_set_addressbook(RmProfile *profile, RmAddressBook *book)
 {
 	g_settings_set_string(profile->settings, "address-book-plugin", rm_addressbook_get_name(book));
@@ -451,10 +460,12 @@ RmAudio *rm_profile_get_audio(RmProfile *profile)
 }
 
 /**
- * rm_profile_get_ringtone_device:
+ * rm_profile_get_audio_ringtone:
  * @profile: a #RmProfile
-*
- * Get audio for selected profile.
+ *
+ * Get ringtone audio device for selected profile.
+ *
+ * Returns: Audio ringtone device
  */
 gchar *rm_profile_get_audio_ringtone(RmProfile *profile)
 {
@@ -466,6 +477,8 @@ gchar *rm_profile_get_audio_ringtone(RmProfile *profile)
  * @profile: a #RmProfile
  *
  * Get notification for selected profile.
+ *
+ * Returns: a #RmNotification
  */
 RmNotification *rm_profile_get_notification(RmProfile *profile)
 {
@@ -526,7 +539,7 @@ void rm_profile_set_notification_incoming_numbers(RmProfile *profile, const gcha
 }
 
 /**
- * rm_profile_get_notification_outgoing_numbers:
+ * rm_profile_set_notification_outgoing_numbers:
  * @profile: a #RmProfile
  * @numbers: numbers to set
  *
@@ -555,6 +568,13 @@ RmPhone *rm_profile_get_phone(RmProfile *profile)
 	return phone;
 }
 
+/**
+ * rm_profile_set_phone:
+ * @profile: a #RmProfile
+ * @name: phone name
+ *
+ * Set preferred phone name within profile.
+ */
 void rm_profile_set_phone(RmProfile *profile, gchar *name)
 {
 	g_settings_set_string(profile->settings, "phone-plugin", name);
@@ -578,6 +598,13 @@ RmFax *rm_profile_get_fax(RmProfile *profile)
 	return fax;
 }
 
+/**
+ * rm_profile_set_fax:
+ * @profile: a #RmProfile
+ * @name: fax name
+ *
+ * Set preferred phone name within profile.
+ */
 void rm_profile_set_fax(RmProfile *profile, gchar *name)
 {
 	g_settings_set_string(profile->settings, "fax-plugin", name);

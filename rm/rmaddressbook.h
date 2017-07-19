@@ -20,15 +20,21 @@
 #ifndef __RM_ADDRESSBOOK_H__
 #define __RM_ADDRESSBOOK_H__
 
-//#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
-//#error "Only <rm/rm.h> can be included directly."
-//#endif
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <rm/rmcontact.h>
 
 G_BEGIN_DECLS
 
+/**
+ * RmAddressBook:
+ *
+ * The #RmAddressBook-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	/** Address book plugin name */
 	gchar *name;
 	gchar *(*get_active_book_name)(void);

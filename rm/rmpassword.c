@@ -25,6 +25,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/**
+ * SECTION:rmpassword
+ * @title: RmPassword
+ * @short_description: Password function abstracting interaction with password plugins
+ * @stability: Stable
+ *
+ * Offers generic password functions which are mapped to active password plugin.
+ */
+
 #ifndef __APPLE__
 #if  defined  G_OS_WIN32
  #include  <windows.h>
@@ -234,7 +243,7 @@ gchar *rm_password_encode(const gchar *in)
 }
 
 /**
- * rm_password_encode:
+ * rm_password_decode:
  * @in: input string
  *
  * Decodes @in string and returns result.

@@ -20,7 +20,7 @@
 #ifndef FIRMWARE_QUERY_H
 #define FIRMWARE_QUERY_H
 
-#include <rm/rmrouter.h>
+#include <rm/rm.h>
 
 G_BEGIN_DECLS
 

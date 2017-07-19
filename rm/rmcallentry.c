@@ -51,7 +51,7 @@
  *
  * Returns: new #RmCallEntry
  */
-RmCallEntry *rm_call_entry_new(enum rm_call_entry_types type, const gchar *date_time, const gchar *remote_name, const gchar *remote_number, const gchar *local_name, const gchar *local_number, const gchar *duration, gpointer priv)
+RmCallEntry *rm_call_entry_new(RmCallEntryTypes type, const gchar *date_time, const gchar *remote_name, const gchar *remote_number, const gchar *local_name, const gchar *local_number, const gchar *duration, gpointer priv)
 {
 	RmCallEntry *call_entry;
 

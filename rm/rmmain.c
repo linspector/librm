@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+#include <rmconfig.h>
+
 #include <rm/rmmain.h>
 #include <rm/rmfilter.h>
 #include <rm/rmprofile.h>
@@ -185,6 +187,18 @@ gchar *rm_get_user_data_dir(void)
 }
 
 /**
+ * rm_get_user_plugins_dir:
+ *
+ * Return user plugins directory.
+ *
+ * Returns: user plugins directory string
+ */
+gchar *rm_get_user_plugins_dir(void)
+{
+	return g_build_filename(rm_get_user_data_dir(), RM_NAME, NULL);
+}
+
+/**
  * rm_set_requested_profile:
  * @name: requested profile name
  *
@@ -209,6 +223,19 @@ void rm_set_requested_profile(gchar *name)
 gchar *rm_get_requested_profile(void)
 {
 	return rm_requested_profile;
+}
+
+/**
+ * rm_gettext:
+ * @msgid: Text to translate with gettext
+ *
+ * Translate provided text.
+ *
+ * Returns: translated text using dgettext
+ */
+char *rm_gettext(const char *msgid)
+{
+	return dgettext(RM_GETTEXT_PACKAGE, msgid);
 }
 
 /**

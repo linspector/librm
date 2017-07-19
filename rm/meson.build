@@ -34,10 +34,11 @@ rm_sources = [
 	'rmsettings.c',
 	'rmssdp.c',
 	'rmvox.c',
-	'xml.c'
+	'rmxml.c'
 ]
 
 rm_headers = [
+	'rm.h',
 	'rmaction.h',
 	'rmaddressbook.h',
 	'rmaudio.h',
@@ -59,6 +60,7 @@ rm_headers = [
 	'rmnetmonitor.h',
 	'rmnetwork.h',
 	'rmnotification.h',
+	'rmnumber.h',
 	'rmobjectemit.h',
 	'rmobject.h',
 	'rmosdep.h',
@@ -72,7 +74,7 @@ rm_headers = [
 	'rmvox.h',
 	'rmrouter.h',
 	'rmrouterinfo.h',
-	'xml.h'
+	'rmxml.h'
 ]
 install_headers(rm_headers, subdir : 'rm')
 
@@ -89,6 +91,7 @@ rm_shared = shared_library('rm',
                         include_directories : rm_inc,
                         dependencies : rm_dep,
                         install : true,
+                        c_args : '-DRM_COMPILATION',
                         link_args : rm_link)
 
 rm_dep = declare_dependency(link_with : rm_shared,

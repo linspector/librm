@@ -17,13 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_CONNECTION_H
-#define __RM_CONNECTION_H
+#ifndef __RM_CONNECTION_H__
+#define __RM_CONNECTION_H__
 
-G_BEGIN_DECLS
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <rm/rmdevice.h>
 
+G_BEGIN_DECLS
+
+/**
+ * RmConnectionType:
+ * @RM_CONNECTION_TYPE_INCOMING: Incoming connection
+ * @RM_CONNECTION_TYPE_OUTGOING: Outgoing connection
+ * @RM_CONNECTION_TYPE_CONNECT: Connection established
+ * @RM_CONNECTION_TYPE_DISCONNECT: Connection terminated
+ * @RM_CONNECTION_TYPE_MISSED: Connection missed (call not picked up)
+ * @RM_CONNECTION_TYPE_SOFTPHONE: Additional flag indicating that this is a softphone connection
+ *
+ * The type of a connection.
+ */
 typedef enum {
 	RM_CONNECTION_TYPE_INCOMING   = 0x01,
 	RM_CONNECTION_TYPE_OUTGOING   = 0x02,
@@ -35,8 +50,13 @@ typedef enum {
 
 typedef struct RmConnection RmConnection;
 
-/** connection structure */
+/**
+ * RmConnection:
+ *
+ * The #RmConnection-struct contains only private fileds and should not be directly accessed.
+ */
 struct RmConnection {
+	/*< private >*/
 	/* Device owning this connection */
 	gpointer device;
 	/* Unique ID */

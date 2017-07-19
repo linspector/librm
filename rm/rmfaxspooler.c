@@ -30,6 +30,16 @@
 #include <rm/rmmain.h>
 #include <rm/rmfaxspooler.h>
 
+/**
+ * SECTION:rmfaxspooler
+ * @title: RmFaxSpooler
+ * @short_description: Fax spooler watching a spooler directory for incoming fax transfers
+ * @stability: Stable
+ *
+ * Provides a fax spooler. Watches a selected directory for new files and starts a fax
+ * transfer if a valid file has been placed. This one is used on most systems (Linux, OSX, ...)
+ */
+
 #define SPOOLER_DIR "/var/spool/"
 
 #define SPOOLER_DEBUG 1

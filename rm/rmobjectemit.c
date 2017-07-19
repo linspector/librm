@@ -28,6 +28,15 @@
 #include <rm/rmstring.h>
 
 /**
+ * SECTION:rmobjectemit
+ * @title: RmObjectEmit
+ * @short_description: Helper functions for interacting with RmObject
+ * @stability: Stable
+ *
+ * Helper functions for interacting with RmObject, e.g. all emit functions.
+ */
+
+/**
  * rm_object_emit_connection_changed:
  * @event: a #RmConnectionType
  * @connection: a #RmConnection
@@ -89,6 +98,8 @@ void rm_object_emit_fax_process(const gchar *filename)
 /**
  * rm_object_emit_connection_incoming:
  * @connection: a #RmConnection
+ *
+ * Emit signal connection-changed with type RM_CONNECTON_TYPE_INCOMING
  */
 void rm_object_emit_connection_incoming(RmConnection *connection)
 {
@@ -98,6 +109,8 @@ void rm_object_emit_connection_incoming(RmConnection *connection)
 /**
  * rm_object_emit_connection_outgoing:
  * @connection: a #RmConnection
+ *
+ * Emit signal connection-changed with type RM_CONNECTON_TYPE_OUTGOINF
  */
 void rm_object_emit_connection_outgoing(RmConnection *connection)
 {
@@ -107,6 +120,8 @@ void rm_object_emit_connection_outgoing(RmConnection *connection)
 /**
  * rm_object_emit_connection_connect:
  * @connection: a #RmConnection
+ *
+ * Emit signal connection-changed with type RM_CONNECTON_TYPE_CONNECT
  */
 void rm_object_emit_connection_connect(RmConnection *connection)
 {
@@ -116,6 +131,8 @@ void rm_object_emit_connection_connect(RmConnection *connection)
 /**
  * rm_object_emit_connection_disconnect:
  * @connection: a #RmConnection
+ *
+ * Emit signal connection-changed with type RM_CONNECTON_TYPE_DISCONNECT
  */
 void rm_object_emit_connection_disconnect(RmConnection *connection)
 {

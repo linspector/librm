@@ -51,7 +51,7 @@ static void rm_network_free_auth_data(RmAuthData *auth_data)
 	g_free(auth_data->username);
 	g_free(auth_data->password);
 
-	g_slice_free(struct auth_data, auth_data);
+	g_slice_free(RmAuthData, auth_data);
 }
 
 /**
@@ -82,6 +82,8 @@ static void rm_network_save_password_cb(SoupMessage* msg, RmAuthData *auth_data)
  * rm_network_authenticate:
  * @auth_set: indicated whether authtentification data has been set
  * @auth_data: a #RmAuthData
+ *
+ * Authenticate within network with @auth_data
  */
 void rm_network_authenticate(gboolean auth_set, RmAuthData *auth_data)
 {

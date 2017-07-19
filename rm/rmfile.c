@@ -34,7 +34,7 @@
 
 /**
  * rm_file_save:
- * @file: file name
+ * @name: file name
  * @data: data pointer
  * @len: length of data
  *

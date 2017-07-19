@@ -31,13 +31,7 @@
 #include <phone.h>
 #include <isdn-convert.h>
 
-#include <rm/rmphone.h>
-#include <rm/rmprofile.h>
-#include <rm/rmstring.h>
-#include <rm/rmnumber.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmmain.h>
-
+#include <rm/rm.h>
 
 /* Close recording */
 int recording_close(struct recorder *recorder);

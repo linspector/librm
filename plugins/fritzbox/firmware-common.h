@@ -22,9 +22,7 @@
 
 #include <string.h>
 
-#include <rm/rmrouter.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmnumber.h>
+#include <rm/rm.h>
 
 #include "fritzbox.h"
 

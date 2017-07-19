@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_PHONE_H
-#define __RM_PHONE_H
+#ifndef __RM_PHONE_H__
+#define __RM_PHONE_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 
@@ -30,7 +34,13 @@ G_BEGIN_DECLS
 
 typedef struct _RmPhone RmPhone;
 
+/**
+ * RmPhone:
+ *
+ * The #RmPhone-struct contains only private fileds and should not be directly accessed.
+ */
 struct _RmPhone {
+	/*< private >*/
 	RmDevice *device;
 	gchar *name;
 	RmConnection *(*dial)(RmPhone *phone, const gchar *target, gboolean anonymous);
@@ -51,8 +61,6 @@ void rm_phone_register(RmPhone *phone);
 void rm_phone_unregister(RmPhone *phone);
 
 GSList *rm_phone_get_plugins(void);
-GSList *rm_phone_get_devices(RmPhone *phone);
-void rm_phone_set_device(RmPhone *phone, gchar *name);
 RmPhone *rm_phone_get(gchar *name);
 gchar *rm_phone_get_name(RmPhone *phone);
 

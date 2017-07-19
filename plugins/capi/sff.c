@@ -26,7 +26,7 @@
 
 #include <glib.h>
 
-#include <rm/rmfile.h>
+#include <rm/rm.h>
 
 #include <capi.h>
 #include <fax.h>

@@ -187,6 +187,8 @@ static gint rm_addressbook_number_in_contact(gconstpointer a, gconstpointer b)
  * @obj: a #RmObject
  * @contact: a #RmContact
  * @user_data: user data
+ *
+ * On contact-process signal, try to lookup contact in addressbook
  */
 static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact, gpointer user_data)
 {
@@ -295,7 +297,7 @@ void rm_addressbook_unregister(RmAddressBook *book)
 }
 
 /**
- * rm_addresbook_get_name:
+ * rm_addressbook_get_name:
  * @book: a #RmAddressBook
  *
  * Retrieve name of current address book.
@@ -308,7 +310,7 @@ gchar *rm_addressbook_get_name(RmAddressBook *book)
 }
 
 /**
- * rm_addresbook_get_sub_name:
+ * rm_addressbook_get_sub_name:
  * @book: a #RmAddressBook
  *
  * Retrieve sub name of current address book.
@@ -338,6 +340,7 @@ GSList *rm_addressbook_get_plugins(void)
 
 /**
  * rm_addressbook_get_sub_books:
+ * @book: a #RmAddressBook
  *
  * Get all sub books provides by given address book plugin
  *
@@ -352,6 +355,13 @@ gchar **rm_addressbook_get_sub_books(RmAddressBook *book)
 	return NULL;
 }
 
+/**
+ * rm_addressbook_set_sub_book:
+ * @book: a #RmAddressBook
+ * @name: name of the sub book
+ *
+ * Sets #name as the current sub book.
+ */
 void rm_addressbook_set_sub_book(RmAddressBook *book, gchar *name)
 {
 	if (book && book->set_sub_book) {

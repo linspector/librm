@@ -17,19 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_ROUTERINFO_H
-#define __RM_ROUTERINFO_H
+#ifndef __RM_ROUTERINFO_H__
+#define __RM_ROUTERINFO_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <gio/gio.h>
+
+/**
+ * SECTION:rmrouterinfo
+ * @title: RmRouterInfo
+ * @short_description: Keeps track of a small subset of router informations.
+ * @stability: Stable
+ *
+ * Keeps track of a small subset of router informations.
+ */
 
 G_BEGIN_DECLS
 
 /**
  * RmRouterInfo:
  *
- * Router information structure
+ * The #RmRouterInfo-struct contains only private fileds and should not be directly accessed.
  */
 typedef struct {
+	/*< private >*/
 	/* Host name */
 	gchar *host;
 	/* User */

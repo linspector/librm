@@ -24,12 +24,7 @@
 
 #include <glib.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmlog.h>
-#include <rm/rmnetwork.h>
-#include <rm/rmcsv.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 #include "fritzbox.h"
 #include "csv.h"

@@ -25,6 +25,16 @@
 #include <rm/rmphone.h>
 #include <rm/rmstring.h>
 
+/**
+ * SECTION:rmphone
+ * @title: RmPhone
+ * @short_description: High level phone functions
+ * @stability: Stable
+ *
+ * Abstraction between application an phone plugins. Offers convenient phone function which
+ * hides all complexity.
+ */
+
 /** Internal phone list */
 static GSList *rm_phone_plugins = NULL;
 
@@ -142,18 +152,18 @@ void rm_phone_hold(RmPhone *phone, RmConnection *connection, gboolean hold)
  * rm_phone_dtmf:
  * @phone: a #RmPhone
  * @connection: a #RmConnection
- * @chr: character to send
+ * @code: code to send
  *
  * Send dtmf code on @connection
- * */
-void rm_phone_dtmf(RmPhone *phone, RmConnection *connection, guchar chr)
+ */
+void rm_phone_dtmf(RmPhone *phone, RmConnection *connection, guchar code)
 {
 	if (!phone || !phone->send_dtmf_code) {
 		g_warning("%s(): No phone or send dtmf code function", __FUNCTION__);
 		return;
 	}
 
-	phone->send_dtmf_code(connection, chr);
+	phone->send_dtmf_code(connection, code);
 }
 
 /**

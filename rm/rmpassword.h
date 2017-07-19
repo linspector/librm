@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_PASSWORD_H
-#define __RM_PASSWORD_H
+#ifndef __RM_PASSWORD_H__
+#define __RM_PASSWORD_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 
@@ -26,7 +30,13 @@
 
 G_BEGIN_DECLS
 
-typedef struct _RmPasswordManager {
+/**
+ * RmPasswordManager:
+ *
+ * The #RmPasswordManager-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct {
+	/*< private >*/
 	const gchar *name;
 	void (*set)(RmProfile *profile, const gchar *name, const gchar *password);
 	gchar *(*get)(RmProfile *profile, const gchar *name);
@@ -38,7 +48,6 @@ gchar *rm_password_get(RmProfile *profile, const gchar *name);
 gboolean rm_password_remove(RmProfile *profile, const gchar *name);
 void rm_password_register(RmPasswordManager *manager);
 GSList *rm_password_get_plugins(void);
-void rm_password_init(void);
 gchar *rm_password_encode(const gchar *in);
 guchar *rm_password_decode(const gchar *in);
 

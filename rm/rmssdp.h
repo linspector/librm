@@ -17,10 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_SSDP_H
-#define __RM_SSDP_H
+#ifndef __RM_SSDP_H__
+#define __RM_SSDP_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
+
+G_BEGIN_DECLS
 
 void rm_ssdp_init(void);
 GList *rm_ssdp_get_routers(void);
+
+G_END_DECLS
 
 #endif

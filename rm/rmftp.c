@@ -28,13 +28,25 @@
 #include <rm/rmnetwork.h>
 #include <rm/rmftp.h>
 
+/**
+ * SECTION:rmftp
+ * @title: RmFtp
+ * @short_description: Small ftp library
+ * @stability: Stable
+ *
+ * Provides basic FTP functionality for interacting with the router.
+ */
+
 //#define FTP_DEBUG 1
 
 /**
- * \brief Open FTP port channel
- * \param server server name
- * \param port port number
- * \return io channel for given server:port
+ * rm_ftp_open_port:
+ * @server server name
+ * @port port number
+ *
+ * Open FTP port channel
+ *
+ * Returns: io channel for given server:port
  */
 static GIOChannel *rm_ftp_open_port(gchar *server, gint port)
 {
@@ -109,10 +121,13 @@ static GIOChannel *rm_ftp_open_port(gchar *server, gint port)
 }
 
 /**
- * \brief Read FTP control response from channel
- * \param channel open ftp io control channel
- * \param len pointer to store the data length to
- * \return data response message or NULL on error
+ * rm_ftp_read_control_response:
+ * @channel: open ftp io control channel
+ * @len: pointer to store the data length to
+ *
+ * Read FTP control response from channel
+ *
+ * Returns: data response message or NULL on error
  */
 gboolean rm_ftp_read_control_response(RmFtp *client)
 {
@@ -176,10 +191,13 @@ gboolean rm_ftp_read_control_response(RmFtp *client)
 }
 
 /**
- * \brief Read FTP data response from channel
- * \param channel open ftp io data channel
- * \param len pointer to store the data length to
- * \return data response message or NULL on error
+ * rm_ftp_read_data_response:
+ * @channel: open ftp io data channel
+ * @len: pointer to store the data length to
+ *
+ * Read FTP data response from channel
+ *
+ * Returns: data response message or NULL on error
  */
 gchar *rm_ftp_read_data_response(GIOChannel *channel, gsize *len)
 {
@@ -218,10 +236,13 @@ gchar *rm_ftp_read_data_response(GIOChannel *channel, gsize *len)
 }
 
 /**
- * \brief Send FTP command through io channel
- * \param client ftp client structure
- * \param command FTP command
- * \return TRUE if data is available, FALSE on error
+ * rm_ftp_send_command:
+ * @client: a #RmFtp
+ * @command: FTP command
+ *
+ * Send FTP command through io channel
+ *
+ * Returns: TRUE if data is available, FALSE on error
  */
 gboolean rm_ftp_send_command(RmFtp *client, gchar *command)
 {
@@ -244,11 +265,14 @@ gboolean rm_ftp_send_command(RmFtp *client, gchar *command)
 }
 
 /**
- * \brief Login to FTP server
- * \param client ftp client structure
- * \param user username
- * \param password user password
- * \return TRUE if login was successfull, otherwise FALSE
+ * rm_ftp_login:
+ * @client: a #RmFtp
+ * @user: username
+ * @password: user password
+ *
+ * Login to FTP server
+ *
+ * Returns: %TRUE if login was successfull, otherwise %FALSE
  */
 gboolean rm_ftp_login(RmFtp *client, const gchar *user, const gchar *password)
 {
@@ -282,9 +306,12 @@ gboolean rm_ftp_login(RmFtp *client, const gchar *user, const gchar *password)
 }
 
 /**
- * \brief Switch FTP transfer to passive mode
- * \param client ftp client structure
- * \return result, TRUE for success, FALSE on error
+ * rm_ftp_passive:
+ * @client: a #RmFtp
+ *
+ * Switch FTP transfer to passive mode
+ *
+ * Returns: result, %TRUE for success, %FALSE on error
  */
 gboolean rm_ftp_passive(RmFtp *client)
 {
@@ -354,10 +381,13 @@ gboolean rm_ftp_passive(RmFtp *client)
 }
 
 /**
- * \brief List FTP directory
- * \param client ftp client structure
- * \param dir directory name
- * \return directory listing
+ * rm_ftp_list_dir:
+ * @client: a #RmFtp
+ * @dir: directory name
+ *
+ * List FTP directory
+ *
+ * Returns: directory listing
  */
 gchar *rm_ftp_list_dir(RmFtp *client, const gchar *dir)
 {
@@ -383,11 +413,14 @@ gchar *rm_ftp_list_dir(RmFtp *client, const gchar *dir)
 }
 
 /**
- * \brief Get file of FTP
- * \param client ftp client structure
- * \param file file to download
- * \param len pointer to store the file size to
- * \return file data or NULL on error
+ * rm_ftp_get_file:
+ * @client: a #RmFtp
+ * @file: file to download
+ * @len: pointer to store the file size to
+ *
+ * Get file of FTP
+ *
+ * Returns: file data or %NULL on error
  */
 gchar *rm_ftp_get_file(RmFtp *client, const gchar *file, gsize *len)
 {
@@ -418,13 +451,16 @@ gchar *rm_ftp_get_file(RmFtp *client, const gchar *file, gsize *len)
 }
 
 /**
- * \brief Put file on FTP
- * \param client ftp client structure
- * \param file file to upload
- * \param path remote path
- * \param data file data
- * \param size file size
- * \return TRUE on success, otherwise FALSE
+ * rm_ftp_put_file:
+ * @client: a #RmFtp
+ * @file: file to upload
+ * @path: remote path
+ * @data: file data
+  * @size: file size
+ *
+ * Put file on FTP
+ *
+ * Returns: TRUE on success, otherwise FALSE
  */
 gboolean rm_ftp_put_file(RmFtp *client, const gchar *file, const gchar *path, gchar *data, gsize size)
 {
@@ -498,9 +534,12 @@ gboolean rm_ftp_put_file(RmFtp *client, const gchar *file, const gchar *path, gc
 }
 
 /**
- * \brief Initialize ftp structure
- * \param server server host name
- * \return ftp structure or NULL on error
+ * rm_ftp_init:
+ * @server: server host name
+ *
+ * Initialize ftp structure
+ *
+ * Returns: ftp structure or NULL on error
  */
 RmFtp *rm_ftp_init(const gchar *server)
 {
@@ -528,9 +567,12 @@ RmFtp *rm_ftp_init(const gchar *server)
 }
 
 /**
- * \brief Shutdown ftp structure (close sockets and free memory)
- * \param client ftp client structure
- * \return TRUE on success, otherwise FALSE
+ * rm_ftp_shutdown:
+ * @client: a #RmFtp
+ *
+ * Shutdown ftp structure (close sockets and free memory)
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_ftp_shutdown(RmFtp *client)
 {
@@ -575,14 +617,17 @@ gboolean rm_ftp_shutdown(RmFtp *client)
 }
 
 /**
- * \brief Delete file on FTP
- * \param client ftp client structure
- * \param filename file to delete
- * \return TRUE on success, otherwise FALSE
+ * rm_ftp_delete_file:
+ * @client: a #RmFtp
+ * @file: file to delete
+ *
+ * Delete file on FTP.
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
-gboolean rm_ftp_delete_file(RmFtp *client, const gchar *filename)
+gboolean rm_ftp_delete_file(RmFtp *client, const gchar *file)
 {
-	gchar *cmd = g_strconcat("DELE ", filename, NULL);
+	gchar *cmd = g_strconcat("DELE ", file, NULL);
 
 #ifdef FTP_DEBUG
 	g_debug("ftp_delete_file(): %s", cmd);

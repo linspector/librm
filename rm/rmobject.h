@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_OBJECT_H
-#define __RM_OBJECT_H
+#ifndef __RM_OBJECT_H__
+#define __RM_OBJECT_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 #include <glib-object.h>
@@ -48,14 +52,23 @@ typedef enum {
 #define IS_RM_OBJECT(obj) (G_TYPE_CHECK_INSTANCE_TYPE((obj), RM_OBJECT_TYPE))
 #define IS_RM_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), RM_OBJECT_TYPE))
 
-typedef struct _RmObject RmObject;
-typedef struct _RmObjectClass RmObjectClass;
-
-struct _RmObject {
+/**
+ * RmObject:
+ *
+ * The #RmObject-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct _RmObject {
+	/*< private >*/
 	GObject parent;
-};
+} RmObject;
 
-struct _RmObjectClass {
+/**
+ * RmObjectClass:
+ *
+ * The #RmObjectClass-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct _RmObjectClass {
+	/*< private >*/
 	GObjectClass parent_class;
 	void (*journal_loaded)(GSList *journal);
 	void (*connection_changed)(gint event, RmConnection *connection);
@@ -65,7 +78,7 @@ struct _RmObjectClass {
 	void (*message)(gpointer title, gpointer message);
 	void (*contacts_changed)(void);
 	void (*authenticate)(RmAuthData *auth_data);
-};
+} RmObjectClass;
 
 GObject *rm_object_new(void);
 

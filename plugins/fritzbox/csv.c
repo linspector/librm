@@ -22,11 +22,7 @@
 
 #include <glib.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmcsv.h>
-#include <rm/rmlog.h>
-#include <rm/rmjournal.h>
+#include <rm/rm.h>
 
 #include "csv.h"
 #include "firmware-common.h"

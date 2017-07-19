@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_PROFILE_H
-#define __RM_PROFILE_H
+#ifndef __RM_PROFILE_H__
+#define __RM_PROFILE_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <gio/gio.h>
 
@@ -32,6 +36,11 @@
 
 G_BEGIN_DECLS
 
+/**
+ * RmProfile:
+ *
+ * The #RmProfile-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
 	/*< private >*/
 	gchar *name;

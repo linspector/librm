@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_OSDEP_H
-#define __RM_OSDEP_H
+#ifndef __RM_OSDEP_H__
+#define __RM_OSDEP_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #ifdef G_OS_WIN32
 #include <windows.h>

@@ -27,7 +27,7 @@
 #include <rm/rmfile.h>
 #include <rm/rmmain.h>
 
-static rm_log_func app_log = NULL;
+static RmLogFunc app_log = NULL;
 static gboolean debug_state = FALSE;
 
 /**
@@ -213,7 +213,7 @@ void rm_log_set_level(GLogLevelFlags level)
  *
  * Allows application to access debug information
  */
-void rm_log_set_app_handler(rm_log_func app_log_func)
+void rm_log_set_app_handler(RmLogFunc app_log_func)
 {
 	app_log = app_log_func;
 }

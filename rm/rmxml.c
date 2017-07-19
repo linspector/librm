@@ -17,19 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/**
- * \file xml.c
- * \brief XML config file parsing
- */
-
 #include <string.h>
 
-//#include <gtk/gtk.h>
 #include <glib.h>
 
 #include <libxml/parser.h>
 
-#include <rm/xml.h>
+#include <rm/rmxml.h>
+
+/**
+ * SECTION:rmxml
+ * @title: RmXml
+ * @short_description: XML parsing functions
+ * @stability: Stable
+ *
+ * Small subset of function for parsing and modifying XML files.
+ */
 
 /**
  * \brief Create new xml node

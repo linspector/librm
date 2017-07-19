@@ -22,23 +22,11 @@
  * \brief CAPI routines and main capi functions
  */
 
-#include <rmconfig.h>
-
 #ifndef WIN32
 #include <sys/resource.h>
 #endif
 
-#include <rm/rmobjectemit.h>
-#include <rm/rmplugins.h>
-#include <rm/rmnetmonitor.h>
-#include <rm/rmaudio.h>
-#include <rm/rmstring.h>
-
-#include <rm/rmprofile.h>
-#include <rm/rmrouter.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmnumber.h>
-
+#include <rm/rm.h>
 
 #include <capi.h>
 #include <fax.h>
@@ -63,8 +51,6 @@ static struct session *session = NULL;
 static unsigned int id = 1024;
 /** cancellable capi loop */
 static GCancellable *capi_loop_cancel = NULL;
-
-#define RM_ERROR
 
 /**
  * \brief Connection ring handler - emit connection-established signal

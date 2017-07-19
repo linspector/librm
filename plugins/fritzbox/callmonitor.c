@@ -27,14 +27,7 @@
 #include <netinet/tcp.h>
 #endif
 
-#include <rm/rmconnection.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmplugins.h>
-#include <rm/rmrouter.h>
-#include <rm/rmprofile.h>
-#include <rm/rmnetmonitor.h>
-#include <rm/rmdevice.h>
+#include <rm/rm.h>
 
 #include <fritzbox.h>
 

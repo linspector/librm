@@ -17,15 +17,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_NETMONITOR_H
-#define __RM_NETMONITOR_H
+#ifndef __RM_NETMONITOR_H__
+#define __RM_NETMONITOR_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
+/**
+ * RmNetConnect:
+ * @user_data: Plugin specific data
+ *
+ * Gets called as soon a network connection has been established.
+ */
 typedef gboolean (*RmNetConnect)(gpointer user_data);
+
+/**
+ * RmNetDisconnect:
+ * @user_data: Plugin specific data
+ *
+ * Gets called as soon a network connection has been terminated.
+ */
 typedef gboolean (*RmNetDisconnect)(gpointer user_data);
 
+/**
+ * RmNetEvent:
+ *
+ * The #RmNetEvent-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct net_event {
+	/*< private >*/
 	gchar *name;
 	RmNetConnect connect;
 	RmNetDisconnect disconnect;

@@ -122,32 +122,32 @@ GSettings *rm_settings_new(gchar *scheme)
 /**
  * rm_settings_new_with_path:
  * @scheme: scheme name
- * @settings_path: settings path name
+ * @path: settings path name
  *
  * Creates new #GSettings configuration with settings path (either keyfile based, or system based (default)).
  *
  * Returns: newly create gsettings
  */
-GSettings *rm_settings_new_with_path(gchar *scheme, gchar *settings_path)
+GSettings *rm_settings_new_with_path(gchar *scheme, gchar *path)
 {
 	GSettings *settings = NULL;
 
 #ifdef USE_KEYFILE
 	GSettingsBackend *keyfile;
 	gchar *filename;
-	gchar *file = g_strdup(settings_path + 1);
+	gchar *file = g_strdup(path + 1);
 
 	rm_settings_remove_prefix(file);
 
 	filename = g_build_filename(g_get_user_config_dir(), G_DIR_SEPARATOR_S, file, G_DIR_SEPARATOR_S, "config", NULL);
 	keyfile = g_keyfile_settings_backend_new(filename, "/", NULL);
-	settings = g_settings_new_with_backend_and_path(scheme, keyfile, settings_path);
+	settings = g_settings_new_with_backend_and_path(scheme, keyfile, path);
 	g_object_unref(keyfile);
 
 	g_free(file);
 	g_free(filename);
 #else
-	settings = g_settings_new_with_path(scheme, settings_path);
+	settings = g_settings_new_with_path(scheme, path);
 #endif
 
 	return settings;
@@ -157,6 +157,7 @@ GSettings *rm_settings_new_with_path(gchar *scheme, gchar *settings_path)
  * rm_settings_new_profile:
  * @scheme: scheme name
  * @name: settings name
+ * @profile_name: profile name
  *
  * Creates new #GSettings configuration with a profile specfic settings path (either keyfile based, or system based (default)).
  *

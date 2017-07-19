@@ -17,12 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_FTP_H
-#define __RM_FTP_H
+#ifndef __RM_FTP_H__
+#define __RM_FTP_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
+/**
+ * RmFtp:
+ *
+ * The #RmFtp-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct rm_ftp {
+	/*< private >*/
 	gchar *server;
 	gint code;
 	gchar *response;
@@ -31,7 +41,6 @@ typedef struct rm_ftp {
 	GTimer *timer;
 } RmFtp;
 
-gchar *rm_ftp_read_response(GIOChannel *channel, gsize *len);
 gboolean rm_ftp_send_command(RmFtp *client, gchar *command);
 gboolean rm_ftp_login(RmFtp *client, const gchar *user, const gchar *password);
 gboolean rm_ftp_passive(RmFtp *client);

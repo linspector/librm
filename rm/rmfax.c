@@ -77,15 +77,15 @@ gchar *rm_fax_get_name(RmFax *fax)
  * rm_fax_get_status:
  * @fax: a #RmFax
  * @connection: a #RmConnection
- * @fax_status: a #RmFaxStatus
+ * @status: a #RmFaxStatus
  *
  * Retrieve fax status in @fax_status for given fax device @fax with connection @connection.
  *
  * Returns: %TRUE if status has been received, %FALSE on error
  */
-gboolean rm_fax_get_status(RmFax *fax, RmConnection *connection, RmFaxStatus *fax_status)
+gboolean rm_fax_get_status(RmFax *fax, RmConnection *connection, RmFaxStatus *status)
 {
-	return fax ? fax->get_status(connection, fax_status) : FALSE;
+	return fax ? fax->get_status(connection, status) : FALSE;
 }
 
 /**

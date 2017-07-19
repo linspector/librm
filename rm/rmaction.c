@@ -23,14 +23,6 @@
 
 #include <rmconfig.h>
 
-#if HAVE_UUID
-#include <uuid.h>
-#endif
-
-#if HAVE_DCONF
-#include <dconf.h>
-#endif
-
 #include <rm/rmaction.h>
 #include <rm/rmstring.h>
 #include <rm/rmobject.h>
@@ -178,6 +170,8 @@ static void rm_action_set_path(RmAction *action, const gchar *path)
  * rm_action_get_path:
  * @action: a #RmAction
  *
+ * Get action path.
+ *
  * Returns: (transfer full) action path.
  */
 static gchar *rm_action_get_path(RmAction *action)
@@ -201,6 +195,8 @@ void rm_action_set_name(RmAction *action, const gchar *name)
  * rm_action_get_name:
  * @action: a #RmAction
  *
+ * Get action name.
+ *
  * Returns: (transfer full) action name.
  */
 gchar *rm_action_get_name(RmAction *action)
@@ -213,7 +209,7 @@ gchar *rm_action_get_name(RmAction *action)
  * @action: a #RmAction
  * @description: new description of @action
  *
- * Set action description.
+ * Set action description of action.
  */
 void rm_action_set_description(RmAction *action, const gchar *description)
 {
@@ -223,6 +219,8 @@ void rm_action_set_description(RmAction *action, const gchar *description)
 /**
  * rm_action_get_description:
  * @action: a #RmAction
+ *
+ * Get action description of @action.
  *
  * Returns: (transfer full) action description.
  */
@@ -247,6 +245,8 @@ void rm_action_set_exec(RmAction *action, const gchar *exec)
  * rm_action_get_exec:
  * @action: a #RmAction
  *
+ * Get action exec string.
+ *
  * Returns: (transfer full) action exec.
  */
 gchar *rm_action_get_exec(RmAction *action)
@@ -257,6 +257,8 @@ gchar *rm_action_get_exec(RmAction *action)
 /**
  * rm_action_get_flags:
  * @action: a #RmAction
+ *
+ * Get action flags.
  *
  * Returns: action flags.
  */
@@ -292,6 +294,8 @@ void rm_action_set_numbers(RmAction *action, const gchar **numbers)
 /**
  * rm_action_get_numbers:
  * @action: a #RmAction
+ *
+ * Get numbers which are connected to action.
  *
  * Returns: (transfer full) action numbers.
  */
@@ -410,17 +414,9 @@ RmAction *rm_action_new(RmProfile *profile)
 {
 	RmAction *action;
 	gchar uuidstr[37];
-#if HAVE_UUID
-	uuid_t u;
 
-	uuid_generate(u);
-	uuid_unparse(u, uuidstr);
-
-	action = rm_action_load(profile, uuidstr);
-#else
 	rand_string(uuidstr, sizeof(uuidstr));
 	action = rm_action_load(profile, uuidstr);
-#endif
 
 	/* Save all actions to profile */
 	rm_action_save(profile);
@@ -442,19 +438,6 @@ void rm_action_remove(RmProfile *profile, RmAction *action)
 
 	/* Save all actions to profile */
 	rm_action_save(profile);
-
-#if HAVE_DCONF
-	if (rm_settings_backend_is_dconf()) {
-		gchar *path;
-		DConfClient *client;
-
-		path = g_strconcat("/org/tabos/rm/profile/", profile->name, "/", rm_action_get_path(action), "/", NULL);
-		client = dconf_client_new ();
-		dconf_client_write_sync (client, path, NULL, NULL, NULL, NULL);
-		g_free(path);
-		g_object_unref(client);
-	}
-#endif
 
 	/* Free internal action data */
 	g_object_unref(action);

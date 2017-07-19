@@ -28,18 +28,7 @@
 #include <libgupnp/gupnp.h>
 #include <libgupnp/gupnp-device-info.h>
 
-#include <rm/xml.h>
-#include <rm/rmprofile.h>
-#include <rm/rmfile.h>
-#include <rm/rmlog.h>
-#include <rm/rmnetwork.h>
-#include <rm/rmcsv.h>
-#include <rm/rmftp.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmnumber.h>
-#include <rm/rmstring.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmjournal.h>
+#include <rm/rm.h>
 
 #include "fritzbox.h"
 #include "firmware-common.h"
@@ -314,7 +303,7 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, xmlnode 
 	gchar *local_number;
 	xmlnode *tmp;
 	RmCallEntry *call_entry;
-	enum rm_call_entry_types call_type;
+	RmCallEntryTypes call_type;
 
 	//tmp = xmlnode_get_child(call, "Id");
 	//id = xmlnode_get_data(tmp);

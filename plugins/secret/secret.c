@@ -20,10 +20,7 @@
 
 #include <libsecret/secret.h>
 
-#include <rm/rmcallentry.h>
-#include <rm/rmplugins.h>
-#include <rm/rmpassword.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 #include <secret.h>
 

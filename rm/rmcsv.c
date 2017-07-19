@@ -28,8 +28,6 @@
 #include <rm/rmprofile.h>
 #include <rm/rmfile.h>
 
-//#include <rm/plugins/fritzbox/csv.h>
-
 /**
  * SECTION:rmcsv
  * @title: RmCsv
@@ -41,7 +39,7 @@
 /**
  * rm_csv_parse_data:
  * @data: raw data to parse
- * @header expected: header line
+ * @header: expected header line
  * @csv_parse_line: a function pointer
  * @ptr: user pointer
  *
@@ -49,7 +47,7 @@
  *
  * Returns: user pointer
  */
-gpointer rm_csv_parse_data(const gchar *data, const gchar *header, rm_csv_parse_line_func csv_parse_line, gpointer ptr)
+gpointer rm_csv_parse_data(const gchar *data, const gchar *header, RmCsvParseLineFunc csv_parse_line, gpointer ptr)
 {
 	gint index = 0;
 	gchar sep[2];

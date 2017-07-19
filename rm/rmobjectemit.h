@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_OBJECTEMIT_H
-#define __RM_OBJECTEMIT_H
+#ifndef __RM_OBJECTEMIT_H__
+#define __RM_OBJECTEMIT_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 

@@ -33,10 +33,7 @@
 #include <string.h>
 #include <portaudio.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmplugins.h>
-#include <rm/rmaudio.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 /* Does not work at the moment */
 //#define USE_SPEEX 1

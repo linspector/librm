@@ -17,8 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_PLUGINS_H
-#define __RM_PLUGINS_H
+#ifndef __RM_PLUGINS_H__
+#define __RM_PLUGINS_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
@@ -36,11 +40,44 @@ G_BEGIN_DECLS
 	}
 
 typedef struct _RmPlugin RmPlugin;
+
+/**
+ * initPlugin:
+ * @plugin: a #RmPlugin
+ *
+ * Initializes a plugin
+ *
+ * Returns: %TRUE on success
+ */
 typedef gboolean (*initPlugin)(RmPlugin *plugin);
+
+/**
+ * shutdownPlugin:
+ * @plugin: a #RmPlugin
+ *
+ * Shutdowns a plugin
+ *
+ * Returns: %TRUE on success
+ */
 typedef gboolean (*shutdownPlugin)(RmPlugin *plugin);
+
+/**
+ * configurePlugin:
+ * @plugin: a #RmPlugin
+ *
+ * Creates configuration view of a plugin
+ *
+ * Returns: pointer to a configuration widget
+ */
 typedef gpointer (*configurePlugin)(RmPlugin *plugin);
 
+/**
+ * RmPlugin:
+ *
+ * The #RmPlugin-struct contains only private fileds and should not be directly accessed.
+ */
 struct _RmPlugin {
+	/*< private >*/
 	gchar *name;
 	gchar *description;
 	gchar *copyright;

@@ -29,8 +29,6 @@
  * SSDP scans for routers within the network using UPnP SSDP.
  */
 
-#ifdef HAVE_SSDP
-
 #include <libgupnp/gupnp.h>
 #include <libgupnp/gupnp-device-info.h>
 
@@ -77,6 +75,8 @@ static void rm_device_proxy_unavailable_cb(GUPnPControlPoint *cp, GUPnPDevicePro
 
 /**
  * rm_ssdp_get_routers:
+ *
+ * Get all ssdp detected routers.
  *
  * Returns: a list of detected routers
  */
@@ -133,28 +133,3 @@ void rm_ssdp_init(void)
 
 	g_signal_connect(rm_context_manager, "context-available", G_CALLBACK(rm_on_context_available), NULL);
 }
-
-#else
-
-/**
- * rm_ssdp_get_routers:
- *
- * Dummy function - SSDP not compiled in
- *
- * Returns: NULL
- */
-GList *rm_ssdp_get_routers(void)
-{
-	return NULL;
-}
-
-/**
- * rm_ssdp_init:
- *
- * Dummy function - SSDP not compiled in
- */
-void rm_ssdp_init(void)
-{
-}
-
-#endif

@@ -46,7 +46,7 @@
 /**
  * rm_journal_save_as:
  * @journal: journal list pointer
- * @filename: file name to store journal to
+ * @file_name: file name to store journal to
  *
  * Save journal to local storage.
  *

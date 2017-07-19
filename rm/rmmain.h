@@ -17,17 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_MAIN_H
-#define __RM_MAIN_H
+#ifndef __RM_MAIN_H__
+#define __RM_MAIN_H__
 
-#include <rmconfig.h>
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 #include <libintl.h>
 
 G_BEGIN_DECLS
 
-#define R_(text) dgettext(RM_GETTEXT_PACKAGE, text)
+char *rm_gettext(const char *msgid);
+
+#define R_(text) rm_gettext(text)
 
 #define RM_SCHEME "org.tabos.rm"
 #define RM_SCHEME_PROFILE "org.tabos.rm.profile"
@@ -54,6 +58,7 @@ gchar *rm_get_requested_profile(void);
 gchar *rm_get_user_config_dir(void);
 gchar *rm_get_user_cache_dir(void);
 gchar *rm_get_user_data_dir(void);
+gchar *rm_get_user_plugins_dir(void);
 
 void rm_use_fax_server(gboolean on);
 

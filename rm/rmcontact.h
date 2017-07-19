@@ -17,14 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_CONTACT_H_
-#define __RM_CONTACT_H_
+#ifndef __RM_CONTACT_H__
+#define __RM_CONTACT_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 
 G_BEGIN_DECLS
 
+/**
+ * RmContactAddress:
+ *
+ * The #RmContactAddress-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gint type;
 	gchar *street;
 	gchar *zip;
@@ -32,7 +42,13 @@ typedef struct {
 	gboolean lookup;
 } RmContactAddress;
 
+/**
+ * RmContact:
+ *
+ * The #RmContact-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	/* Name */
 	gchar *name;
 	/* Picture */

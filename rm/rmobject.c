@@ -19,6 +19,15 @@
 
 #include <rm/rmobject.h>
 
+/**
+ * SECTION:rmobject
+ * @title: RmObject
+ * @short_description: Abstract object offering gobject functionality
+ * @stability: Stable
+ *
+ * Base object for application interacting with the core library through gobject functions.
+ */
+
 /*
  * TODO List
  * - combine connection-XXX in connection-notify

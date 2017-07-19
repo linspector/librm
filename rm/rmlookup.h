@@ -17,14 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_LOOKUP_H
-#define __RM_LOOKUP_H
+#ifndef __RM_LOOKUP_H__
+#define __RM_LOOKUP_H__
 
-G_BEGIN_DECLS
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <rm/rmcontact.h>
 
+G_BEGIN_DECLS
+
+/**
+ * RmLookup:
+ *
+ * The #RmLookup-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gchar *name;
 	gboolean (*search)(gchar *number, RmContact *contact);
 } RmLookup;

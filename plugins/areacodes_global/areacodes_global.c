@@ -24,14 +24,7 @@
 
 #include <glib.h>
 
-#include <rm/rmcallentry.h>
-#include <rm/rmmain.h>
-#include <rm/rmrouter.h>
-#include <rm/rmobject.h>
-#include <rm/rmfile.h>
-#include <rm/rmplugins.h>
-#include <rm/rmstring.h>
-#include <rm/rmnumber.h>
+#include <rm/rm.h>
 
 #include "csv.h"
 

@@ -111,7 +111,7 @@ static inline gchar *rm_netmonitor_state(gboolean state)
  *
  * Return network online status
  *
- * Returns: network online status as boolean (true = online, false = offline)
+ * Returns: network online status as boolean (%TRUE = online, %FALSE = offline)
  */
 gboolean rm_netmonitor_is_online(void)
 {
@@ -121,6 +121,8 @@ gboolean rm_netmonitor_is_online(void)
 /**
  * rm_netmonitor_state_changed:
  * @state: new network state (online/offline)
+ *
+ * Gets called on network monitor state changes
  *
  * Returns: Handle network state changes.
  */
@@ -211,7 +213,7 @@ void rm_netmonitor_changed_cb(GNetworkMonitor *monitor, gboolean available, gpoi
  *
  * Initialize network monitor.
  *
- * Returns: TRUE on success, otherwise FALSE
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 gboolean rm_netmonitor_init(void)
 {

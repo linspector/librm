@@ -56,7 +56,7 @@ typedef struct capi_profile {
 
 #include <sndfile.h>
 
-#include <rm/rmdevice.h>
+#include <rm/rm.h>
 
 #define CAPI_CONNECTIONS 5
 /* Packet size */

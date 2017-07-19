@@ -17,14 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_NETWORK_H
-#define __RM_NETWORK_H
+#ifndef __RM_NETWORK_H__
+#define __RM_NETWORK_H__
 
-G_BEGIN_DECLS
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <libsoup/soup.h>
 
-typedef struct auth_data {
+G_BEGIN_DECLS
+
+/**
+ * RmAuthData:
+ *
+ * The #RmAuthData-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct {
+	/*< private >*/
 	SoupMessage *msg;
 	SoupAuth *auth;
 	SoupSession *session;
@@ -37,7 +47,7 @@ extern SoupSession *rm_soup_session;
 
 gboolean rm_network_init(void);
 void rm_network_shutdown(void);
-void rm_network_authenticate(gboolean auth, RmAuthData *auth_data);
+void rm_network_authenticate(gboolean auth_set, RmAuthData *auth_data);
 
 G_END_DECLS
 

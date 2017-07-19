@@ -27,8 +27,7 @@
 
 #include <capi20.h>
 
-#include <rm/rmconnection.h>
-#include <rm/rmphone.h>
+#include <rm/rm.h>
 
 #define PHONE_CIP 0x04
 

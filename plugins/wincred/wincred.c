@@ -25,8 +25,7 @@
 #include <glib.h>
 #include <gio/gio.h>
 
-#include <rm/rmplugins.h>
-#include <rm/rmpassword.h>
+#include <rm/rm.h>
 
 /**
  * \brief Store password

@@ -19,9 +19,7 @@
 
 #include <glib.h>
 
-#include <rm/rmaudio.h>
-#include <rm/rmcallentry.h>
-#include <rm/rmconnection.h>
+#include <rm/rm.h>
 
 #include "isdn-convert.h"
 

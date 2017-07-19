@@ -25,8 +25,7 @@
 #ifndef FAX_H
 #define FAX_H
 
-#include <rm/rmconnection.h>
-#include <rm/rmfax.h>
+#include <rm/rm.h>
 
 #define SPANDSP_EXPOSE_INTERNAL_STRUCTURES
 #include <spandsp.h>

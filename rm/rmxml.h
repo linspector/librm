@@ -22,8 +22,12 @@
  * \brief XML node header
  */
 
-#ifndef LIBROUTERMANAGER_XML_H
-#define LIBROUTERMANAGER_XML_H
+#ifndef __RM_XML_H__
+#define __RM_XML_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 

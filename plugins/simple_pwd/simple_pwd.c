@@ -17,10 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <rm/rmcallentry.h>
-#include <rm/rmplugins.h>
-#include <rm/rmpassword.h>
-#include <rm/rmmain.h>
+#include <rm/rm.h>
 
 static GKeyFile *simple_pwd_keyfile = NULL;
 static gchar *simple_pwd_file = NULL;

@@ -17,12 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_JOURNAL_H
-#define __RM_JOURNAL_H
+#ifndef __RM_JOURNAL_H__
+#define __RM_JOURNAL_H__
 
-G_BEGIN_DECLS
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <rm/rmcallentry.h>
+
+G_BEGIN_DECLS
 
 GSList *rm_journal_add_call_entry(GSList *journal, RmCallEntry *call);
 gboolean rm_journal_save_as(GSList *journal, gchar *file_name);

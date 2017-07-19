@@ -20,12 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <rm/rmprofile.h>
-#include <rm/rmsettings.h>
-#include <rm/rmobjectemit.h>
-#include <rm/rmmain.h>
-#include <rm/rmplugins.h>
-#include <rm/rmstring.h>
+#include <rm/rm.h>
 
 #include "fritzbox.h"
 #include "firmware-common.h"

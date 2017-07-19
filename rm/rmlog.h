@@ -17,18 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_LOG_H
-#define __RM_LOG_H
+#ifndef __RM_LOG_H__
+#define __RM_LOG_H__
+
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
-typedef void (*rm_log_func)(GLogLevelFlags level, const gchar *message);
+/**
+ * RmLogFunc:
+ * @level: #GLogLevelFlags
+ * @message: log message
+ *
+ * Handle log messages
+ */
+typedef void (*RmLogFunc)(GLogLevelFlags level, const gchar *message);
+
 void rm_log_save_data(gchar *name, const gchar *data, gsize len);
 void rm_log_init(void);
 void rm_log_shutdown(void);
 void rm_log_set_debug(gboolean state);
 void rm_log_set_level(GLogLevelFlags level);
-void rm_log_set_app_handler(rm_log_func app_log);
+void rm_log_set_app_handler(RmLogFunc app_log);
 
 G_END_DECLS
 

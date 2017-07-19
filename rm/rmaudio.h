@@ -17,20 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_AUDIO_H_
-#define __RM_AUDIO_H_
+#ifndef __RM_AUDIO_H__
+#define __RM_AUDIO_H__
 
-//#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
-//#error "Only <rm/rm.h> can be included directly."
-//#endif
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 G_BEGIN_DECLS
 
 #define RM_AUDIO_OUTPUT 0
 #define RM_AUDIO_INPUT  1
 
-/** Audio device structure */
+/**
+ * RmAudio:
+ *
+ * The #RmAudio-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	/* Name of plugin */
 	const gchar *name;
 	/* Initialize function */
@@ -49,7 +54,13 @@ typedef struct {
 	GSList *(*get_devices)(void);
 } RmAudio;
 
+/**
+ * RmAudioDevice:
+ *
+ * The #RmAudioDevice-struct contains only private fileds and should not be directly accessed.
+ */
 typedef struct {
+	/*< private >*/
 	gchar *name;
 	gchar *internal_name;
 	gchar type;

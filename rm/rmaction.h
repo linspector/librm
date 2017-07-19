@@ -20,15 +20,15 @@
 #ifndef __RMACTION_H__
 #define __RMACTION_H__
 
-//#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
-//#error "Only <rm/rm.h> can be included directly."
-//#endif
+#if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
+#error "Only <rm/rm.h> can be included directly."
+#endif
 
 #include <glib.h>
 
-G_BEGIN_DECLS
-
 #include <rm/rmprofile.h>
+
+G_BEGIN_DECLS
 
 /**
  * RM_ACTION_INCOMING_RING:
@@ -38,9 +38,9 @@ G_BEGIN_DECLS
 #define RM_ACTION_INCOMING_RING   0x01
 
 /**
- * RM_ACTION_INCOMING_RING:
+ * RM_ACTION_INCOMING_BEGIN:
  *
- * Indicator for incoming call rings.
+ * Indicator for incoming call begins.
  */
 #define RM_ACTION_INCOMING_BEGIN  0x02
 

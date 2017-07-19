@@ -234,11 +234,24 @@ void rm_plugins_shutdown(void)
 	}
 }
 
+/**
+ * rm_plugins_get:
+ *
+ * Get a list of all plugins.
+ *
+ * Returns: list of all plugins
+ */
 GSList *rm_plugins_get(void)
 {
 	return rm_plugins;
 }
 
+/**
+ * rm_plugins_disable:
+ * @plugin: a #RmPlugin
+ *
+ * Disable a plugin.
+ */
 void rm_plugins_disable(RmPlugin *plugin)
 {
 	RmProfile *profile = rm_profile_get_active();
@@ -259,6 +272,12 @@ void rm_plugins_disable(RmPlugin *plugin)
 	g_settings_set_strv(profile->settings, "active-plugins", (const gchar * const *) active_plugins);
 }
 
+/**
+ * rm_plugins_enable:
+ * @plugin: a #RmPlugin
+ *
+ * Enable a plugin
+ */
 void rm_plugins_enable(RmPlugin *plugin)
 {
 	RmProfile *profile = rm_profile_get_active();
@@ -278,4 +297,3 @@ void rm_plugins_enable(RmPlugin *plugin)
 
 	g_settings_set_strv(profile->settings, "active-plugins", (const gchar * const *) active_plugins);
 }
-
