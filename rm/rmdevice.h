@@ -26,8 +26,6 @@
 
 G_BEGIN_DECLS
 
-typedef struct _RmDevice RmDevice;
-
 /**
  * RmDeviceType:
  * @RM_DEVICE_TYPE_PHONE: phone device
@@ -45,11 +43,11 @@ typedef enum {
  *
  * The #RmDevice-struct contains only private fileds and should not be directly accessed.
  */
-struct _RmDevice {
+typedef struct _RmDevice {
 	/*< private >*/
 	gchar *name;
 	gchar *settings_name;
-};
+} RmDevice;
 
 /**
  * RmDeviceCast:
@@ -64,6 +62,12 @@ typedef struct {
 	gpointer priv;
 } RmDeviceCast;
 
+/**
+ * RM_DEVICE:
+ * @x: a @RmDeviceCast
+ *
+ * Cast a fax/phone device to plain device
+ */
 #define RM_DEVICE(x) (((RmDeviceCast*)(x))->device)
 
 gboolean rm_device_handles_number(RmDevice *device, gchar *number);

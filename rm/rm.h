@@ -34,7 +34,7 @@
 #include <rm/rm.h>
 #include <rm/rmrouter.h>
 #include <rm/rmssdp.h>
-#include <rm/xml.h>
+#include <rm/rmxml.h>
 #include <rm/rmaddressbook.h>
 #include <rm/rmconnection.h>
 #include <rm/rmdevice.h>

@@ -856,4 +856,4 @@ static gboolean portaudio_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(portaudio)
+RM_PLUGIN(portaudio)

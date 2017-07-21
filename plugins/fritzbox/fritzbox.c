@@ -414,4 +414,4 @@ static gboolean fritzbox_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(fritzbox);
+RM_PLUGIN(fritzbox);

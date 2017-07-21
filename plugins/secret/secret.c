@@ -197,4 +197,4 @@ gboolean secret_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(secret);
+RM_PLUGIN(secret);

@@ -398,10 +398,10 @@ static gboolean reverse_lookup(gchar *number, RmContact *contact)
  * \brief Add lookup from xmlnode
  * \param psNode xml node structure
  */
-static void lookup_add(xmlnode *node)
+static void lookup_add(RmXmlNode *node)
 {
 	struct lookup *lookup = NULL;
-	xmlnode *child = NULL;
+	RmXmlNode *child = NULL;
 	gchar *service = NULL;
 	gchar *prefix = NULL;
 	gchar *url = NULL;
@@ -411,44 +411,44 @@ static void lookup_add(xmlnode *node)
 	gchar **zip = NULL;
 	gint zip_len = 0;
 
-	child = xmlnode_get_child(node, "service");
+	child = rm_xmlnode_get_child(node, "service");
 	g_assert(child != NULL);
-	service = xmlnode_get_data(child);
+	service = rm_xmlnode_get_data(child);
 
-	child = xmlnode_get_child(node, "prefix");
+	child = rm_xmlnode_get_child(node, "prefix");
 	g_assert(child != NULL);
-	prefix = xmlnode_get_data(child);
+	prefix = rm_xmlnode_get_data(child);
 
-	child = xmlnode_get_child(node, "url");
+	child = rm_xmlnode_get_child(node, "url");
 	g_assert(child != NULL);
-	url = xmlnode_get_data(child);
+	url = rm_xmlnode_get_data(child);
 
 	gchar *tmp;
 
-	child = xmlnode_get_child(node, "name");
+	child = rm_xmlnode_get_child(node, "name");
 	g_assert(child != NULL);
-	tmp = xmlnode_get_data(child);
+	tmp = rm_xmlnode_get_data(child);
 	name = g_strsplit(tmp, " ", -1);
 
-	child = xmlnode_get_child(node, "street");
+	child = rm_xmlnode_get_child(node, "street");
 	g_assert(child != NULL);
-	tmp = xmlnode_get_data(child);
+	tmp = rm_xmlnode_get_data(child);
 	street = g_strsplit(tmp, " ", -1);
 
-	child = xmlnode_get_child(node, "city");
+	child = rm_xmlnode_get_child(node, "city");
 	g_assert(child != NULL);
-	tmp = xmlnode_get_data(child);
+	tmp = rm_xmlnode_get_data(child);
 	city = g_strsplit(tmp, " ", -1);
 
-	tmp = (gchar*)xmlnode_get_attrib(child, "zip");
+	tmp = (gchar*)rm_xmlnode_get_attrib(child, "zip");
 	if (tmp) {
 		zip_len = atoi(tmp);
 	}
 
-	child = xmlnode_get_child(node, "zip");
+	child = rm_xmlnode_get_child(node, "zip");
 
 	if (child) {
-		tmp = xmlnode_get_data(child);
+		tmp = rm_xmlnode_get_data(child);
 		zip = g_strsplit(tmp, " ", -1);
 	}
 
@@ -467,20 +467,20 @@ static void lookup_add(xmlnode *node)
 }
 
 /**
- * \brief Add country code from xmlnode
+ * \brief Add country code from RmXmlNode
  * \param node xml node structure
  */
-static void country_code_add(xmlnode *node)
+static void country_code_add(RmXmlNode *node)
 {
-	xmlnode *child = NULL;
+	RmXmlNode *child = NULL;
 	const gchar *code = NULL;
 
-	code = xmlnode_get_attrib(node, "code");
+	code = rm_xmlnode_get_attrib(node, "code");
 	g_debug("Country Code: %s", code);
 
 	lookup_list = NULL;
 
-	for (child = xmlnode_get_child(node, "lookup"); child != NULL; child = xmlnode_get_next_twin(child)) {
+	for (child = rm_xmlnode_get_child(node, "lookup"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		lookup_add(child);
 	}
 	lookup_list = g_slist_reverse(lookup_list);
@@ -546,7 +546,7 @@ RmLookup rl = {
 static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 {
 	RmReverseLookupPlugin *reverselookup_plugin = g_slice_new0(RmReverseLookupPlugin);
-	xmlnode *node, *child;
+	RmXmlNode *node, *child;
 	gchar *file;
 
 	plugin->priv = reverselookup_plugin;
@@ -561,7 +561,7 @@ static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 		file = g_build_filename(rm_get_directory(RM_PLUGINS), "reverselookup", "lookup.xml", NULL);
 	}
 
-	node = read_xml_from_file(file);
+	node = rm_xml_read_from_file(file);
 	if (!node) {
 		g_debug("Could not read %s", file);
 		g_free(file);
@@ -573,7 +573,7 @@ static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 	/* Create new lookup hash table */
 	lookup_table = g_hash_table_new(NULL, NULL);
 
-	for (child = xmlnode_get_child(node, "country"); child != NULL; child = xmlnode_get_next_twin(child)) {
+	for (child = rm_xmlnode_get_child(node, "country"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		/* Add new country code lists to hash table */
 		country_code_add(child);
 	}
@@ -583,7 +583,7 @@ static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 	lookup_read_cache(file);
 	g_free(file);
 
-	xmlnode_free(node);
+	rm_xmlnode_free(node);
 
 	rl_session = soup_session_new();
 
@@ -610,4 +610,4 @@ static gboolean reverselookup_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(reverselookup)
+RM_PLUGIN(reverselookup)

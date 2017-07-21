@@ -29,7 +29,12 @@
 G_BEGIN_DECLS
 
 #ifndef RM_EMPTY_STRING
-/** Convenient function to check for an empty string (either NULL or with a len of 0) */
+/**
+ * RM_EMPTY_STRING:
+ * @x: string to check
+ *
+ * Convenient function to check for an empty string (either NULL or with a len of 0)
+ */
 #define RM_EMPTY_STRING(x) (!(x) || !strlen(x))
 #endif
 

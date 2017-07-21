@@ -482,4 +482,4 @@ static gboolean pulseaudio_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(pulseaudio);
+RM_PLUGIN(pulseaudio);

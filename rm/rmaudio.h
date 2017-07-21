@@ -26,8 +26,17 @@
 
 G_BEGIN_DECLS
 
-#define RM_AUDIO_OUTPUT 0
-#define RM_AUDIO_INPUT  1
+/**
+ * RmAudioType:
+ * @RM_AUDIO_OUTPUT: Output audio device (speaker)
+ * @RM_AUDIO_INPUT: Input audio device (microphone)
+ *
+ * Type of audio device.
+ */
+typedef enum {
+	RM_AUDIO_OUTPUT = 0,
+	RM_AUDIO_INPUT =  1
+} RmAudioType;
 
 /**
  * RmAudio:

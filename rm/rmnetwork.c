@@ -35,7 +35,11 @@
  * A network wrapper with authentication support
  */
 
-/** Soup session */
+/**
+ * rm_soup_session:
+ *
+ * Global soup session.
+ */
 SoupSession *rm_soup_session = NULL;
 
 /**

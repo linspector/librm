@@ -31,10 +31,33 @@ G_BEGIN_DECLS
 
 char *rm_gettext(const char *msgid);
 
+/**
+ * R_:
+ * @text: text to translate
+ *
+ * Translates text using @rm_gettext
+ */
 #define R_(text) rm_gettext(text)
 
+/**
+ * RM_SCHEME:
+ *
+ * RM scheme
+ */
 #define RM_SCHEME "org.tabos.rm"
+
+/**
+ * RM_SCHEME_PROFILE:
+ *
+ * RM scheme profile
+ */
 #define RM_SCHEME_PROFILE "org.tabos.rm.profile"
+
+/**
+ * RM_SCHEME_PROFILE_ACTION:
+ *
+ * RM scheme profile action
+ */
 #define RM_SCHEME_PROFILE_ACTION "org.tabos.rm.profile.action"
 
 #define RM_PATH "/org/tabos/rm/"

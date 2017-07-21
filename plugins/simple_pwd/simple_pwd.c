@@ -139,4 +139,4 @@ gboolean simple_pwd_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(simple_pwd);
+RM_PLUGIN(simple_pwd);

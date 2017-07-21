@@ -223,4 +223,4 @@ static gboolean areacodes_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(areacodes);
+RM_PLUGIN(areacodes);

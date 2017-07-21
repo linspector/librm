@@ -151,4 +151,4 @@ gboolean wincred_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(wincred);
+RM_PLUGIN(wincred);

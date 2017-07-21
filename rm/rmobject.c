@@ -33,7 +33,11 @@
  * - combine connection-XXX in connection-notify
  */
 
-/** main internal rm_object containing signals and private data */
+/**
+ * rm_object:
+ *
+ * Main internal rm_object containing signals and private data
+ */
 GObject *rm_object = NULL;
 
 /** rm_object signals array */

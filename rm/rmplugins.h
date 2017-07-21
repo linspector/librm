@@ -26,50 +26,62 @@
 
 G_BEGIN_DECLS
 
-#define PLUGIN(NAME) \
+typedef struct _RmPlugin RmPlugin;
+
+/**
+ * RM_PLUGIN:
+ * @NAME: prefix name of plugin functions
+ *
+ * Generic init function for plugins
+ */
+#define RM_PLUGIN(NAME) \
 	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin * plugin) { \
 		plugin->init = NAME ## _plugin_init; \
 		plugin->shutdown = NAME ## _plugin_shutdown; \
 	}
 
-#define PLUGIN_CONFIG(NAME) \
+/**
+ * RM_PLUGIN_CONFIG:
+ * @NAME: prefix name of plugin functions
+ *
+ * Generic init function with configuration for plugins
+ */
+#define RM_PLUGIN_CONFIG(NAME) \
 	G_MODULE_EXPORT void __rm_init_plugin(RmPlugin * plugin) { \
 		plugin->init = NAME ## _plugin_init; \
 		plugin->shutdown = NAME ## _plugin_shutdown; \
 		plugin->configure = NAME ## _plugin_configure; \
 	}
 
-typedef struct _RmPlugin RmPlugin;
-
 /**
- * initPlugin:
+ * RmInitPlugin:
  * @plugin: a #RmPlugin
  *
  * Initializes a plugin
  *
  * Returns: %TRUE on success
  */
-typedef gboolean (*initPlugin)(RmPlugin *plugin);
+typedef gboolean (*RmInitPlugin)(RmPlugin *plugin);
 
 /**
- * shutdownPlugin:
+ * RmShutdownPlugin:
  * @plugin: a #RmPlugin
  *
  * Shutdowns a plugin
  *
  * Returns: %TRUE on success
  */
-typedef gboolean (*shutdownPlugin)(RmPlugin *plugin);
+typedef gboolean (*RmShutdownPlugin)(RmPlugin *plugin);
 
 /**
- * configurePlugin:
+ * RmConfigurePlugin:
  * @plugin: a #RmPlugin
  *
  * Creates configuration view of a plugin
  *
  * Returns: pointer to a configuration widget
  */
-typedef gpointer (*configurePlugin)(RmPlugin *plugin);
+typedef gpointer (*RmConfigurePlugin)(RmPlugin *plugin);
 
 /**
  * RmPlugin:
@@ -81,9 +93,9 @@ struct _RmPlugin {
 	gchar *name;
 	gchar *description;
 	gchar *copyright;
-	initPlugin init;
-	shutdownPlugin shutdown;
-	configurePlugin configure;
+	RmInitPlugin init;
+	RmShutdownPlugin shutdown;
+	RmConfigurePlugin configure;
 
 	gchar *module_name;
 	gchar *help;

@@ -55,6 +55,12 @@ struct _RmPhone {
 	gpointer priv;
 };
 
+/**
+ * RM_PHONE:
+ * @x: a #RmPhone
+ *
+ * Cast x to #RmPhone
+ */
 #define RM_PHONE(x) (RmPhone*)(x)
 
 void rm_phone_register(RmPhone *phone);

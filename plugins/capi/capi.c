@@ -1915,4 +1915,4 @@ static gboolean capi_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(capi);
+RM_PLUGIN(capi);

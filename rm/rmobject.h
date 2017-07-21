@@ -33,7 +33,20 @@
 
 G_BEGIN_DECLS
 
-/**  Callbacks Signals */
+/**
+ * RmCallbackId
+ * @RM_ACB_JOURNAL_LOADED: journal-loaded
+ * @RM_ACB_CONNECTION_CHANGED: connection-changed
+ * @RM_ACB_CONTACT_PROCESS: contact-process
+ * @RM_ACB_FAX_PROCESS: fax-process
+ * @RM_ACB_CONNECTION_STATUS: connection-status
+ * @RM_ACB_MESSAGE: message
+ * @RM_ACB_CONTACTS_CHANGED: contacts-changed
+ * @RM_ACB_AUTHENTICATE: authenticate
+ * @RM_ACB_MAX: Max Id
+ *
+ * RM Callback signal ids
+ */
 typedef enum {
 	RM_ACB_JOURNAL_LOADED,
 	RM_ACB_CONNECTION_CHANGED,

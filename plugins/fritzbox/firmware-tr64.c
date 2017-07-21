@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2015 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@
 #include "firmware-common.h"
 #include "firmware-query.h"
 
-#define FIRMWARE_TR64_DEBUG 1
+//#define FIRMWARE_TR64_DEBUG 1
 
 static gint firmware_tr64_security_port = 0;
 
@@ -281,7 +281,7 @@ static gint firmware_tr64_get_security_port(RmProfile *profile)
  *
  * Returns: Updated journal @list
  */
-static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, xmlnode *call)
+static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNode *call)
 {
 	//gchar *id;
 	gchar *type;
@@ -300,42 +300,42 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, xmlnode 
 	gchar *remote_number;
 	gchar *local_name;
 	gchar *local_number;
-	xmlnode *tmp;
+	RmXmlNode *tmp;
 	RmCallEntry *call_entry;
 	RmCallEntryTypes call_type;
 
-	//tmp = xmlnode_get_child(call, "Id");
-	//id = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Type");
-	type = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Name");
-	name = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Duration");
-	duration = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Date");
-	date_time = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Device");
-	local_name = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Path");
-	path = xmlnode_get_data(tmp);
-	tmp = xmlnode_get_child(call, "Port");
-	port = xmlnode_get_data(tmp);
+	//tmp = rm_xmlnode_get_child(call, "Id");
+	//id = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Type");
+	type = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Name");
+	name = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Duration");
+	duration = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Date");
+	date_time = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Device");
+	local_name = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Path");
+	path = rm_xmlnode_get_data(tmp);
+	tmp = rm_xmlnode_get_child(call, "Port");
+	port = rm_xmlnode_get_data(tmp);
 
 	remote_name = name;
 
 	if (atoi(type) == 3) {
-		tmp = xmlnode_get_child(call, "CallerNumber");
-		caller = xmlnode_get_data(tmp);
-		tmp = xmlnode_get_child(call, "Called");
-		called = xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(call, "CallerNumber");
+		caller = rm_xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(call, "Called");
+		called = rm_xmlnode_get_data(tmp);
 
 		remote_number = called;
 		local_number = caller;
 	} else {
-		tmp = xmlnode_get_child(call, "CalledNumber");
-		called = xmlnode_get_data(tmp);
-		tmp = xmlnode_get_child(call, "Caller");
-		caller = xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(call, "CalledNumber");
+		called = rm_xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(call, "Caller");
+		caller = rm_xmlnode_get_data(tmp);
 
 		remote_number = caller;
 		local_number = called;
@@ -372,7 +372,7 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 {
 	GSList *journal = NULL;
 	RmProfile *profile = user_data;
-	xmlnode *child;
+	RmXmlNode *child;
 
 	if (msg->status_code != SOUP_STATUS_OK) {
 		g_debug("%s(): Got invalid data, return code: %d", __FUNCTION__, msg->status_code);
@@ -384,13 +384,13 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 	rm_log_save_data("callist.xml", msg->response_body->data, -1);
 #endif
 
-	xmlnode *node = xmlnode_from_str(msg->response_body->data, msg->response_body->length);
+	RmXmlNode *node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
 	if (node == NULL) {
 		g_object_unref(msg);
 		return;
 	}
 
-	for (child = xmlnode_get_child(node, "Call"); child != NULL; child = xmlnode_get_next_twin(child)) {
+	for (child = rm_xmlnode_get_child(node, "Call"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		journal = firmware_tr64_add_call(journal, profile, child);
 	}
 

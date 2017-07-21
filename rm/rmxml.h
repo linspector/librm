@@ -31,40 +31,52 @@
 
 G_BEGIN_DECLS
 
+/**
+ * RmXmlNodeType:
+ *
+ * The #RmXmlNodeType-struct contains only private fileds and should not be directly accessed.
+ */
 typedef enum {
-	XMLNODE_TYPE_TAG,
-	XMLNODE_TYPE_ATTRIB,
-	XMLNODE_TYPE_DATA
-} xml_node_type;
+	/*< private >*/
+	RM_XMLNODE_TYPE_TAG,
+	RM_XMLNODE_TYPE_ATTRIB,
+	RM_XMLNODE_TYPE_DATA
+} RmXmlNodeType;
 
-typedef struct xml_node {
+/**
+ * RmXmlNode:
+ *
+ * The #RmXmlNode-struct contains only private fileds and should not be directly accessed.
+ */
+typedef struct _RmXmlNode {
+	/*< private >*/
 	gchar *name;
 	gchar *xml_ns;
-	xml_node_type type;
+	RmXmlNodeType type;
 	gchar *data;
 	size_t data_size;
-	struct xml_node *parent;
-	struct xml_node *child;
-	struct xml_node *last_child;
-	struct xml_node *next;
+	struct _RmXmlNode *parent;
+	struct _RmXmlNode *child;
+	struct _RmXmlNode *last_child;
+	struct _RmXmlNode *next;
 	gchar *prefix;
 	GHashTable *namespace_map;
-} xmlnode;
+} RmXmlNode;
 
-xmlnode *xmlnode_new(const gchar *name);
-xmlnode *xmlnode_new_child(xmlnode *parent, const gchar *name);
-xmlnode *read_xml_from_file(const gchar *file_name);
-xmlnode *xmlnode_get_child(const xmlnode *parent, const gchar *name);
-xmlnode *xmlnode_get_next_twin(xmlnode *node);
-gchar *xmlnode_get_data(xmlnode *node);
-const gchar *xmlnode_get_attrib(xmlnode *node, const gchar *attr);
-xmlnode *xmlnode_from_str(const char *str, gssize size);
-void xmlnode_insert_data(xmlnode *node, const gchar *data, gssize size);
-void xmlnode_free(xmlnode *node);
-void xmlnode_set_attrib(xmlnode *node, const gchar *attr, const gchar *value);
-void xmlnode_insert_child(xmlnode *parent, xmlnode *child);
-gchar *xmlnode_to_formatted_str(xmlnode *node, gint *len);
-xmlnode *xmlnode_copy(const xmlnode *node);
+RmXmlNode *rm_xmlnode_new(const gchar *name);
+RmXmlNode *rm_xmlnode_new_child(RmXmlNode *parent, const gchar *name);
+RmXmlNode *rm_xml_read_from_file(const gchar *file_name);
+RmXmlNode *rm_xmlnode_get_child(const RmXmlNode *parent, const gchar *name);
+RmXmlNode *rm_xmlnode_get_next_twin(RmXmlNode *node);
+gchar *rm_xmlnode_get_data(RmXmlNode *node);
+const gchar *rm_xmlnode_get_attrib(RmXmlNode *node, const gchar *attr);
+RmXmlNode *rm_xmlnode_from_str(const char *str, gssize size);
+void rm_xmlnode_insert_data(RmXmlNode *node, const gchar *data, gssize size);
+void rm_xmlnode_free(RmXmlNode *node);
+void rm_xmlnode_set_attrib(RmXmlNode *node, const gchar *attr, const gchar *value);
+void rm_xmlnode_insert_child(RmXmlNode *parent, RmXmlNode *child);
+gchar *rm_xmlnode_to_formatted_str(RmXmlNode *node, gint *len);
+RmXmlNode *rm_xmlnode_copy(const RmXmlNode *node);
 
 G_END_DECLS
 

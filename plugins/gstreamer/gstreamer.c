@@ -476,4 +476,4 @@ static gboolean gstreamer_plugin_shutdown(RmPlugin *plugin)
 	return TRUE;
 }
 
-PLUGIN(gstreamer);
+RM_PLUGIN(gstreamer);
