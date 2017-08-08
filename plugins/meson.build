@@ -5,7 +5,11 @@ subdir('gstreamer')
 subdir('portaudio')
 subdir('pulseaudio')
 subdir('reverselookup')
-subdir('secret')
+
+if get_option('enable-documentation')
+    subdir('secret')
+endif
+
 subdir('simple_pwd')
 
 # Disabled - needs more love
