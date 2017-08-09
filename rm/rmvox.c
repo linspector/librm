@@ -107,7 +107,7 @@ static gpointer rm_vox_playback_thread(gpointer user_data)
 
 	/* Start playback */
 	while (playback->offset < playback->len && !g_cancellable_is_cancelled(playback->cancel)) {
-		if (playback->state) {
+		if (playback->pause) {
 			/* We are in pause state, delay the loop to prevent high cpu load */
 			g_usleep(100);
 			continue;
@@ -196,7 +196,7 @@ static gpointer rm_vox_sf_playback_thread(gpointer user_data)
 
 	/* Start playback */
 	while (playback->cnt < playback->num_cnt && !g_cancellable_is_cancelled(playback->cancel)) {
-		if (playback->state) {
+		if (playback->pause) {
 			/* We are in pause state, delay the loop to prevent high cpu load */
 			g_usleep(100);
 			continue;
@@ -245,7 +245,7 @@ gboolean rm_vox_play(RmVoxPlayback *playback)
 	playback->seconds = 0;
 
 	/* Start playback thread */
-	playback->state = FALSE;
+	playback->pause = FALSE;
 
 	if (playback->speex) {
 		playback->thread = g_thread_new("play vox", rm_vox_playback_thread, playback);
@@ -257,21 +257,21 @@ gboolean rm_vox_play(RmVoxPlayback *playback)
 }
 
 /**
- * rm_vox_set_state:
+ * rm_vox_set_pause:
  * @playback: a #RmVoxPlayback
- * @state: playback state
+ * @pause: pause state
  *
- * Toggle play/pause state. %TRUE = play, %FALSE = pause.
+ * Toggle pause state. %TRUE = pause, %FALSE = unpause.
  *
  * Returns: %TRUE if successful
  */
-gboolean rm_vox_set_state(RmVoxPlayback *playback, gboolean state)
+gboolean rm_vox_set_pause(RmVoxPlayback *playback, gboolean state)
 {
 	if (!playback) {
 		return FALSE;
 	}
 
-	playback->state = state;
+	playback->pause = state;
 
 	return TRUE;
 }
@@ -292,7 +292,7 @@ gboolean rm_vox_shutdown(RmVoxPlayback *playback)
 	}
 
 	/* Pause music, cancel cancellable and join thread */
-	playback->state = TRUE;
+	playback->pause = TRUE;
 
 	if (playback->thread) {
 		g_cancellable_cancel(playback->cancel);
