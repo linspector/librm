@@ -67,7 +67,7 @@ typedef struct _RmVoxPlayback {
 RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error);
 gboolean rm_vox_play(RmVoxPlayback *playback);
 gboolean rm_vox_shutdown(RmVoxPlayback *playback);
-gboolean rm_vox_playpause(RmVoxPlayback *playback);
+gboolean rm_vox_set_state(RmVoxPlayback *playback, gboolean state);
 gboolean rm_vox_seek(RmVoxPlayback *playback, gdouble pos);
 gint rm_vox_get_fraction(RmVoxPlayback *playback);
 gfloat rm_vox_get_seconds(RmVoxPlayback *playback);

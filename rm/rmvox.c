@@ -257,22 +257,23 @@ gboolean rm_vox_play(RmVoxPlayback *playback)
 }
 
 /**
- * rm_vox_playpause:
+ * rm_vox_set_state:
  * @playback: a #RmVoxPlayback
+ * @state: playback state
  *
- * Toggle play/pause state.
+ * Toggle play/pause state. %TRUE = play, %FALSE = pause.
  *
- * Returns: %TRUE if pause, %FALSE on playing
+ * Returns: %TRUE if successful
  */
-gboolean rm_vox_playpause(RmVoxPlayback *playback)
+gboolean rm_vox_set_state(RmVoxPlayback *playback, gboolean state)
 {
 	if (!playback) {
 		return FALSE;
 	}
 
-	playback->state = !playback->state;
+	playback->state = state;
 
-	return !playback->state;
+	return TRUE;
 }
 
 /**
