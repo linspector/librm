@@ -33,6 +33,8 @@
 #include <rm/rmprofile.h>
 #include <rm/rmfile.h>
 
+//#define VOX_DEBUG 1
+
 /**
  * SECTION:rmvox
  * @title: RmVox
@@ -344,8 +346,13 @@ gboolean rm_vox_seek(RmVoxPlayback *playback, gdouble pos)
 	}
 
 	if (playback->sf) {
-		sf_seek(playback->sf, pos * playback->num_cnt, SEEK_SET);
-		playback->cnt = pos;
+		sf_count_t sf_cnt = sf_seek(playback->sf, pos * playback->num_cnt, SEEK_SET);
+
+		if (sf_cnt == -1) {
+			return FALSE;
+		}
+
+		playback->cnt = sf_cnt;
 		return TRUE;
 	}
 
@@ -442,6 +449,7 @@ RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 	}
 
 	if (!g_ascii_strncasecmp(data, "RIFF", 4)) {
+		g_debug("%s(): Wave file", __FUNCTION__);
 		rm_file_save("vox.wav", data, len);
 		playback->sf = sf_open("vox.wav", SFM_READ, &playback->info);
 
@@ -450,6 +458,7 @@ RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 			return NULL;
 		}
 	} else {
+		g_debug("%s(): Speex file", __FUNCTION__);
 		/* Initialize speex decoder */
 		mode = speex_lib_get_mode(0);
 
