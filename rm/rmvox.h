@@ -24,15 +24,53 @@
 #error "Only <rm/rm.h> can be included directly."
 #endif
 
+#include <sndfile.h>
+
+#include <rm/rmaudio.h>
+
 G_BEGIN_DECLS
 
-gpointer rm_vox_init(gchar *data, gsize len, GError **error);
-gboolean rm_vox_play(gpointer vox_data);
-gboolean rm_vox_shutdown(gpointer vox_data);
-gboolean rm_vox_playpause(gpointer vox_data);
-gboolean rm_vox_seek(gpointer vox_data, gdouble pos);
-gint rm_vox_get_fraction(gpointer vox_data);
-gfloat rm_vox_get_seconds(gpointer vox_data);
+/** Private vox playback structure */
+typedef struct _RmVoxPlayback {
+	/*< private >*/
+	/** Vox data buffer */
+	gchar *data;
+	/** Length of vox data */
+	gsize len;
+	/** Pointer to thread structure */
+	GThread *thread;
+	/** Speex structure */
+	gpointer speex;
+	/** audio device */
+	RmAudio *audio;
+	/** audio private data */
+	gpointer audio_priv;
+	/** cancellable object for playback thread */
+	GCancellable *cancel;
+	/** playback state (pause/playing) */
+	gboolean state;
+	/** number of frame count */
+	gint num_cnt;
+	/** current playback data offset */
+	gsize offset;
+	/** current playback frame count */
+	gint cnt;
+	/** Current fraction */
+	gint fraction;
+	/** Current seconds */
+	gfloat seconds;
+
+	SNDFILE *sf;
+	SF_INFO info;
+} RmVoxPlayback;
+
+RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error);
+gboolean rm_vox_play(RmVoxPlayback *playback);
+gboolean rm_vox_shutdown(RmVoxPlayback *playback);
+gboolean rm_vox_playpause(RmVoxPlayback *playback);
+gboolean rm_vox_seek(RmVoxPlayback *playback, gdouble pos);
+gint rm_vox_get_fraction(RmVoxPlayback *playback);
+gfloat rm_vox_get_seconds(RmVoxPlayback *playback);
 
 G_END_DECLS
 

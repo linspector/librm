@@ -44,39 +44,6 @@
 
 #define MAX_FRAME_SIZE 2000
 
-/** Private vox playback structure */
-typedef struct _RmVoxPlayback {
-	/** Vox data buffer */
-	gchar *data;
-	/** Length of vox data */
-	gsize len;
-	/** Pointer to thread structure */
-	GThread *thread;
-	/** Speex structure */
-	gpointer speex;
-	/** audio device */
-	RmAudio *audio;
-	/** audio private data */
-	gpointer audio_priv;
-	/** cancellable object for playback thread */
-	GCancellable *cancel;
-	/** playback state (pause/playing) */
-	gboolean state;
-	/** number of frame count */
-	gint num_cnt;
-	/** current playback data offset */
-	gsize offset;
-	/** current playback frame count */
-	gint cnt;
-	/** Current fraction */
-	gint fraction;
-	/** Current seconds */
-	gfloat seconds;
-
-	SNDFILE *sf;
-	SF_INFO info;
-} RmVoxPlayback;
-
 /**
  * rm_vox_playback_thread:
  * @user_data audio private pointer:
@@ -253,16 +220,14 @@ static gpointer rm_vox_sf_playback_thread(gpointer user_data)
 
 /**
  * rm_vox_play:
- * @vox_data: pointer to vox playback data
+ * @playback: a #RmVoxPlayback
  *
  * Play voicebox message file.
  *
  * Returns: %TRUE on playback started, %FALSE otherwise
  */
-gboolean rm_vox_play(gpointer vox_data)
+gboolean rm_vox_play(RmVoxPlayback *playback)
 {
-	RmVoxPlayback *playback = vox_data;
-
 	if (!playback) {
 		return FALSE;
 	}
@@ -293,16 +258,14 @@ gboolean rm_vox_play(gpointer vox_data)
 
 /**
  * rm_vox_playpause:
- * @vox_data: pointer to vox playback data
+ * @playback: a #RmVoxPlayback
  *
  * Toggle play/pause state.
  *
  * Returns: %TRUE if pause, %FALSE on playing
  */
-gboolean rm_vox_playpause(gpointer vox_data)
+gboolean rm_vox_playpause(RmVoxPlayback *playback)
 {
-	RmVoxPlayback *playback = vox_data;
-
 	if (!playback) {
 		return FALSE;
 	}
@@ -314,16 +277,14 @@ gboolean rm_vox_playpause(gpointer vox_data)
 
 /**
  * rm_vox_shutdown:
- * @vox_data: pointer to vox playback data
+ * @playback: a #RmVoxPlayback
  *
  * Stop vox playback if it is still running
  *
  * Returns: %TRUE if playback has been stop, %FALSE on error
  */
-gboolean rm_vox_shutdown(gpointer vox_data)
+gboolean rm_vox_shutdown(RmVoxPlayback *playback)
 {
-	RmVoxPlayback *playback = vox_data;
-
 	/* Safety check */
 	if (!playback) {
 		return FALSE;
@@ -358,16 +319,15 @@ gboolean rm_vox_shutdown(gpointer vox_data)
 
 /**
  * rm_vox_seek:
- * @vox_data: pointer to vox playback data
+ * @playback: a #RmVoxPlayback
  * @pos: position fraction
  *
  * Seek within vox stream.
  *
  * Returns: %TRUE on seek success, %FALSE on error
  */
-gboolean rm_vox_seek(gpointer vox_data, gdouble pos)
+gboolean rm_vox_seek(RmVoxPlayback *playback, gdouble pos)
 {
-	RmVoxPlayback *playback = vox_data;
 	spx_int32_t frame_size;
 	gint cnt;
 	gint cur_cnt = 0;
@@ -423,31 +383,27 @@ gboolean rm_vox_seek(gpointer vox_data, gdouble pos)
 
 /**
  * rm_vox_get_fraction:
- * @vox_data: internal vox playback structure
+ * @playback: a #RmVoxPlayback
  *
  * Get current fraction of playback slider.
  *
  * Returns: current fraction
  */
-gint rm_vox_get_fraction(gpointer vox_data)
+gint rm_vox_get_fraction(RmVoxPlayback *playback)
 {
-	RmVoxPlayback *playback = vox_data;
-
 	return playback->fraction;
 }
 
 /**
  * rm_vox_get_seconds:
- * @vox_data: internal vox playback structure
+ * @playback: a #RmVoxPlayback
  *
  * Get current seconds of playback.
  *
  * Returns: current seconds
  */
-gfloat rm_vox_get_seconds(gpointer vox_data)
+gfloat rm_vox_get_seconds(RmVoxPlayback *playback)
 {
-	RmVoxPlayback *playback = vox_data;
-
 	return playback->seconds;
 }
 
@@ -459,9 +415,9 @@ gfloat rm_vox_get_seconds(gpointer vox_data)
  *
  * Initialize vox playback structure.
  *
- * Returns: vox play structure
+ * Returns: new #RmVoxPlayback
  */
-gpointer rm_vox_init(gchar *data, gsize len, GError **error)
+RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 {
 	RmVoxPlayback *playback;
 	const SpeexMode *mode;
