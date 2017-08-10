@@ -39,39 +39,7 @@
  */
 void rm_os_execute(const gchar *uri)
 {
-#if 0
-	gchar *exec;
-
-	/* create execution command line for g_spawn */
-	exec = g_strdup_printf("%s %s", RM_OS_OPEN, uri);
-
-#ifdef G_OS_WIN32
-	ShellExecute(0, "open", uri, 0, 0, SW_SHOW);
-#else
-	g_spawn_command_line_async(exec, NULL);
-#endif
-
-	/* free command line */
-	g_free(exec);
-#else
-	GError *error = NULL;
-	GFile *file = g_file_new_for_path(uri);
-	GAppInfo *info = g_file_query_default_handler(file, NULL, &error);
-	GList *list = g_list_append(NULL, file);
-
-	if (!info) {
-		g_warning("%s(): %s", __FUNCTION__, error->message);
-		g_object_unref(file);
-		return;
+	if (!g_app_info_launch_default_for_uri(uri, NULL, NULL)) {
+		g_warning("%s(): Could not open uri: %s", __FUNCTION__, uri);
 	}
-
-	g_debug("%s(): %s/%s", __FUNCTION__, g_app_info_get_display_name(info), g_app_info_get_executable(info));
-	if (!g_app_info_launch(info, list, NULL, &error)) {
-		g_warning("%s(): %s", __FUNCTION__, error->message);
-	}
-
-	g_list_free(list);
-	g_object_unref(file);
-	g_object_unref(info);
-#endif
 }
