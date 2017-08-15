@@ -1881,7 +1881,7 @@ gboolean capi_session_disconnect(gpointer user_data)
 
 /**
  * \brief Activate plugin (add net event)
- * \param plugin peas plugin
+ * \param plugin plugin
  */
 static gboolean capi_plugin_init(RmPlugin *plugin)
 {
@@ -1900,7 +1900,7 @@ static gboolean capi_plugin_init(RmPlugin *plugin)
 
 /**
  * \brief Deactivate plugin (remote net event)
- * \param plugin peas plugin
+ * \param plugin plugin
  */
 static gboolean capi_plugin_shutdown(RmPlugin *plugin)
 {

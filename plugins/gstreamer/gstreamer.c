@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,22 +33,25 @@ static gint gstreamer_bits_per_sample = 16;
 static GstDeviceMonitor *monitor = NULL;
 static gboolean use_gst_device_monitor = FALSE;
 
-struct pipes {
+typedef struct _GstreamerPipes {
 	GstElement *in_pipe;
 	GstElement *out_pipe;
 	GstElement *in_bin;
 	GstElement *out_bin;
 	GstAdapter *adapter;
-};
+} GstreamerPipes;
 
 /**
- * \brief Stop and clean gstreamer pipeline
- * \param bus gstreamer bus
- * \param message gstreamer message
- * \param pipeline pipeline to pipeline we want to stop
- * \return TRUE if we received a EOS for the requested pipeline, otherwise FALSE
+ * gstreamer_pipeline_cleaner:
+ * @bus: a #GstBus
+ * @message: a #GstMessage
+ * @pipeline: pipeline we want to stop
+ *
+ * Stop and clean gstreamer pipeline
+ *
+ * Returns: %TRUE if we received a EOS for the requested pipeline
  */
-static gboolean pipeline_cleaner(GstBus *bus, GstMessage *message, gpointer pipeline)
+static gboolean gstreamer_pipeline_cleaner(GstBus *bus, GstMessage *message, gpointer pipeline)
 {
 	gboolean result = TRUE;
 
@@ -63,8 +66,11 @@ static gboolean pipeline_cleaner(GstBus *bus, GstMessage *message, gpointer pipe
 }
 
 /**
- * \brief Detect supported audio devices
- * \return 0
+ * gstreamer_detect_devices:
+ *
+ * Detect supported audio devices.
+ *
+ * Returns: list of audio device (output/input)
  */
 static GSList *gstreamer_detect_devices(void)
 {
@@ -73,22 +79,24 @@ static GSList *gstreamer_detect_devices(void)
 	GList *gst_devices = NULL;
 
 	if (!use_gst_device_monitor) {
+		/* We do not use the gstreamer device monitor, fallback to auto devices */
 		audio_device = g_slice_new0(RmAudioDevice);
 
 		audio_device->internal_name = g_strdup("autoaudiosink");
-		audio_device->name = g_strdup("Standard");
+		audio_device->name = g_strdup("Automatic");
 		audio_device->type = RM_AUDIO_OUTPUT;
 		devices = g_slist_prepend(devices, audio_device);
 
 		audio_device = g_slice_new0(RmAudioDevice);
 		audio_device->internal_name = g_strdup("autoaudiosrc");
-		audio_device->name = g_strdup("Standard");
+		audio_device->name = g_strdup("Automatic");
 		audio_device->type = RM_AUDIO_INPUT;
 		devices = g_slist_prepend(devices, audio_device);
 
 		return devices;
 	}
 
+	/* Get devices from monitor */
 	gst_devices = gst_device_monitor_get_devices(monitor);
 	GList *list;
 
@@ -122,8 +130,11 @@ static GSList *gstreamer_detect_devices(void)
 }
 
 /**
- * \brief Set buffer size we want to use
- * \param buffer_size requested buffer size
+ * gstreamer_set_buffer_output_size:
+ * @priv: a #GstElement pipeline
+ * @buffer_size: requested buffer size
+ *
+ * Set buffer size we want to use.
  */
 static void gstreamer_set_buffer_output_size(gpointer priv, unsigned buffer_size)
 {
@@ -139,6 +150,13 @@ static void gstreamer_set_buffer_output_size(gpointer priv, unsigned buffer_size
 	}
 }
 
+/**
+ * gstreamer_set_buffer_input_size:
+ * @priv: a #GstElement pipeline
+ * @buffer_size: requested buffer size
+ *
+ * Set buffer size we want to use.
+ */
 static void gstreamer_set_buffer_input_size(gpointer priv, unsigned buffer_size)
 {
 	GstElement *sink = NULL;
@@ -154,11 +172,14 @@ static void gstreamer_set_buffer_input_size(gpointer priv, unsigned buffer_size)
 }
 
 /**
- * \brief Initialize audio device
- * \param channels number of channels
- * \param sample_rate sample rate
- * \param bits_per_sample number of bits per samplerate
- * \return TRUE on success, otherwise error
+ * gstreamer_init:
+ * @channels: number of channels
+ * @sample_rate: sample rate
+ * @bits_per_sample: number of bits per samplerate
+ *
+ * Initialize audio device
+ *
+ * Returns: %TRUE on success, otherwise error
  */
 static int gstreamer_init(unsigned char channels, unsigned short sample_rate, unsigned char bits_per_sample)
 {
@@ -181,13 +202,17 @@ static int gstreamer_init(unsigned char channels, unsigned short sample_rate, un
 }
 
 /**
- * \brief Open audio device
- * \return private data or NULL on error
+ * gstreamer_open:
+ * @output: output device
+ *
+ * Open audio device
+ *
+ * Returns: private data or %NULL on error
  */
 static void *gstreamer_open(gchar *output)
 {
 	RmProfile *profile = rm_profile_get_active();
-	struct pipes *pipes = NULL;
+	GstreamerPipes *pipes = NULL;
 	GstElement *sink;
 	GstElement *audio_sink;
 	GstElement *audio_source;
@@ -204,7 +229,7 @@ static void *gstreamer_open(gchar *output)
 	gchar *input_name;
 	gint ret;
 
-	pipes = g_slice_alloc0(sizeof(struct pipes));
+	pipes = g_slice_alloc0(sizeof(GstreamerPipes));
 	if (pipes == NULL) {
 		return NULL;
 	}
@@ -316,7 +341,6 @@ static void *gstreamer_open(gchar *output)
 						 "rate", G_TYPE_INT, gstreamer_sample_rate,
 						 NULL);
 
-		//g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
 
 		convert = gst_element_factory_make("audioconvert", "convert");
@@ -342,16 +366,19 @@ static void *gstreamer_open(gchar *output)
 }
 
 /**
- * \brief Write audio data
- * \param priv private data
- * \param pnData audio data
- * \param size size of audio data
- * \return bytes written or error code
+ * gstreamer_write:
+ * @priv: internal pipe data
+ * @data: audio data
+ * @size: size of audio data
+ *
+ * Write audio data
+ *
+ * Returns: bytes written or error code
  */
 static gsize gstreamer_write(void *priv, guchar *data, gsize size)
 {
 	GstBuffer *buffer = NULL;
-	struct pipes *pipes = priv;
+	GstreamerPipes *pipes = priv;
 	GstElement *src = pipes->out_bin;
 	gchar *tmp;
 
@@ -368,10 +395,20 @@ static gsize gstreamer_write(void *priv, guchar *data, gsize size)
 	return size;
 }
 
+/**
+ * gstreamer_read:
+ * @priv: internal pipe data
+ * @data: audio data
+ * @size: size of audio data
+ *
+ * Read audio data
+ *
+ * Returns: bytes read or error code
+ */
 static gsize gstreamer_read(void *priv, guchar *data, gsize size)
 {
 	GstSample *sample = NULL;
-	struct pipes *pipes = priv;
+	GstreamerPipes *pipes = priv;
 	GstElement *sink = pipes->in_bin;
 	unsigned int read = 0;
 
@@ -394,13 +431,16 @@ static gsize gstreamer_read(void *priv, guchar *data, gsize size)
 }
 
 /**
- * \brief Stop and remove pipeline
- * \param priv private data
- * \return error code
+ * gstreamer_close:
+ * @priv: private data
+ *
+ * Stop and remove pipeline
+ *
+ * Returns: error code
  */
 int gstreamer_close(void *priv)
 {
-	struct pipes *pipes = priv;
+	GstreamerPipes *pipes = priv;
 
 	if (pipes == NULL) {
 		return 0;
@@ -409,7 +449,7 @@ int gstreamer_close(void *priv)
 	GstElement *src = pipes->out_bin;
 	if (src != NULL) {
 		GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipes->out_pipe));
-		gst_bus_add_watch(bus, pipeline_cleaner, pipes->out_pipe);
+		gst_bus_add_watch(bus, gstreamer_pipeline_cleaner, pipes->out_pipe);
 		gst_app_src_end_of_stream(GST_APP_SRC(src));
 		gst_element_set_state(pipes->out_pipe, GST_STATE_NULL);
 		gst_object_unref(bus);
@@ -423,12 +463,19 @@ int gstreamer_close(void *priv)
 		pipes->out_pipe = NULL;
 	}
 
-	g_slice_free(struct pipes, pipes);
+	g_slice_free(GstreamerPipes, pipes);
 	pipes = NULL;
 
 	return 0;
 }
 
+/**
+ * gstremaer_shutdown:
+ *
+ * Shutdown gstreamer
+ *
+ * Returns: 0
+ */
 int gstreamer_shutdown(void)
 {
 	gst_device_monitor_stop(monitor);
@@ -450,8 +497,12 @@ RmAudio gstreamer = {
 };
 
 /**
- * \brief Activate plugin (add net event)
- * \param plugin peas plugin
+ * gstreamer_plugin_init:
+ * @plugin: a #RmPlugin
+ *
+ * Activate plugin (add net event)
+ *
+ * Returns: %TRUE
  */
 static gboolean gstreamer_plugin_init(RmPlugin *plugin)
 {
@@ -466,8 +517,12 @@ static gboolean gstreamer_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * \brief Deactivate plugin (remote net event)
- * \param plugin peas plugin
+ * gstreamer_plugin_shutdown:
+ * @plugin: a #RmPlugin
+ *
+ * Deactivate plugin (remote net event)
+ *
+ * Returns: %TRUE
  */
 static gboolean gstreamer_plugin_shutdown(RmPlugin *plugin)
 {
@@ -477,3 +532,4 @@ static gboolean gstreamer_plugin_shutdown(RmPlugin *plugin)
 }
 
 RM_PLUGIN(gstreamer);
+

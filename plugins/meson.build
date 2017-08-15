@@ -2,7 +2,6 @@ subdir('areacodes_global')
 subdir('capi')
 subdir('fritzbox')
 subdir('gstreamer')
-subdir('portaudio')
 subdir('pulseaudio')
 subdir('reverselookup')
 

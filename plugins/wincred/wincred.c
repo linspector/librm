@@ -28,10 +28,12 @@
 #include <rm/rm.h>
 
 /**
- * \brief Store password
- * \param profile profile pointer
- * \param name password name
- * \param password password
+ * wincred_store_password:
+ * @profile: a #RmProfile
+ * @name: password name
+ * @password: password
+ *
+ * Store password
  */
 static void wincred_store_password(RmProfile *profile, const gchar *name, const gchar *password)
 {
@@ -65,10 +67,13 @@ static void wincred_store_password(RmProfile *profile, const gchar *name, const 
 }
 
 /**
- * \brief Get password
- * \param profile profile pointer
- * \param name password name
- * \return password
+ * wincred_get_password:
+ * @profile: a #RmProfile
+ * @name: password name
+ *
+ * Get password
+ *
+ * Returns: password
  */
 static gchar *wincred_get_password(RmProfile *profile, const gchar *name)
 {
@@ -99,10 +104,13 @@ static gchar *wincred_get_password(RmProfile *profile, const gchar *name)
 }
 
 /**
- * \brief Remove password
- * \param profile profile pointer
- * \param name password name
- * \return TRUE on success, otherwise FALSE
+ * wincred_remove_password:
+ * @profile: a #RmProfile
+ * @name: password name
+ *
+ * Remove password
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
 static gboolean wincred_remove_password(RmProfile *profile, const gchar *name)
 {
@@ -132,8 +140,12 @@ RmPasswordManager wincred = {
 };
 
 /**
- * \brief Activate plugin - register windows credential password manager
- * \pram plugin peas plugin
+ * wincred_plugin_init:
+ * @plugin: a #RmPlugin
+ *
+ * Activate plugin - register windows credential password manager
+ *
+ * Returns: %TRUE
  */
 gboolean wincred_plugin_init(RmPlugin *plugin)
 {
@@ -143,8 +155,12 @@ gboolean wincred_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * \brief Deactivate plugin
- * \pram plugin peas plugin
+ * wincred_plugin_shutdown:
+ * @plugin: a #RmPlugin
+ *
+ * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 gboolean wincred_plugin_shutdown(RmPlugin *plugin)
 {

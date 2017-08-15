@@ -33,7 +33,7 @@ GSList *rm_plugins = NULL;
  * @Title: RmPlugins
  * @Short_description: Plugins handling functions
  *
- * Adds plugin support based on libpeas.
+ * Adds plugin support.
  */
 
 /** Internal search path list */
@@ -43,7 +43,7 @@ static GSList *rm_search_path_list = NULL;
  * rm_plugins_add_search_path:
  * @path: additional search path for plugins
  *
- * Add additional search @path for peas.
+ * Add additional search @path for plugins.
  */
 void rm_plugins_add_search_path(gchar *path)
 {

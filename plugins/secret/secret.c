@@ -22,7 +22,9 @@
 
 #include <rm/rm.h>
 
-#include <secret.h>
+const SecretSchema *secret_get_schema(void) G_GNUC_CONST;
+
+#define SECRET_SCHEMA  secret_get_schema()
 
 /**
  * secret_get_schema:
@@ -170,10 +172,12 @@ gboolean secret_available(void)
 }
 
 /**
- * impl_activate:
- * @plugin: a #PeasActivatable
+ * secret_plugin_init:
+ * @plugin: a #RmPlugin
  *
- * Activate peas plugin - register libsecret password manager if present
+ * Activate plugin - register libsecret password manager if present
+ *
+ * Returns: %TRUE if plugin could be registered
  */
 gboolean secret_plugin_init(RmPlugin *plugin)
 {
@@ -187,10 +191,12 @@ gboolean secret_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * impl_deactivate:
- * @plugin: a #PeasActivatable
+ * secret_plugin_shutdown:
+ * @plugin: a #RmPlugin
  *
- * Deactivate peas plugin
+ * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 gboolean secret_plugin_shutdown(RmPlugin *plugin)
 {

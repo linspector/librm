@@ -158,10 +158,12 @@ static void areacodes_contact_process_cb(RmObject *obj, RmContact *contact, gpoi
 }
 
 /**
- * impl_activate:
- * @plugin: a #PeasActivatable
+ * areacodes_plugin_init:
+ * @plugin: a #RmPlugin
  *
  * Activate plugin
+ *
+ * Returns: %TRUE if plugin could be initialized
  */
 static gboolean areacodes_plugin_init(RmPlugin *plugin)
 {
@@ -201,10 +203,12 @@ static gboolean areacodes_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * impl_deactivate:
- * @plugin: a #PeasActivatable
+ * areacodes_plugin_shutdown:
+ * @plugin: a #RmPlugin
  *
  * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 static gboolean areacodes_plugin_shutdown(RmPlugin *plugin)
 {

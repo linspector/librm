@@ -102,10 +102,12 @@ static RmPasswordManager simple_pwd = {
 };
 
 /**
- * impl_activate:
- * @plugin: a #PeasActivatable
+ * simple_pwd_plugin_init:
+ * @plugin: a #RmPlugin
  *
- * Activate peas plugin - register libsimple_pwd password manager if present
+ * Activate plugin - register libsimple_pwd password manager if present
+ *
+ * Returns: %TRUE
  */
 gboolean simple_pwd_plugin_init(RmPlugin *plugin)
 {
@@ -127,10 +129,12 @@ gboolean simple_pwd_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * impl_deactivate:
- * @plugin: a #PeasActivatable
+ * simple_pwd_plugin_shutdown:
+ * @plugin: a #RmPlugin
  *
- * Deactivate peas plugin
+ * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 gboolean simple_pwd_plugin_shutdown(RmPlugin *plugin)
 {

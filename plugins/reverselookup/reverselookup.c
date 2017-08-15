@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,8 +31,6 @@
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 
-#include "reverselookup.h"
-
 //#define RL_DEBUG 1
 
 typedef struct {
@@ -48,7 +46,27 @@ static GHashTable *lookup_table = NULL;
 /** Lookup soup session */
 static SoupSession *rl_session = NULL;
 
-static gchar *replace_number(gchar *url, gchar *full_number)
+typedef struct _RmLookupEntry {
+	gboolean prefix;
+	gchar *service;
+	gchar *url;
+	gchar **name;
+	gchar **street;
+	gchar **zip;
+	gchar **city;
+	gint zip_len;
+} RmLookupEntry;
+
+/**
+ * reverselookup_replace_number:
+ * @url: url string
+ * @full_number: full phone number
+ *
+ * Repleaces %NUMBER% within @url with @full_number.
+ *
+ * Returns: replaced string
+ */
+static gchar *reverselookup_replace_number(gchar *url, gchar *full_number)
 {
 	GRegex *number = g_regex_new("%NUMBER%", G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 	gchar *out = g_regex_replace_literal(number, url, -1, 0, full_number, 0, NULL);
@@ -58,7 +76,17 @@ static gchar *replace_number(gchar *url, gchar *full_number)
 	return out;
 }
 
-static gboolean extract_element(gchar **in, xmlNode *a_node, gchar **out)
+/**
+ * reversellokup_extract_element:
+ * @in: input string
+ * @a_node: a #xmlNode
+ * @out: output string
+ *
+ * Extracts a defined xml element of an xmlNode
+ *
+ * Returns: %TRUE if element could be extracted
+ */
+static gboolean reverselookup_extract_element(gchar **in, xmlNode *a_node, gchar **out)
 {
 	xmlNode *cur_node = NULL;
 	gboolean ret = FALSE;
@@ -73,33 +101,34 @@ static gboolean extract_element(gchar **in, xmlNode *a_node, gchar **out)
 					xmlChar *name = xmlNodeListGetString(cur_node->doc, cur_node->children, TRUE);
 					GRegex *whitespace = g_regex_new("[ ]{2,}", G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
 
-					//g_debug("%s(): name = '%s'", __FUNCTION__, name);
 					tmp = g_regex_replace_literal(whitespace, (gchar*)name, -1, 0, " ", 0, NULL);
-					//g_debug("%s(): tmp = '%s'", __FUNCTION__, tmp);
 
 					*out = g_strdup(g_strstrip(tmp));
 					g_free(tmp);
 
-					//printf("%s(): %s\n", __FUNCTION__, *out);
 					xmlFree(name);
 					return TRUE;
 				}
 			}
 		}
 
-		ret = extract_element(in, cur_node->children, out);
+		ret = reverselookup_extract_element(in, cur_node->children, out);
 	}
 
 	return ret;
 }
 
 /**
- * \brief Internal reverse lookup function
- * \param number number to lookup
- * \param contact a #RmContact
- * \return TRUE on success, otherwise FALSE
+ * reverselookup_do_entry:
+ * @lookup: a #RmLookupEntry
+ * @number: number to lookup
+ * @contact: a #RmContact
+ *
+ * Internal reverse lookup function
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
-static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContact *contact)
+static gboolean reverselookup_do_entry(RmLookupEntry *lookup, gchar *number, RmContact *contact)
 {
 	SoupMessage *msg;
 	const gchar *data;
@@ -120,7 +149,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 	g_debug("New lookup for '%s'", full_number);
 #endif
 
-	gchar *url = replace_number(lookup->url, full_number);
+	gchar *url = reverselookup_replace_number(lookup->url, full_number);
 #ifdef RL_DEBUG
 	g_debug("URL: %s", url);
 #endif
@@ -152,7 +181,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 
 	node = xmlDocGetRootElement(html);
 
-	if (!extract_element(lookup->name, node, &contact->name)) {
+	if (!reverselookup_extract_element(lookup->name, node, &contact->name)) {
 #ifdef RL_DEBUG
 		gchar *tmp_file = g_strdup_printf("rl-%s-%s.html", lookup->service, number);
 		rm_log_save_data(tmp_file, rdata, len);
@@ -162,7 +191,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 		goto end;
 	}
 
-	if (!extract_element(lookup->street, node, &contact->street)) {
+	if (!reverselookup_extract_element(lookup->street, node, &contact->street)) {
 #ifdef RL_DEBUG
 		gchar *tmp_file = g_strdup_printf("rl-%s-%s.html", lookup->service, number);
 		rm_log_save_data(tmp_file, rdata, len);
@@ -172,7 +201,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 		goto end;
 	}
 
-	if (!extract_element(lookup->city, node, &contact->city)) {
+	if (!reverselookup_extract_element(lookup->city, node, &contact->city)) {
 #ifdef RL_DEBUG
 		gchar *tmp_file = g_strdup_printf("rl-%s-%s.html", lookup->service, number);
 		rm_log_save_data(tmp_file, rdata, len);
@@ -183,7 +212,7 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 	}
 
 	if (lookup->zip) {
-		if (!extract_element(lookup->zip, node, &contact->zip)) {
+		if (!reverselookup_extract_element(lookup->zip, node, &contact->zip)) {
 	#ifdef RL_DEBUG
 			gchar *tmp_file = g_strdup_printf("rl-%s-%s.html", lookup->service, number);
 			rm_log_save_data(tmp_file, rdata, len);
@@ -242,11 +271,14 @@ static gboolean do_reverse_lookup(struct lookup *lookup, gchar *number, RmContac
 }
 
 /**
- * \brief Get lookup list
- * \param country_code country code
- * \return lookup list
+ * reverselookup_get_lookup_list:
+ * @country_code: country code
+ *
+ * Get lookup list
+ *
+ * Returns: lookup list
  */
-GSList *get_lookup_list(const gchar *country_code)
+static GSList *reverselookup_get_lookup_list(const gchar *country_code)
 {
 	GSList *list = NULL;
 
@@ -266,11 +298,14 @@ GSList *get_lookup_list(const gchar *country_code)
 }
 
 /**
- * \brief Extract country code from full number
- * \param full_number full international number
- * \return country code or NULL on error
+ * reverselookup_get_country_code:
+ * @full_number: full international number
+ *
+ * Extract country code from full number
+ *
+ * Returns: country code or %NULL on error
  */
-gchar *get_country_code(const gchar *full_number)
+static gchar *reverselookup_get_country_code(const gchar *full_number)
 {
 	gchar sub_string[7];
 	int index;
@@ -293,14 +328,17 @@ gchar *get_country_code(const gchar *full_number)
 }
 
 /**
- * \brief Reverse lookup function
- * \param number number to lookup
- * \contact a #RmContact
- * \return TRUE on success, otherwise FALSE
+ * reverselookup_do:
+ * @number: number to lookup
+ * @contact: a #RmContact
+ *
+ * Reverse lookup function
+ *
+ * Returns: %TRUE on success, otherwise %FALSE
  */
-static gboolean reverse_lookup(gchar *number, RmContact *contact)
+static gboolean reverselookup_do(gchar *number, RmContact *contact)
 {
-	struct lookup *lookup = NULL;
+	RmLookupEntry *lookup = NULL;
 	GSList *list = NULL;
 	gchar *full_number = NULL;
 	gchar *country_code = NULL;
@@ -345,7 +383,7 @@ static gboolean reverse_lookup(gchar *number, RmContact *contact)
 	g_debug("full number '%s'", full_number);
 #endif
 
-	country_code = get_country_code(full_number);
+	country_code = reverselookup_get_country_code(full_number);
 	g_free(full_number);
 
 	international_access_code_len = strlen(rm_router_get_international_access_code(profile));
@@ -363,10 +401,10 @@ static gboolean reverse_lookup(gchar *number, RmContact *contact)
 
 	if (strcmp(country_code + international_access_code_len, rm_router_get_country_code(rm_profile_get_active()))) {
 		/* if country code is not the same as the router country code, loop through country list */
-		list = get_lookup_list(country_code + international_access_code_len);
+		list = reverselookup_get_lookup_list(country_code + international_access_code_len);
 	} else {
 		/* if country code is the same as the router country code, use default plugin */
-		list = get_lookup_list(rm_router_get_country_code(rm_profile_get_active()));
+		list = reverselookup_get_lookup_list(rm_router_get_country_code(rm_profile_get_active()));
 	}
 
 	g_free(country_code);
@@ -378,7 +416,7 @@ static gboolean reverse_lookup(gchar *number, RmContact *contact)
 		g_debug("Using service '%s'", lookup->service);
 #endif
 
-		found = do_reverse_lookup(lookup, number, contact);
+		found = reverselookup_do_entry(lookup, number, contact);
 		/* in case we found some valid data, break loop */
 		if (found) {
 			break;
@@ -395,12 +433,14 @@ static gboolean reverse_lookup(gchar *number, RmContact *contact)
 }
 
 /**
- * \brief Add lookup from xmlnode
- * \param psNode xml node structure
+ * reverselookup_add:
+ * @node: a #RmXmlNode
+ *
+ * Add lookup from xmlnode
  */
-static void lookup_add(RmXmlNode *node)
+static void reverselookup_add(RmXmlNode *node)
 {
-	struct lookup *lookup = NULL;
+	RmLookupEntry *lookup = NULL;
 	RmXmlNode *child = NULL;
 	gchar *service = NULL;
 	gchar *prefix = NULL;
@@ -452,7 +492,7 @@ static void lookup_add(RmXmlNode *node)
 		zip = g_strsplit(tmp, " ", -1);
 	}
 
-	lookup = g_slice_alloc0(sizeof(struct lookup));
+	lookup = g_slice_alloc0(sizeof(RmLookupEntry));
 	g_debug(" o Service: '%s', prefix: %s", service, prefix);
 	lookup->service = service;
 	lookup->prefix = prefix[ 0 ] == '1';
@@ -467,10 +507,12 @@ static void lookup_add(RmXmlNode *node)
 }
 
 /**
- * \brief Add country code from RmXmlNode
- * \param node xml node structure
+ * reverselookup_country_code_add:
+ * @node: a #RmXmlNode
+ *
+ * Add country code from RmXmlNode
  */
-static void country_code_add(RmXmlNode *node)
+static void reverselookup_country_code_add(RmXmlNode *node)
 {
 	RmXmlNode *child = NULL;
 	const gchar *code = NULL;
@@ -481,14 +523,20 @@ static void country_code_add(RmXmlNode *node)
 	lookup_list = NULL;
 
 	for (child = rm_xmlnode_get_child(node, "lookup"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
-		lookup_add(child);
+		reverselookup_add(child);
 	}
 	lookup_list = g_slist_reverse(lookup_list);
 
 	g_hash_table_insert(lookup_table, (gpointer)atol(code), lookup_list);
 }
 
-static void lookup_read_cache(gchar *dir_name)
+/**
+ * reverselookup_read_cache:
+ * @dir_name: read cache file from @dir_name
+ *
+ * Read cached data (previous lookups with valid data)
+ */
+static void reverselookup_read_cache(gchar *dir_name)
 {
 #ifndef RL_DEBUG
 	GDir *dir;
@@ -536,12 +584,16 @@ static void lookup_read_cache(gchar *dir_name)
 
 RmLookup rl = {
 	"Reverse Lookup",
-	reverse_lookup
+	reverselookup_do
 };
 
 /**
- * \brief Activate plugin
- * \param plugin peas plugin
+ * reverselookup_plugin_init:
+ * @plugin: a #RmPlugin
+ *
+ * Activate plugin
+ *
+ * Returns: %TRUE if plugin could be initialized
  */
 static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 {
@@ -575,12 +627,12 @@ static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 
 	for (child = rm_xmlnode_get_child(node, "country"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		/* Add new country code lists to hash table */
-		country_code_add(child);
+		reverselookup_country_code_add(child);
 	}
 
 	file = g_build_filename(rm_get_user_cache_dir(), "reverselookup", NULL);
 	g_mkdir_with_parents(file, 0770);
-	lookup_read_cache(file);
+	reverselookup_read_cache(file);
 	g_free(file);
 
 	rm_xmlnode_free(node);
@@ -593,8 +645,12 @@ static gboolean reverselookup_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * \brief Deactivate plugin
- * \param plugin peas plugin
+ * reverselookup_plugin_shutdown:
+ * @plugin: a #RmPlugin
+ *
+ * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 static gboolean reverselookup_plugin_shutdown(RmPlugin *plugin)
 {

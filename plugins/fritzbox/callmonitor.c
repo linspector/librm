@@ -311,10 +311,6 @@ gboolean callmonitor_disconnect(gpointer user_data)
 	return TRUE;
 }
 
-/**
- * \brief Activate plugin (add net event)
- * \param plugin peas plugin
- */
 void fritzbox_init_callmonitor(void)
 {
 	g_debug("%s(): called", __FUNCTION__);
@@ -328,10 +324,6 @@ void fritzbox_init_callmonitor(void)
 	dialer_phone.device = telnet_device;
 }
 
-/**
- * \brief Deactivate plugin (remote net event)
- * \param plugin peas plugin
- */
 void fritzbox_shutdown_callmonitor(void)
 {
 	g_debug("%s(): called", __FUNCTION__);
