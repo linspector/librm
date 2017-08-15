@@ -43,7 +43,6 @@
 #include <rm/rmlog.h>
 #include <rm/rmnetmonitor.h>
 #include <rm/rmnumber.h>
-#include <rm/rmosdep.h>
 #include <rm/rmplugins.h>
 #include <rm/rmrouterinfo.h>
 #include <rm/rmstring.h>
