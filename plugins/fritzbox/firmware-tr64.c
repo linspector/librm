@@ -462,7 +462,9 @@ gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize
 	gchar *url;
 	gchar *ret = NULL;
 
-	rm_router_login(profile);
+	if (!rm_router_login(profile)) {
+		return ret;
+	}
 
 	/* Create message */
 	url = g_strdup_printf("https://%s:%d%s&sid=%s", rm_router_get_host(profile), firmware_tr64_security_port, filename, profile->router_info->session_id);

@@ -45,7 +45,7 @@ typedef struct {
 RmAreaCode *areacodes_get_area_code(RmGlobalAreaCodesPlugin *areacodes_plugin, const gchar *full_number)
 {
 	RmAreaCode *areacode;
-	gchar sub_string[6];
+	gchar sub_string[7];
 	gint index;
 	gint len = strlen(full_number);
 

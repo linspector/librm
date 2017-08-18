@@ -184,7 +184,7 @@ static gboolean rm_faxspooler_setup_file_monitor(const gchar *dir_name, GError *
 	/* Create GFile for GFileMonitor */
 	file = g_file_new_for_path(dir_name);
 	/* Create file monitor for spool directory */
-	file_monitor = g_file_monitor_directory(file, 0, NULL, error);
+	file_monitor = g_file_monitor_directory(file, 0, NULL, &file_error);
 	g_object_unref(file);
 	if (file_monitor) {
 		/* Set callback for file monitor */

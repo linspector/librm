@@ -43,11 +43,13 @@
  */
 gchar *rm_strcasestr(const gchar *haystack, const gchar *needle)
 {
-	size_t n = strlen(needle);
+	size_t n;
 
 	if (!haystack || !needle) {
 		return NULL;
 	}
+
+	n = strlen(needle);
 
 	for (; *haystack; haystack++) {
 		if (g_ascii_strncasecmp(haystack, needle, n) == 0) {

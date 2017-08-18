@@ -379,12 +379,14 @@ static gsize gstreamer_write(void *priv, guchar *data, gsize size)
 {
 	GstBuffer *buffer = NULL;
 	GstreamerPipes *pipes = priv;
-	GstElement *src = pipes->out_bin;
+	GstElement *src;
 	gchar *tmp;
 
-	if (!pipes || !src) {
+	if (!pipes || !pipes->out_bin) {
 		return 0;
 	}
+
+	src = pipes->out_bin;
 
 	tmp = g_malloc0(size);
 	memcpy((char*)tmp, (char*)data, size);

@@ -263,7 +263,9 @@ gboolean callmonitor_connect(gpointer user_data)
 
 	/* this is a bit of a mess: LINUX uses TCP_KEEP_IDLE, where OSX uses TCP_KEEPALIVE */
 #ifdef TCP_KEEPIDLE
-	setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &tcp_keepalive_time, sizeof(tcp_keepalive_time));
+	if (setsockopt(sock, IPPROTO_TCP, TCP_KEEPIDLE, &tcp_keepalive_time, sizeof(tcp_keepalive_time)) == 1) {
+		g_warning("%s(): Could not set TCP_KEEPIDLE time", __FUNCTION__);
+	}
 #else
 #ifdef TCP_KEEPALIVE
 	setsockopt(sock, IPPROTO_TCP, TCP_KEEPALIVE, &tcp_keepalive_time, sizeof(tcp_keepalive_time));

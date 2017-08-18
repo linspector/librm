@@ -182,6 +182,7 @@ gboolean rm_filter_rule_match(RmFilter *filter, RmCallEntry *call)
 				} else {
 					dates_valid++;
 				}
+				break;
 			case RM_FILTER_STARTS_WITH:
 				/* Compare year */
 				ret = strncmp(number_a + 6, number_b + 6, 2);
@@ -200,6 +201,7 @@ gboolean rm_filter_rule_match(RmFilter *filter, RmCallEntry *call)
 				} else {
 					dates_valid++;
 				}
+				break;
 			case RM_FILTER_CONTAINS:
 				/* Compare year */
 				ret = strncmp(number_a + 6, number_b + 6, 2);
@@ -384,7 +386,9 @@ void rm_filter_remove(RmProfile *profile, RmFilter *filter)
 	profile->filter_list = g_slist_remove(profile->filter_list, filter);
 
 	if (filter->file) {
-		g_remove(filter->file);
+		if (g_remove(filter->file) == -1) {
+			g_warning("%s(): File '%s' could not be removed", __FUNCTION__, filter->file);
+		}
 	}
 
 	g_free(filter->name);

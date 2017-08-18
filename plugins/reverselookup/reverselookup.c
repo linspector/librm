@@ -132,8 +132,6 @@ static gboolean reverselookup_do_entry(RmLookupEntry *lookup, gchar *number, RmC
 {
 	SoupMessage *msg;
 	const gchar *data;
-	GRegex *reg = NULL;
-	GMatchInfo *info = NULL;
 	gchar *rl_tmp;
 	RmContact *rl_contact;
 	gboolean result = FALSE;
@@ -255,14 +253,6 @@ static gboolean reverselookup_do_entry(RmLookupEntry *lookup, gchar *number, RmC
  end:
 	if (rdata) {
 		g_free(rdata);
-	}
-
-	if (info) {
-		g_match_info_free(info);
-	}
-
-	if (reg) {
-		g_regex_unref(reg);
 	}
 
 	g_object_unref(msg);

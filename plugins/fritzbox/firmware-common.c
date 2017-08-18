@@ -779,7 +779,10 @@ gchar *fritzbox_load_fax(RmProfile *profile, const gchar *filename, gsize *len)
 		SoupMessage *msg;
 		gchar *url;
 
-		rm_router_login(profile);
+		if (!rm_router_login(profile)) {
+			return ret;
+		}
+
 		/* Create message */
 		url = g_strdup_printf("https://%s:49443%s&sid=%s", rm_router_get_host(profile), filename, profile->router_info->session_id);
 		msg = soup_message_new(SOUP_METHOD_GET, url);
