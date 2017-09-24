@@ -90,6 +90,8 @@ rm_shared = shared_library('rm',
                         dependencies : rm_dep,
                         install : true,
                         c_args : '-DRM_COMPILATION',
+                        version: rm_version,
+                        soversion: '0',
                         link_args : rm_link)
 
 rm_dep = declare_dependency(link_with : rm_shared,
