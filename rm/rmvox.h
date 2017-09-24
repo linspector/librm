@@ -24,45 +24,11 @@
 #error "Only <rm/rm.h> can be included directly."
 #endif
 
-#include <sndfile.h>
-
 #include <rm/rmaudio.h>
 
 G_BEGIN_DECLS
 
-/** Private vox playback structure */
-typedef struct _RmVoxPlayback {
-	/*< private >*/
-	/** Vox data buffer */
-	gchar *data;
-	/** Length of vox data */
-	gsize len;
-	/** Pointer to thread structure */
-	GThread *thread;
-	/** Speex structure */
-	gpointer speex;
-	/** audio device */
-	RmAudio *audio;
-	/** audio private data */
-	gpointer audio_priv;
-	/** cancellable object for playback thread */
-	GCancellable *cancel;
-	/** pause state (pause/playing) */
-	gboolean pause;
-	/** number of frame count */
-	gint num_cnt;
-	/** current playback data offset */
-	gsize offset;
-	/** current playback frame count */
-	gint cnt;
-	/** Current fraction */
-	gint fraction;
-	/** Current seconds */
-	gfloat seconds;
-
-	SNDFILE *sf;
-	SF_INFO info;
-} RmVoxPlayback;
+typedef struct _RmVoxPlayback RmVoxPlayback;
 
 RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error);
 gboolean rm_vox_play(RmVoxPlayback *playback);

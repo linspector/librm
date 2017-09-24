@@ -35,6 +35,40 @@
 
 //#define VOX_DEBUG 1
 
+/** Private vox playback structure */
+typedef struct _RmVoxPlayback {
+	/*< private >*/
+	/** Vox data buffer */
+	gchar *data;
+	/** Length of vox data */
+	gsize len;
+	/** Pointer to thread structure */
+	GThread *thread;
+	/** Speex structure */
+	gpointer speex;
+	/** audio device */
+	RmAudio *audio;
+	/** audio private data */
+	gpointer audio_priv;
+	/** cancellable object for playback thread */
+	GCancellable *cancel;
+	/** pause state (pause/playing) */
+	gboolean pause;
+	/** number of frame count */
+	gint num_cnt;
+	/** current playback data offset */
+	gsize offset;
+	/** current playback frame count */
+	gint cnt;
+	/** Current fraction */
+	gint fraction;
+	/** Current seconds */
+	gfloat seconds;
+
+	SNDFILE *sf;
+	SF_INFO info;
+} RmVoxPlayback;
+
 /**
  * SECTION:rmvox
  * @title: RmVox
