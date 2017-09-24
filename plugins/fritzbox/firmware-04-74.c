@@ -278,7 +278,7 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 		}
 
 		/* MSN */
-		for (index = 0; index < 10; index++) {
+		for (index = 0; index < 10 && skip != NULL; index++) {
 			skip = strstr(skip, "nrs.msn.push");
 			if (skip != NULL) {
 				start = strchr(skip, '"');
@@ -291,7 +291,7 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 		}
 
 		/* SIP */
-		for (index = 0; index < 19 && skip != NULL; index++) {
+		for (index = 0; index < 19; index++) {
 			skip = strstr(skip, "nrs.sip.push");
 			if (skip != NULL) {
 				start = strchr(skip, '"');

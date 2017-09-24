@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,10 +28,13 @@
 #include "firmware-common.h"
 
 /**
- * \brief Parse FRITZ!Box "Anruferliste"
- * \param ptr pointer to journal
- * \param split splitted line
- * \return pointer to journal with attached call line
+ * csv_parse_fritzbox:
+ * @ptr: pointer to journal
+ * @split: splitted line
+ *
+ * Parse FRITZ!Box "Anruferliste"
+ *
+ * Returns: pointer to journal with attached call line
  */
 static inline gpointer csv_parse_fritzbox(gpointer ptr, gchar **split)
 {
@@ -71,9 +74,13 @@ static inline gpointer csv_parse_fritzbox(gpointer ptr, gchar **split)
 }
 
 /**
- * \brief Parse journal data as csv
- * \param data raw data to parse
- * \return call list
+ * csv_parse_fritzbox_journal_data:
+ * @list: journal as list
+ * @data: raw data to parse
+ *
+ * Parse journal data as csv
+ *
+ * Returns: call list
  */
 GSList *csv_parse_fritzbox_journal_data(GSList *list, const gchar *data)
 {

@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -129,9 +129,12 @@ gboolean fritzbox_delete_voice(RmProfile *profile, const gchar *filename);
 gboolean strv_contains(const gchar *const *strv, const gchar *str);
 
 /**
- * \brief Make dots (UTF8 -> UTF16)
- * \param str UTF8 string
- * \return UTF16 string
+ * make_dots:
+ * @str: UTF8 string
+ *
+ * Make dots (UTF8 -> UTF16)
+ *
+ * Returns: UTF16 string
  */
 static inline gchar *make_dots(const gchar *str)
 {
@@ -156,9 +159,12 @@ static inline gchar *make_dots(const gchar *str)
 }
 
 /**
- * \brief Compute md5 sum of input string
- * \param input - input string
- * \return md5 in hex or NULL on error
+ * md5:
+ * @input: input string
+ *
+ * Compute md5 sum of input string
+ *
+ * Returns: md5 in hex or %NULL on error
  */
 static inline gchar *md5(gchar *input)
 {
@@ -179,9 +185,12 @@ static inline gchar *md5(gchar *input)
 }
 
 /**
- * \brief Compute md5 sum of input string
- * \param input - input string
- * \return md5 in hex or NULL on error
+ * md5_simple:
+ * @input: input string
+ *
+ * Compute md5 sum of input string
+ *
+ * Returns: md5 in hex or NULL on error
  */
 static inline gchar *md5_simple(gchar *input)
 {

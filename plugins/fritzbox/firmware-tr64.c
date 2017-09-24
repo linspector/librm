@@ -283,18 +283,13 @@ static gint firmware_tr64_get_security_port(RmProfile *profile)
  */
 static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNode *call)
 {
-	//gchar *id;
 	gchar *type;
 	gchar *called;
 	gchar *caller;
-	//gchar *caller_number;
 	gchar *name;
-	//gchar *number_type;
-	//gchar *device;
 	gchar *port;
 	gchar *date_time;
 	gchar *duration;
-	//gchar *count;
 	gchar *path;
 	gchar *remote_name;
 	gchar *remote_number;
@@ -304,8 +299,6 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 	RmCallEntry *call_entry;
 	RmCallEntryTypes call_type;
 
-	//tmp = rm_xmlnode_get_child(call, "Id");
-	//id = rm_xmlnode_get_data(tmp);
 	tmp = rm_xmlnode_get_child(call, "Type");
 	type = rm_xmlnode_get_data(tmp);
 	tmp = rm_xmlnode_get_child(call, "Name");
@@ -368,6 +361,14 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 	return list;
 }
 
+/**
+ * firmware_tr64_journal_cb:
+ * @session: a #SoupSession
+ * @msg: a #SoupMessage
+ * @user_data: a #RmProfile
+ *
+ * Get journal callback
+ */
 void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
 	GSList *journal = NULL;
@@ -563,6 +564,14 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 	return TRUE;
 }
 
+/**
+ * firmware_tr64_get_dial_config:
+ * @profile: a #RmProfle
+ *
+ * Get dial configuration
+ *
+ * Returns: %TRUE on success
+ */
 gboolean firmware_tr64_get_dial_config(RmProfile *profile)
 {
 	SoupMessage *msg;
@@ -583,6 +592,14 @@ gboolean firmware_tr64_get_dial_config(RmProfile *profile)
 	return TRUE;
 }
 
+/**
+ * firmware_tr64_set_dial_config:
+ * @profile: a #RmProfile
+ *
+ * Set dial config (hard coded to Roger atm)
+ *
+ * Returns: %TRUE on success
+ */
 gboolean firmware_tr64_set_dial_config(RmProfile *profile)
 {
 	SoupMessage *msg;
@@ -603,6 +620,14 @@ gboolean firmware_tr64_set_dial_config(RmProfile *profile)
 	return TRUE;
 }
 
+/**
+ * firmware_tr64_get_numbers:
+ * @profile: a #RmProfile
+ *
+ * Get numbers of router
+ *
+ * Returns: %TRUE on success
+ */
 gboolean firmware_tr64_get_numbers(RmProfile *profile)
 {
 	SoupMessage *msg;
@@ -629,7 +654,7 @@ gboolean firmware_tr64_get_numbers(RmProfile *profile)
  *
  * Check if TR64 is available
  *
- * Returns: %TRUE if TR64 is available, or %FALSE if not
+ * Returns: %TRUE if TR64 is available
  */
 gboolean firmware_tr64_is_available(RmProfile *profile)
 {

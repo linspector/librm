@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,8 +39,10 @@ static guint id = 0;
 RmDevice *telnet_device = NULL;
 
 /**
- * \brief Convert text line and emit connection-notify signal
- * \param text text line from telnet port
+ * callmonitor_convert:
+ * @text: text line from telnet port
+ *
+ * Convert text line and emit connection-notify signal
  */
 static inline void callmonitor_convert(gchar *text)
 {
@@ -100,11 +102,14 @@ static inline void callmonitor_convert(gchar *text)
 }
 
 /**
- * \brief Call monitor socket callback
- * \param source source channel pointer
- * \param condition io condition
- * \param data user data (UNUSED)
- * \return TRUE
+ * callmonitor_io_cb:
+ * @source: a #GIOChannel
+ * @condition: a #GIOCondition
+ * @data: USUSED
+ *
+ * Call monitor socket callback
+ *
+ * Returns: %TRUE to continue, %FALSE on abort
  */
 gboolean callmonitor_io_cb(GIOChannel *source, GIOCondition condition, gpointer data)
 {
@@ -115,7 +120,6 @@ gboolean callmonitor_io_cb(GIOChannel *source, GIOCondition condition, gpointer 
 
 	if (condition & (G_IO_HUP | G_IO_ERR | G_IO_NVAL)) {
 		/* A big problem occurred and we've lost the connection */
-		//callmonitor_reconnect(data);
 		g_warning("%s(): Connection lost, abort", __FUNCTION__);
 
 		return FALSE;
@@ -154,9 +158,12 @@ gboolean callmonitor_io_cb(GIOChannel *source, GIOCondition condition, gpointer 
 }
 
 /**
- * \brief Call monitor connect
- * \param user_data callmonitor plugin pointer
- * \return error code
+ * callmonitor_connect:
+ * @user_data: UNUSED
+ *
+ * Call monitor connect
+ *
+ * Returns: error code
  */
 gboolean callmonitor_connect(gpointer user_data)
 {
@@ -175,19 +182,19 @@ gboolean callmonitor_connect(gpointer user_data)
 
 	profile = rm_profile_get_active();
 	if (!profile) {
-		g_debug("No active profile");
+		g_debug("%s(): No active profile", __FUNCTION__);
 		return FALSE;
 	}
 
 	hostname = rm_router_get_host(profile);
 	if (!hostname || strlen(hostname) <= 0) {
-		g_debug("Invalid hostname");
+		g_debug("%s(): Invalid hostname", __FUNCTION__);
 		return FALSE;
 	}
 
  again:
 #ifdef CALLMONITOR_DEBUG
-	g_debug("Trying to connect to '%s' on port 1012", hostname);
+	g_debug("%s(): Trying to connect to '%s' on port 1012", __FUNCTION__, hostname);
 #endif
 
 	resolver = g_resolver_get_default();
@@ -195,7 +202,7 @@ gboolean callmonitor_connect(gpointer user_data)
 	g_object_unref(resolver);
 
 	if (!list) {
-		g_warning("Cannot resolve ip from hostname!");
+		g_warning("%s(): Cannot resolve ip from hostname!", __FUNCTION__);
 		return FALSE;
 	}
 
@@ -207,14 +214,14 @@ gboolean callmonitor_connect(gpointer user_data)
 	}
 
 	if (!inet_address) {
-		g_warning("Could not get required IPV4 connection to telnet port!");
+		g_warning("%s(): Could not get required IPV4 connection to telnet port!", __FUNCTION__);
 		g_resolver_free_addresses(list);
 		return FALSE;
 	}
 
 	sock_address = g_inet_socket_address_new(inet_address, 1012);
 	if (!sock_address) {
-		g_warning("Could not create sock address on port %s:1012", g_inet_address_to_string(inet_address));
+		g_warning("%s(): Could not create sock address on port %s:1012", __FUNCTION__, g_inet_address_to_string(inet_address));
 		g_resolver_free_addresses(list);
 		return FALSE;
 	}
@@ -222,7 +229,7 @@ gboolean callmonitor_connect(gpointer user_data)
 	error = NULL;
 	socket = g_socket_new(g_inet_address_get_family(inet_address), G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, &error);
 	if (error) {
-		g_warning("Could not create socket on %s:1012. Error: '%s'", g_inet_address_to_string(inet_address), error->message);
+		g_warning("%s(): Could not create socket on %s:1012. Error: '%s'", __FUNCTION__, g_inet_address_to_string(inet_address), error->message);
 		g_error_free(error);
 		g_object_unref(sock_address);
 		g_resolver_free_addresses(list);
@@ -231,10 +238,10 @@ gboolean callmonitor_connect(gpointer user_data)
 
 	if (g_socket_connect(socket, sock_address, NULL, &error) == FALSE) {
 		if (error) {
-			g_debug("Could not connect to socket. Error: %s", error->message);
+			g_debug("%s(): Could not connect to socket. Error: %s", __FUNCTION__, error->message);
 			g_error_free(error);
 		} else {
-			g_debug("Could not connect to socket: Error: unknown");
+			g_debug("%s(): Could not connect to socket: Error: unknown", __FUNCTION__);
 		}
 		g_object_unref(socket);
 		g_object_unref(sock_address);
@@ -253,7 +260,7 @@ gboolean callmonitor_connect(gpointer user_data)
 	}
 
 #ifdef CALLMONITOR_DEBUG
-	g_debug("Connected to '%s' on port 1012", g_inet_address_to_string(inet_address));
+	g_debug("%s(): Connected to '%s' on port 1012", __FUNCTION__, g_inet_address_to_string(inet_address));
 #endif
 
 	sock = g_socket_get_fd(socket);
@@ -288,9 +295,12 @@ gboolean callmonitor_connect(gpointer user_data)
 }
 
 /**
- * \brief Network disconnect callback
- * \param user_data callmonitor plugin pointer
- * \return TRUE
+ * callmonitor_disconnect:
+ * @user_data: UNUSED
+ *
+ * Network disconnect callback
+ *
+ * Returns: %TRUE on success
  */
 gboolean callmonitor_disconnect(gpointer user_data)
 {
@@ -313,11 +323,14 @@ gboolean callmonitor_disconnect(gpointer user_data)
 	return TRUE;
 }
 
+/**
+ * fritzbox_init_callmonitor:
+ *
+ * Initialize call monitor
+ */
 void fritzbox_init_callmonitor(void)
 {
 	g_debug("%s(): called", __FUNCTION__);
-
-	//fritzbox_settings = rm_settings_new("org.tabos.rm.plugins.fritzbox");
 
 	/* Add network event */
 	net_event = rm_netmonitor_add_event("Call Monitor", callmonitor_connect, callmonitor_disconnect, NULL);
@@ -326,6 +339,11 @@ void fritzbox_init_callmonitor(void)
 	dialer_phone.device = telnet_device;
 }
 
+/**
+ * fritzbox_shutdown_callmonitor:
+ *
+ * Shutdown call monitor
+ */
 void fritzbox_shutdown_callmonitor(void)
 {
 	g_debug("%s(): called", __FUNCTION__);
@@ -335,3 +353,4 @@ void fritzbox_shutdown_callmonitor(void)
 	/* Remove network event */
 	rm_netmonitor_remove_event(net_event);
 }
+

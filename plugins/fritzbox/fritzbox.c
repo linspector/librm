@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -182,11 +182,14 @@ gboolean fritzbox_clear_journal(RmProfile *profile)
 }
 
 /**
- * \brief Dial number using router ui
- * \param profile profile information structure
- * \param port dial port
- * \param number remote number
- * \return TRUE on success, otherwise FALSE
+ * fritzbox_dial_number:
+ * @profile: a #RmProfile
+ * @port: dial port
+ * @number: remote number
+ *
+ * Dial number using router ui
+ *
+ * Returns: %TRUE on success
  */
 gboolean fritzbox_dial_number(RmProfile *profile, gint port, const gchar *number)
 {
@@ -210,11 +213,14 @@ gboolean fritzbox_dial_number(RmProfile *profile, gint port, const gchar *number
 }
 
 /**
- * \brief Hangup call using router ui
- * \param profile profile information structure
- * \param port dial port
- * \param number remote number
- * \return TRUE on success, otherwise FALSE
+ * fritzbox_hangup:
+ * @profile: a #RmProfile
+ * @port: dial port
+ * @number: remote number
+ *
+ * Hangup call using router ui
+ *
+ * Returns: %TRUE on success
  */
 gboolean fritzbox_hangup(RmProfile *profile, gint port, const gchar *number)
 {
@@ -233,16 +239,32 @@ gboolean fritzbox_hangup(RmProfile *profile, gint port, const gchar *number)
 	return FALSE;
 }
 
-
+/** Active dialer connection */
 static RmConnection *dialer_connection = NULL;
 
+/**
+ * fritzbox_phone_dialer_get_connection:
+ *
+ * Get current active dialer connection
+ *
+ * Returns: a #RmConnection
+ */
 RmConnection *fritzbox_phone_dialer_get_connection(void)
 {
 	return dialer_connection;
 }
 
+/** Telnet device (parent device for all dialer phones) */
 extern RmDevice *telnet_device;
 
+/**
+ * fritzbox_get_phone_type:
+ * @name: phone name
+ *
+ * Get phone type by phone name
+ *
+ * Returns: phone type
+ */
 gint fritzbox_get_phone_type(gchar *name)
 {
 	gint type = -1;
@@ -260,6 +282,16 @@ gint fritzbox_get_phone_type(gchar *name)
 	return type;
 }
 
+/**
+ * dialer_dial:
+ * @phone: a #RmPhone
+ * @target: target number
+ * @anonymous: dial anonymous flag
+ *
+ * Dial a given number on selected phone
+ *
+ * Returns: %NULL (this is required as we do offer call functionality but no further phone support (limited by FRITZ!Box)
+ */
 RmConnection *dialer_dial(RmPhone *phone, const gchar *target, gboolean anonymous)
 {
 	gint type = fritzbox_get_phone_type(rm_phone_get_name(phone));
@@ -271,6 +303,12 @@ RmConnection *dialer_dial(RmPhone *phone, const gchar *target, gboolean anonymou
 	return NULL;
 }
 
+/**
+ * dialer_hangup:
+ * @connection: a #RmConnection
+ *
+ * Hangup dialer phone
+ */
 void dialer_hangup(RmConnection *connection)
 {
 	fritzbox_hangup(rm_profile_get_active(), -1, connection->remote_number);
@@ -278,6 +316,7 @@ void dialer_hangup(RmConnection *connection)
 	dialer_connection = NULL;
 }
 
+/** Dialer phone structure */
 RmPhone dialer_phone = {
 	NULL,
 	"Phone dialer",
@@ -290,6 +329,13 @@ RmPhone dialer_phone = {
 	NULL
 };
 
+/**
+ * fritzbox_add_phone:
+ * @name: phone name
+ * @user_data: UNUSED
+ *
+ * Add phone
+ */
 static void fritzbox_add_phone(gpointer name, gpointer user_data)
 {
 	RmPhone *phone = g_slice_new0(RmPhone);
@@ -305,6 +351,14 @@ static void fritzbox_add_phone(gpointer name, gpointer user_data)
 	rm_phone_register(phone);
 }
 
+/**
+ * fritzbox_get_phone_list:
+ * @profile: a #RmProfile
+ *
+ * Get phone list
+ *
+ * Returns: phone list as #GPtrArray
+ */
 static GPtrArray *fritzbox_get_phone_list(RmProfile *profile)
 {
 	GPtrArray *array = NULL;
