@@ -151,7 +151,7 @@ gboolean rm_router_login(RmProfile *profile)
 
 	result = active_router->login(profile);
 	if (!result) {
-		g_warning(R_("Login data are wrong or permissions are missing.\nPlease check your login data."));
+		g_warning("%s", R_("Login data are wrong or permissions are missing.\nPlease check your login data."));
 		rm_object_emit_message(R_("Login failed"), R_("Login data are wrong or permissions are missing.\nPlease check your login data."));
 		rm_router_login_blocked = TRUE;
 	}
