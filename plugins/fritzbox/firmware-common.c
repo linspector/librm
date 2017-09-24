@@ -674,7 +674,7 @@ static GSList *fritzbox_parse_voice_data(GSList *journal, const gchar *data, gsi
 	for (index = 0; index < len / sizeof(struct voice_data); index++) {
 		RmCallEntry *call;
 		struct voice_data *voice_data = (struct voice_data *)(data + index * sizeof(struct voice_data));
-		gchar date_time[15];
+		gchar date_time[20];
 
 		/* Skip user/standard welcome message */
 		if (!strncmp(voice_data->file, "uvp", 3)) {
