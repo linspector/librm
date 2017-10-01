@@ -5,7 +5,7 @@ subdir('gstreamer')
 subdir('pulseaudio')
 subdir('reverselookup')
 
-if get_option('enable-documentation')
+if get_option('enable-secret')
     subdir('secret')
 endif
 
