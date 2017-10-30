@@ -1,20 +1,20 @@
-/**
- * Roger Router
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+/*
+ * The rm project
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
- * This file is part of Roger Router.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 2 only.
- *
- * This program is distributed in the hope that it will be useful,
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <string.h>
@@ -24,13 +24,24 @@
 #include <rm/rm.h>
 
 /**
- * \brief Close gnotification window
+ * gnotification_close:
+ * @priv: private data (notification)
+ *
+ * Close gnotification window
  */
 void gnotification_close(gpointer priv)
 {
 	g_application_withdraw_notification(G_APPLICATION(g_application_get_default()), priv);
 }
 
+/**
+ * gnotification_timeout_close:
+ * @priv: private data (notification)
+ *
+ * Close notification after time out
+ *
+ * Returns: %G_SOURCE_REMOVE
+ */
 gboolean gnotification_timeout_close(gpointer priv)
 {
 	gnotification_close(priv);
@@ -38,6 +49,11 @@ gboolean gnotification_timeout_close(gpointer priv)
 	return G_SOURCE_REMOVE;
 }
 
+/**
+ * gnotification_show_missed_calls:
+ *
+ * Create and show notification about missed calls
+ */
 void gnotification_show_missed_calls(void)
 {
 	GNotification *notify = NULL;
@@ -58,6 +74,15 @@ void gnotification_show_missed_calls(void)
 	g_object_unref(notify);
 }
 
+/**
+ * gnotification_show:
+ * @connection: a #RmConnection
+ * @contact: a #RmContact
+ *
+ * Create and show connection notification
+ *
+ * Returns: a unique id for the new notifiation or %NULL on error
+ */
 gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 {
 	GNotification *notify = NULL;
@@ -117,6 +142,13 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 	return uid;
 }
 
+/**
+ * gnotification_update:
+ * @connection: a #RmConnection
+ * @contact: a #RmContact
+ *
+ * Update notification with new information
+ */
 void gnotification_update(RmConnection *connection, RmContact *contact)
 {
 }
@@ -129,8 +161,12 @@ RmNotification gnotification = {
 };
 
 /**
- * \brief Activate plugin
- * \param plugin plugin
+ * gnotification_plugin_init:
+ * @plugin: a #RmPlugin
+ *
+ * Activate plugin
+ *
+ * Returns: %TRUE
  */
 gboolean gnotification_plugin_init(RmPlugin *plugin)
 {
@@ -140,8 +176,12 @@ gboolean gnotification_plugin_init(RmPlugin *plugin)
 }
 
 /**
- * \brief Deactivate plugin
- * \param plugin plugin
+ * gnotification_plugin_shutdown:
+ * @plugin: a #RmPlugin
+ *
+ * Deactivate plugin
+ *
+ * Returns: %TRUE
  */
 gboolean gnotification_plugin_shutdown(RmPlugin *plugin)
 {

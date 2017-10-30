@@ -36,13 +36,12 @@ extern RmPhone capi_phone;
 struct capi_connection *capi_phone_call(guchar controller, const gchar *source, const gchar *target, gboolean anonymous);
 void capi_phone_mute(RmConnection *connection, gboolean mute);
 void capi_phone_hold(RmConnection *connection, gboolean mute);
-void capi_phone_record(struct capi_connection *connection, guchar hold, const gchar *dir);
+void capi_phone_record(RmConnection *connection, gboolean record);
 void capi_phone_send_dtmf_code(RmConnection *connection, guchar code);
 void capi_phone_hangup(RmConnection *connection);
 gint capi_phone_pickup(RmConnection *connection);
 void capi_phone_transfer(struct capi_connection *capi_connection, _cmsg message);
 void capi_phone_conference(RmConnection *active, RmConnection *hold);
-void capi_phone_flush(RmConnection *connection);
 gint recording_write(struct recorder *recorder, short *buf, gint size, gint channel);
 
 void capi_phone_init(RmDevice *device);

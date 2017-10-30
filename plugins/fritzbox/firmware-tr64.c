@@ -34,7 +34,7 @@
 #include "firmware-common.h"
 #include "firmware-query.h"
 
-//#define FIRMWARE_TR64_DEBUG 1
+#define FIRMWARE_TR64_DEBUG 1
 
 static gint firmware_tr64_security_port = 0;
 

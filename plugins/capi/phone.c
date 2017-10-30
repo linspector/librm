@@ -45,15 +45,15 @@ gpointer capi_phone_input_thread(gpointer data)
 {
 	struct session *session = capi_get_session();
 	struct capi_connection *connection = data;
-	guchar audio_buffer_rx[CAPI_PACKETS];
-	guchar audio_buffer[CAPI_PACKETS * 2];
+	guchar audio_buffer_rx[CAPI_PACKETS * 2];
+	guchar audio_buffer[CAPI_PACKETS];
 	guint audio_buf_len;
 	short rec_buffer[CAPI_PACKETS];
 	_cmsg cmsg;
 	RmAudio *audio = rm_profile_get_audio(rm_profile_get_active());
 
 	while (session->input_thread_state == 1) {
-		int len;
+		gsize len;
 
 		len = rm_audio_read(audio, connection->audio, (guchar*)audio_buffer_rx, sizeof(audio_buffer_rx));
 
@@ -70,7 +70,7 @@ gpointer capi_phone_input_thread(gpointer data)
 
 	session->input_thread_state = 0;
 
-	if (connection->recording == 1) {
+	if (connection->recording) {
 		recording_close(&connection->recorder);
 	}
 
@@ -106,31 +106,13 @@ void capi_phone_transfer(struct capi_connection *connection, _cmsg capi_message)
 
 	/* convert isdn to audio format */
 	convert_isdn_to_audio(connection, DATA_B3_IND_DATA(&capi_message), len, audio_buffer, &audio_buf_len, rec_buffer);
+	/* Send data to soundcard */
+	rm_audio_write(audio, connection->audio, audio_buffer, audio_buf_len);
+
 	/* Send capi response */
 	isdn_lock();
 	DATA_B3_RESP(&cmsg, session->appl_id, session->message_number++, connection->ncci, DATA_B3_IND_DATAHANDLE(&capi_message));
 	isdn_unlock();
-
-	if (!connection->audio) {
-		g_warning("%s(): No audio yet", __FUNCTION__);
-		return;
-	}
-
-	/* Send data to soundcard */
-	rm_audio_write(audio, connection->audio, audio_buffer, audio_buf_len);
-
-	guchar audio_buffer_rx[CAPI_PACKETS];
-	len = rm_audio_read(audio, connection->audio, (guchar*)audio_buffer_rx, sizeof(audio_buffer_rx));
-
-	/* Check if we have some audio data to process */
-	if (len > 0) {
-		/* convert audio data to isdn format */
-		convert_audio_to_isdn(connection, (guchar*)audio_buffer_rx, len, audio_buffer, &audio_buf_len, rec_buffer);
-
-		isdn_lock();
-		DATA_B3_REQ(&cmsg, session->appl_id, 0, connection->ncci, audio_buffer, audio_buf_len, session->message_number++, 0);
-		isdn_unlock();
-	}
 }
 
 /**
@@ -208,6 +190,71 @@ int recording_init(struct recorder *recorder)
 }
 
 /**
+ * \brief Flush recording buffer
+ * \param recorder recording structure
+ * \param last last call flag
+ * \return 0 on success, otherwise error
+ */
+int recording_flush(struct recorder *recorder, guint last)
+{
+	gint64 max_position = recorder->local.position;
+	gint64 tmp = recorder->remote.position;
+	gint64 start_position = recorder->last_write;
+	short rec_buf[RECORDING_BUFSIZE * 2];
+	gint64 src_ptr, dst_ptr, size;
+
+	if (recorder->start_time == 0) {
+		return 0;
+	}
+
+	if (tmp > max_position) {
+		max_position = tmp;
+	}
+
+	if (start_position + (RECORDING_BUFSIZE * 7 / 8) < max_position) {
+		start_position = max_position - (RECORDING_BUFSIZE * 7 / 8);
+	}
+
+	if (!last) {
+		max_position -= RECORDING_BUFSIZE / 8;
+	}
+
+	size = (gint64)(max_position - start_position);
+	if (max_position <= 0 || start_position >= max_position || (!last && size < RECORDING_BUFSIZE / 8)) {
+		return 0;
+	}
+
+	dst_ptr = 0;
+	src_ptr = start_position % RECORDING_BUFSIZE;
+
+	while (--size) {
+		rec_buf[dst_ptr++] = recorder->local.buffer[src_ptr];
+		recorder->local.buffer[src_ptr] = 0;
+		rec_buf[dst_ptr++] = recorder->remote.buffer[src_ptr];
+		recorder->remote.buffer[src_ptr] = 0;
+
+		if (++src_ptr >= RECORDING_BUFSIZE) {
+			src_ptr = 0;
+		}
+	}
+
+	sf_writef_short(recorder->file, rec_buf, dst_ptr / 2);
+
+	recorder->last_write = max_position;
+
+	return 0;
+}
+
+static gboolean recording_timer(gpointer user_data)
+{
+	struct recorder *recorder = user_data;
+
+	recording_flush(recorder, 0);
+
+	return TRUE;
+}
+
+/**
  * \brief Open recording file
  * \param recorder pointer to recorder structure
  * \param file record file
@@ -245,6 +292,8 @@ int recording_open(struct recorder *recorder, char *file)
 	memset(&recorder->local, 0, sizeof(struct record_channel));
 	memset(&recorder->remote, 0, sizeof(struct record_channel));
 
+	g_timeout_add(100, recording_timer, recorder);
+
 	recorder->start_time = microsec_time();
 
 	return 0;
@@ -258,11 +307,11 @@ int recording_open(struct recorder *recorder, char *file)
  * \param channel channel type (local/remote)
  * \return 0 on success, otherwise error
  */
-int recording_write(struct recorder *recorder, short *buf, int size, int channel)
+gint recording_write(struct recorder *recorder, short *buf, int size, int channel)
 {
 	gint64 start = recorder->start_time;
 	gint64 current, start_pos, position, end_pos;
-	int buf_pos, split, delta;
+	gint buf_pos, split, delta;
 	struct record_channel *buffer;
 
 	if (start == 0) {
@@ -270,7 +319,7 @@ int recording_write(struct recorder *recorder, short *buf, int size, int channel
 	}
 
 	if (size < 1) {
-		printf("Warning: Illegal size!\n");
+		g_warning("%s(): Illegal size!", __FUNCTION__);
 		return -1;
 	}
 
@@ -282,11 +331,15 @@ int recording_write(struct recorder *recorder, short *buf, int size, int channel
 		buffer = &recorder->remote;
 		break;
 	default:
-		printf("Recording to unknown channel!\n");
+		g_warning("%s(): Recording to unknown channel %d!", __FUNCTION__, channel);
 		return -1;
 	}
 
+	/* Compute position where to start write */
 	current = microsec_time() - start;
+	if (current < 0) {
+		return 0;
+	}
 
 	end_pos = current * 8000 / 1000000LL;
 	start_pos = end_pos - size;
@@ -325,62 +378,6 @@ int recording_write(struct recorder *recorder, short *buf, int size, int channel
 }
 
 /**
- * \brief Flush recording buffer
- * \param recorder recording structure
- * \param last last call flag
- * \return 0 on success, otherwise error
- */
-int recording_flush(struct recorder *recorder, guint last)
-{
-	gint64 max_position = recorder->local.position;
-	gint64 tmp = recorder->remote.position;
-	gint64 start_position = recorder->last_write;
-	short rec_buf[RECORDING_BUFSIZE * 2];
-	gint64 src_ptr, dst_ptr, size;
-
-	if (recorder->start_time == 0) {
-		return 0;
-	}
-
-	if (tmp > max_position) {
-		max_position = tmp;
-	}
-
-	if (start_position + (RECORDING_BUFSIZE * 7 / 8) < max_position) {
-		start_position = max_position - (RECORDING_BUFSIZE * 7 / 8);
-	}
-
-	if (!last) {
-		max_position -= RECORDING_BUFSIZE / 8;
-	}
-
-	size = (gint64)(max_position - start_position);
-	if (max_position == 0 || start_position >= max_position || (!last && size < RECORDING_BUFSIZE / 8)) {
-		return 0;
-	}
-
-	dst_ptr = 0;
-	src_ptr = start_position % RECORDING_BUFSIZE;
-
-	while (--size) {
-		rec_buf[dst_ptr++] = recorder->local.buffer[src_ptr];
-		recorder->local.buffer[src_ptr] = 0;
-		rec_buf[dst_ptr++] = recorder->remote.buffer[src_ptr];
-		recorder->remote.buffer[src_ptr] = 0;
-
-		if (++src_ptr >= RECORDING_BUFSIZE) {
-			src_ptr = 0;
-		}
-	}
-
-	sf_writef_short(recorder->file, rec_buf, dst_ptr / 2);
-
-	recorder->last_write = max_position;
-
-	return 0;
-}
-
-/**
  * \brief Close recording structure
  * \param recorder recorder structure
  * \return 0 on success, otherwise error
@@ -401,7 +398,7 @@ int recording_close(struct recorder *recorder)
 		}
 
 		if (sf_close(recorder->file) != 0) {
-			printf("Error closing record file!\n");
+			g_warning("%s(): Error closing record file!", __FUNCTION__);
 			result = -1;
 		}
 	}
@@ -410,47 +407,36 @@ int recording_close(struct recorder *recorder)
 }
 
 /**
- * \brief Flush connection recorder
- * \param connection capi connection
- */
-void capi_phone_flush(RmConnection *connection)
-{
-	if (connection != NULL) {
-		struct capi_connection *capi_connection = connection->priv;
-		recording_flush(&capi_connection->recorder, 0);
-	}
-}
-
-/**
  * \brief Start/stop recording of active capi connection
  * \param connection active capi connection
  * \param record record flag
- * \param dir storage directory
  */
-void capi_phone_record(struct capi_connection *connection, guchar record, const char *dir)
+void capi_phone_record(RmConnection *connection, gboolean record)
 {
-	if (record == 1) {
-		gchar *file = NULL;
-		struct tm *time_val = localtime(&connection->connect_time);
+	struct capi_connection *capi_connection = connection->priv;
 
-		if (connection->recording == 0) {
-			recording_init(&connection->recorder);
+	if (record) {
+		gchar *file = NULL;
+		struct tm *time_val = localtime(&capi_connection->connect_time);
+
+		if (!capi_connection->recording) {
+			recording_init(&capi_connection->recorder);
 		}
 
 		file = g_strdup_printf("%s/%2.2d.%2.2d.%2.2d-%2.2d-%2.2d-%s-%s.wav",
-				       dir,
+				       rm_get_user_data_dir(),
 				       time_val->tm_mday, time_val->tm_mon + 1, time_val->tm_year - 100,
-				       time_val->tm_hour, time_val->tm_min, connection->source, connection->target);
+				       time_val->tm_hour, time_val->tm_min, capi_connection->source, capi_connection->target);
 
-		recording_open(&connection->recorder, file);
+		recording_open(&capi_connection->recorder, file);
 		g_free(file);
 	} else {
-		if (connection->recording == 1) {
-			recording_close(&connection->recorder);
+		if (capi_connection->recording) {
+			recording_close(&capi_connection->recorder);
 		}
 	}
 
-	connection->recording = record;
+	capi_connection->recording = record;
 }
 
 /**
@@ -560,7 +546,8 @@ RmPhone capi_phone = {
 	capi_phone_hangup,
 	capi_phone_hold,
 	capi_phone_send_dtmf_code,
-	capi_phone_mute
+	capi_phone_mute,
+	capi_phone_record
 };
 
 void capi_phone_init(RmDevice *device)

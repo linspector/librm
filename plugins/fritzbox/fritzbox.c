@@ -143,7 +143,7 @@ gboolean fritzbox_load_journal(RmProfile *profile)
 {
 	gboolean ret = FALSE;
 
-	g_debug("%s(): called (%d.%d.%d)", __FUNCTION__, profile->router_info->maj_ver_id, profile->router_info->min_ver_id, profile->router_info->maj_ver_id);
+	g_debug("%s(): called (%d.%d.%d)", __FUNCTION__, profile->router_info->box_id, profile->router_info->maj_ver_id, profile->router_info->min_ver_id);
 
 	if (fritzbox_use_tr64) {
 		ret = firmware_tr64_load_journal(profile);

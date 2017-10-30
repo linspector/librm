@@ -42,6 +42,7 @@ cc = meson.get_compiler('c')
 rm_dep = []
 rm_dep += cc.find_library('m', required: true)
 rm_dep += dependency('glib-2.0')
+rm_dep += dependency('gdk-pixbuf-2.0')
 rm_dep += dependency('libsoup-2.4')
 rm_dep += dependency('speex')
 rm_dep += dependency('libxml-2.0')

@@ -565,19 +565,29 @@ RmPhone *rm_profile_get_phone(RmProfile *profile)
 
 	g_free(name);
 
+	if (!phone) {
+		GSList *phones = rm_phone_get_plugins();
+
+		if (phones) {
+			phone = phones->data;
+
+			g_debug("%s(): No phone set, using first one %s", __FUNCTION__, rm_phone_get_name(phone));
+		}
+	}
+
 	return phone;
 }
 
 /**
  * rm_profile_set_phone:
  * @profile: a #RmProfile
- * @name: phone name
+ * @phone: a #RmPhone
  *
- * Set preferred phone name within profile.
+ * Set preferred phone within profile.
  */
-void rm_profile_set_phone(RmProfile *profile, gchar *name)
+void rm_profile_set_phone(RmProfile *profile, RmPhone *phone)
 {
-	g_settings_set_string(profile->settings, "phone-plugin", name);
+	g_settings_set_string(profile->settings, "phone-plugin", rm_phone_get_name (phone));
 }
 
 /**

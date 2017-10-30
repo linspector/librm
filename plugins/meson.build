@@ -1,6 +1,8 @@
 subdir('areacodes_global')
 subdir('capi')
 subdir('fritzbox')
+subdir('fritzfon')
+subdir('gnotification')
 subdir('gstreamer')
 subdir('pulseaudio')
 subdir('reverselookup')

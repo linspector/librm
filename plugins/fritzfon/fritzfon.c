@@ -17,15 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <config.h>
-
 #include <string.h>
 
-#include <gdk/gdk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 #include <rm/rm.h>
-
-#include <roger/main.h>
 
 static GSList *contacts = NULL;
 static GSettings *fritzfon_settings = NULL;
@@ -657,7 +653,7 @@ RmAddressBook fritzfon_book = {
 
 gboolean fritzfon_plugin_init(RmPlugin *plugin)
 {
-	fritzfon_settings = rm_settings_new("org.tabos.roger.plugins.fritzfon");
+	fritzfon_settings = rm_settings_new_profile("org.tabos.rm.plugins.fritzfon", "fritzfon", (gchar*)rm_profile_get_name(rm_profile_get_active()));
 
 	fritzfon_get_books();
 	fritzfon_read_book();

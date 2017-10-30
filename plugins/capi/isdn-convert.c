@@ -276,7 +276,7 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 			int tmp = (int)(in_buf[index]) | ((int)(in_buf[index + 1]) << 8);
 			sample = lut_out[tmp];
 
-			if (connection != NULL && connection->mute != 0) {
+			if (connection != NULL && connection->mute) {
 				sample = lut_out[0];
 			}
 
@@ -286,7 +286,7 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 			}
 
 			if (connection != NULL) {
-				rec_buf[out_ptr] = connection->recorder.file ? lut_a2s[sample] : 0;
+				rec_buf[out_ptr] = connection->recording ? lut_a2s[sample] : 0;
 			} else {
 				rec_buf[out_ptr] = 0;
 			}
@@ -297,7 +297,7 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 	}
 
 	/* Record data */
-	if (connection != NULL && connection->recorder.file != NULL && rec_buf != NULL) {
+	if (connection != NULL && connection->recording && rec_buf != NULL) {
 		recording_write(&connection->recorder, rec_buf, out_ptr, RECORDING_LOCAL);
 	}
 

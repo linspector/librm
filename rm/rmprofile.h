@@ -78,7 +78,7 @@ void rm_profile_set_notification_incoming_numbers(RmProfile *profile, const gcha
 void rm_profile_set_notification_outgoing_numbers(RmProfile *profile, const gchar * const* numbers);
 gboolean rm_profile_get_notification_ringtone(RmProfile *profile);
 RmPhone *rm_profile_get_phone(RmProfile *profile);
-void rm_profile_set_phone(RmProfile *profile, gchar *name);
+void rm_profile_set_phone(RmProfile *profile, RmPhone *phone);
 RmFax *rm_profile_get_fax(RmProfile *profile);
 void rm_profile_set_fax(RmProfile *profile, gchar *name);
 

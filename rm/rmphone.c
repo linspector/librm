@@ -46,7 +46,7 @@ static GSList *rm_phone_plugins = NULL;
  *
  * Returns: a #RmPhone, or %NULL on error
  */
-RmPhone *rm_phone_get(gchar *name)
+RmPhone *rm_phone_get(const gchar *name)
 {
 	GSList *list;
 
@@ -189,12 +189,17 @@ void rm_phone_mute(RmPhone *phone, RmConnection *connection, gboolean mute)
  * @phone: a #RmPhone
  * @connection: a #RmConnection
  * @record: Flag to start/stop recording
- * @dir: directory name to store recording to
  *
  * Start/Stops recording of active @connection
  */
-void rm_phone_record(RmPhone *phone, RmConnection *connection, guchar record, const char *dir)
+void rm_phone_record(RmPhone *phone, RmConnection *connection, gboolean record)
 {
+	if (!phone || !phone->record) {
+		g_warning("%s(): No phone or record function", __FUNCTION__);
+		return;
+	}
+
+	phone->record(connection, record);
 }
 
 /**

@@ -49,7 +49,7 @@ struct _RmPhone {
 	void (*hold)(RmConnection *connection, gboolean hold);
 	void (*send_dtmf_code)(RmConnection *connection, guchar code);
 	void (*mute)(RmConnection *connection, gboolean mute);
-	/*void (*record)(gpointer connection, guchar hold, const gchar *dir);*/
+	void (*record)(RmConnection *connection, gboolean record);
 
 	/* Private information for phone plugins, e.g. internal connection or status information */
 	gpointer priv;
@@ -67,11 +67,11 @@ void rm_phone_register(RmPhone *phone);
 void rm_phone_unregister(RmPhone *phone);
 
 GSList *rm_phone_get_plugins(void);
-RmPhone *rm_phone_get(gchar *name);
+RmPhone *rm_phone_get(const gchar *name);
 gchar *rm_phone_get_name(RmPhone *phone);
 
 void rm_phone_mute(RmPhone *phone, RmConnection *connection, gboolean mute);
-void rm_phone_record(RmPhone *phone, RmConnection *connection, guchar record, const char *dir);
+void rm_phone_record(RmPhone *phone, RmConnection *connection, gboolean record);
 void rm_phone_hold(RmPhone *phone, RmConnection *connection, gboolean hold);
 void rm_phone_dtmf(RmPhone *phone, RmConnection *connection, guchar code);
 void rm_phone_hangup(RmConnection *connection);

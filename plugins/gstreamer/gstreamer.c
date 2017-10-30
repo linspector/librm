@@ -349,6 +349,7 @@ static void *gstreamer_open(gchar *output)
 		gst_bin_add_many(GST_BIN(pipe), audio_source, convert, resample, filter, sink, NULL);
 		gst_element_link_many(audio_source, convert, resample, filter, sink, NULL);
 
+		gstreamer_set_buffer_input_size(pipe, 160);
 		ret = gst_element_set_state(pipe, GST_STATE_PLAYING);
 		if (ret == GST_STATE_CHANGE_FAILURE) {
 			g_warning("Error: cannot start source pipeline => %d", ret);
@@ -357,7 +358,6 @@ static void *gstreamer_open(gchar *output)
 
 		pipes->in_pipe = pipe;
 		pipes->in_bin = gst_bin_get_by_name(GST_BIN(pipe), "rm_sink");
-		gstreamer_set_buffer_input_size(pipe, 160);
 	}
 
 	pipes->adapter = gst_adapter_new();
@@ -379,20 +379,13 @@ static gsize gstreamer_write(void *priv, guchar *data, gsize size)
 {
 	GstBuffer *buffer = NULL;
 	GstreamerPipes *pipes = priv;
-	GstElement *src;
 	gchar *tmp;
 
-	if (!pipes || !pipes->out_bin) {
-		return 0;
-	}
-
-	src = pipes->out_bin;
-
-	tmp = g_malloc0(size);
+	tmp = g_malloc(size);
 	memcpy((char*)tmp, (char*)data, size);
 
 	buffer = gst_buffer_new_wrapped(tmp, size);
-	gst_app_src_push_buffer(GST_APP_SRC(src), buffer);
+	gst_app_src_push_buffer(GST_APP_SRC(pipes->out_bin), buffer);
 
 	return size;
 }
@@ -412,22 +405,25 @@ static gsize gstreamer_read(void *priv, guchar *data, gsize size)
 	GstSample *sample = NULL;
 	GstreamerPipes *pipes = priv;
 	GstElement *sink = pipes->in_bin;
-	unsigned int read = 0;
+	gsize read = 0;
 
 	if (!sink) {
 		return read;
 	}
 
 	sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));
-	if (sample != NULL) {
-		gst_adapter_push(pipes->adapter, gst_sample_get_buffer(sample));
+	if (sample == NULL) {
+		return read;
 	}
 
+	gst_adapter_push(pipes->adapter, gst_sample_get_buffer(sample));
 	read = MIN(gst_adapter_available(pipes->adapter), size);
 	if (read != 0) {
 		gst_adapter_copy(pipes->adapter, data, 0, read);
 		gst_adapter_flush(pipes->adapter, read);
 	}
+
+	//gst_sample_unref(sample);
 
 	return read;
 }
