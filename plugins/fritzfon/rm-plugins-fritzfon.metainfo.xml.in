@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+  <id>rm-plugins-fritzfon</id>
+  <extends>org.tabos.rm.desktop</extends>
+  <name>FritzFon</name>
+  <summary>Support for FRITZ!Box address book</summary>
+  <url type="homepage">https://www.tabos.org</url>
+  <metadata_license>LGPL-2.0</metadata_license>
+  <project_license>LGPL-2.0</project_license>
+  <updatecontact>jan.brummer_AT_tabos.org</updatecontact>
+</component>
