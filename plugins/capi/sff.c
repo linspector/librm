@@ -43,7 +43,7 @@ static gsize sff_pos = 0;
 static inline void sff_transfer(struct capi_connection *connection)
 {
 	struct session *session = capi_get_session();
-	struct fax_status *status = connection->priv;
+	CapiFaxStatus *status = connection->priv;
 	_cmsg cmsg;
 	gint transfer = CAPI_PACKETS;
 
@@ -62,8 +62,6 @@ static inline void sff_transfer(struct capi_connection *connection)
 	status->bytes_total = sff_len;
 	status->bytes_sent = sff_pos;
 
-	status->progress_status = 1;
-	//connection_status(connection, 1);
 	g_warning("%s(): TODO", __FUNCTION__);
 
 	if (sff_pos == sff_len) {
@@ -157,13 +155,12 @@ struct capi_connection *sff_send(gchar *sff_file, gint modem, gint ecm, gint con
 
 	connection = capi_call(controller, src_no, trg_no, (guint)call_anonymous, SESSION_SFF, SFF_CIP, 4, 4, 4, b1, b2, b3);
 	if (connection) {
-		struct fax_status *status = NULL;
+		CapiFaxStatus *status = NULL;
 
 		connection->buffers = 0;
 		connection->use_buffers = TRUE;
 
-		status = malloc(sizeof(struct fax_status));
-		memset(status, 0, sizeof(struct fax_status));
+		status = g_slice_new0(CapiFaxStatus);
 
 		connection->priv = status;
 	}

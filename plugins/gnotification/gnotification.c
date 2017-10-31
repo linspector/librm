@@ -31,6 +31,7 @@
  */
 void gnotification_close(gpointer priv)
 {
+	g_debug("%s(): Called", __FUNCTION__);
 	g_application_withdraw_notification(G_APPLICATION(g_application_get_default()), priv);
 }
 
@@ -91,7 +92,8 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 	gchar *text;
 	gchar *uid;
 
-	if (connection->type != RM_CONNECTION_TYPE_INCOMING && connection->type != RM_CONNECTION_TYPE_OUTGOING) {
+	g_debug("%s(): Called", __FUNCTION__);
+	if (!(connection->type & RM_CONNECTION_TYPE_INCOMING) && !(connection->type & RM_CONNECTION_TYPE_OUTGOING)) {
 		g_warning("Unhandled case in connection notify - gnotification!");
 
 		return NULL;
@@ -107,7 +109,7 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 				       contact->city ? contact->city : ""
 				       );
 
-	if (connection->type == RM_CONNECTION_TYPE_INCOMING) {
+	if (connection->type & RM_CONNECTION_TYPE_INCOMING) {
 		title = g_strdup_printf(R_("Incoming call (on %s)"), connection->local_number);
 	} else {
 		title = g_strdup_printf(R_("Outgoing call (on %s)"), connection->local_number);
@@ -124,7 +126,7 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 	if (connection->type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_SOFTPHONE)) {
 		g_notification_add_button_with_target(notify, R_("Accept"), "app.pickup", "i", connection->id);
 		g_notification_add_button_with_target(notify, R_("Decline"), "app.hangup", "i", connection->id);
-	} else if (connection->type == RM_CONNECTION_TYPE_OUTGOING) {
+	} else if (connection->type & RM_CONNECTION_TYPE_OUTGOING) {
 		gint duration = 5;
 
 		g_timeout_add_seconds(duration, gnotification_timeout_close, uid);
@@ -151,6 +153,7 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
  */
 void gnotification_update(RmConnection *connection, RmContact *contact)
 {
+	g_debug("%s(): Called", __FUNCTION__);
 }
 
 RmNotification gnotification = {

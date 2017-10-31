@@ -161,14 +161,14 @@ static int capi_connection_set_type(struct capi_connection *connection, int type
 	switch (type) {
 	case SESSION_PHONE:
 		connection->init_data = capi_phone_init_data;
-		connection->data = capi_phone_transfer;
+		connection->data = capi_phone_data;
 		connection->clean = NULL;
 		connection->early_b3 = 1;
 		break;
 	case SESSION_FAX:
-		connection->init_data = NULL;
-		connection->data = fax_transfer;
-		connection->clean = fax_clean;
+		connection->init_data = capi_fax_init_data;
+		connection->data = capi_fax_data;
+		connection->clean = capi_fax_clean;
 		connection->early_b3 = 0;
 		break;
 	case SESSION_SFF:
@@ -1032,14 +1032,15 @@ static int capi_indication(_cmsg capi_message)
 		ncci = DATA_B3_IND_NCCI(&capi_message);
 
 		connection = capi_find_ncci(ncci);
-		if (connection == NULL) {
-			break;
-		}
+		g_assert(connection != NULL);
 
 #ifdef CAPI_DEBUG
 		g_debug("IND: CAPI_DATA_B3 - connection: %d, plci: %ld, ncci: %ld", connection->id, connection->plci, connection->ncci);
 #endif
 		connection->data(connection, capi_message);
+		isdn_lock();
+		DATA_B3_RESP(&cmsg1, session->appl_id, session->message_number++, connection->ncci, DATA_B3_IND_DATAHANDLE(&capi_message));
+		isdn_unlock();
 
 		break;
 
@@ -1413,8 +1414,6 @@ static int capi_indication(_cmsg capi_message)
 			break;
 		}
 		case SESSION_FAX:
-			/* Fax workaround */
-			fax_spandsp_workaround(connection);
 			break;
 		default:
 			break;
@@ -1815,7 +1814,7 @@ struct session *capi_session_init(const char *host, gint controller)
 
 	/* start capi transmission loop */
 	capi_loop_cancel = g_cancellable_new();
-	CREATE_THREAD("capi", capi_loop, capi_loop_cancel);
+	g_thread_new("capi", capi_loop, capi_loop_cancel);
 #ifndef WIN32
 	setpriority(PRIO_PROCESS, 0, -10);
 #endif

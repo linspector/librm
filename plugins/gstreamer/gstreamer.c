@@ -33,6 +33,8 @@ static gint gstreamer_bits_per_sample = 16;
 static GstDeviceMonitor *monitor = NULL;
 static gboolean use_gst_device_monitor = FALSE;
 
+#define SAMPLE_SIZE 160
+
 typedef struct _GstreamerPipes {
 	GstElement *in_pipe;
 	GstElement *out_pipe;
@@ -287,7 +289,7 @@ static void *gstreamer_open(gchar *output)
 			     "is-live", 1,
 			     "format", 3,
 			     "block", 1,
-			     "max-bytes", 160,
+			     "max-bytes", SAMPLE_SIZE,
 			     NULL);
 
 		filter = gst_element_factory_make("capsfilter", "filter");
@@ -315,7 +317,7 @@ static void *gstreamer_open(gchar *output)
 
 		pipes->out_pipe = pipe;
 		pipes->out_bin = gst_bin_get_by_name(GST_BIN(pipe), "rm_src");
-		gstreamer_set_buffer_output_size(pipe, 160);
+		gstreamer_set_buffer_output_size(pipe, SAMPLE_SIZE);
 	}
 
 	/* Create input pipeline */
@@ -326,13 +328,6 @@ static void *gstreamer_open(gchar *output)
 		sink = gst_element_factory_make("appsink", "rm_sink");
 		g_assert(sink != NULL);
 
-		g_object_set(G_OBJECT(sink),
-			     "drop", 1,
-			     "max-buffers", 2,
-			     "sync", 1,
-			     "qos", 1,
-			     NULL);
-
 		filter = gst_element_factory_make("capsfilter", "filter");
 
 		filtercaps = gst_caps_new_simple("audio/x-raw",
@@ -341,15 +336,15 @@ static void *gstreamer_open(gchar *output)
 						 "rate", G_TYPE_INT, gstreamer_sample_rate,
 						 NULL);
 
+		g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
 
 		convert = gst_element_factory_make("audioconvert", "convert");
 		resample = gst_element_factory_make("audioresample", "resample");
 
-		gst_bin_add_many(GST_BIN(pipe), audio_source, convert, resample, filter, sink, NULL);
-		gst_element_link_many(audio_source, convert, resample, filter, sink, NULL);
+		gst_bin_add_many(GST_BIN(pipe), audio_source, filter, convert, resample, sink, NULL);
+		gst_element_link_many(audio_source, filter, convert, resample, sink, NULL);
 
-		gstreamer_set_buffer_input_size(pipe, 160);
 		ret = gst_element_set_state(pipe, GST_STATE_PLAYING);
 		if (ret == GST_STATE_CHANGE_FAILURE) {
 			g_warning("Error: cannot start source pipeline => %d", ret);

@@ -60,9 +60,9 @@ typedef struct capi_profile {
 
 #define CAPI_CONNECTIONS 5
 /* Packet size */
-#define CAPI_PACKETS 160
-/* Packer buffer count */
-#define CAPI_BUFFERCNT 6
+#define CAPI_PACKETS 2048
+/* Packet buffer count */
+#define CAPI_BUFFERCNT 7
 /* max. B-Channels */
 #define CAPI_BCHANNELS 2
 
@@ -75,9 +75,6 @@ typedef struct capi_profile {
 #define isdn_lock()
 #define isdn_unlock()
 #endif
-
-#undef CREATE_THREAD
-#define CREATE_THREAD(name, func, data) g_thread_new(name, func, data)
 
 enum state {
 	STATE_IDLE = 0,
@@ -157,14 +154,16 @@ struct capi_connection {
 	void (*clean)(struct capi_connection *connection);
 };
 
-struct session {
+typedef struct capi_connection CapiConnection;
+
+typedef struct session {
 	GMutex isdn_mutex;
 
 	struct capi_connection connection[CAPI_CONNECTIONS];
 	int appl_id;
 	int message_number;
 	int input_thread_state;
-};
+} CapiSession;
 
 extern RmDevice *capi_device;
 

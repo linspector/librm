@@ -1,6 +1,6 @@
-/**
+/*
  * The rm project
- * Copyright (c) 2012-2014 Jan-Michael Brummer
+ * Copyright (c) 2012-2017 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
-/**
- * \file fax.h
- * \brief Fax structures
  */
 
 #ifndef FAX_H
@@ -44,7 +39,7 @@ enum fax_phase {
 	PHASE_E = 4,
 };
 
-struct fax_status {
+typedef struct {
 	gchar tiff_file[256];
 	gchar src_no[64];
 	gchar trg_no[64];
@@ -58,30 +53,24 @@ struct fax_status {
 	gchar ecm;
 	gchar modem;
 	gint bitrate;
-	gint encoding;
-	gint bad_rows;
-	gint page_current;
-	gint page_total;
+	gint pages_transferred;
+	gint pages_total;
 	gint bytes_received;
 	gint bytes_sent;
 	gint bytes_total;
 	gboolean manual_hookup;
 	gboolean done;
-	gboolean progress_status;
 
 	fax_state_t *fax_state;
-};
+} CapiFaxStatus;
 
 extern RmFax capi_fax;
 
-struct capi_connection *fax_send(gchar *tiff_file, gint modem, gint ecm, gint controller, gint cip, const gchar *src_no, const gchar *trg_no, const gchar *lsi, const gchar *local_header_info, gint call_anonymous);
-gint fax_recv(const gchar *tiff_file, gint modem, gint ecm, const gchar *src_no, gchar *trg_no, const gchar *lsi, const gchar *local_header_info, gint manual_hookup);
-
-void fax_transfer(struct capi_connection *connection, _cmsg message);
-void fax_clean(struct capi_connection *connection);
-
-void fax_spandsp_workaround(struct capi_connection *connection);
-
+CapiConnection *capi_fax_send(gchar *tiff_file, gint modem, gint ecm, gint controller, gint cip, const gchar *src_no, const gchar *trg_no, const gchar *lsi, const gchar *local_header_info, gint call_anonymous);
+gint capi_fax_recv(const gchar *tiff_file, gint modem, gint ecm, const gchar *src_no, gchar *trg_no, const gchar *lsi, const gchar *local_header_info, gint manual_hookup);
+void capi_fax_data(CapiConnection *connection, _cmsg message);
+void capi_fax_clean(CapiConnection *connection);
+void capi_fax_init_data(CapiConnection *connection);
 void capi_fax_init(RmDevice *device);
 
 #endif

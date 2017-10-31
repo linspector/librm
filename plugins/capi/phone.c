@@ -85,7 +85,7 @@ void capi_phone_init_data(struct capi_connection *connection)
 	if (session->input_thread_state == 0) {
 		session->input_thread_state = 1;
 
-		CREATE_THREAD("phone-input", capi_phone_input_thread, connection);
+		g_thread_new("phone-input", capi_phone_input_thread, connection);
 	}
 }
 
@@ -94,10 +94,8 @@ void capi_phone_init_data(struct capi_connection *connection)
  * \param connection active capi connection
  * \param sCapiMessage current capi message
  */
-void capi_phone_transfer(struct capi_connection *connection, _cmsg capi_message)
+void capi_phone_data(struct capi_connection *connection, _cmsg capi_message)
 {
-	struct session *session = capi_get_session();
-	_cmsg cmsg;
 	guchar audio_buffer[CAPI_PACKETS * 2];
 	guint len = DATA_B3_IND_DATALENGTH(&capi_message);
 	guint audio_buf_len;
@@ -108,11 +106,6 @@ void capi_phone_transfer(struct capi_connection *connection, _cmsg capi_message)
 	convert_isdn_to_audio(connection, DATA_B3_IND_DATA(&capi_message), len, audio_buffer, &audio_buf_len, rec_buffer);
 	/* Send data to soundcard */
 	rm_audio_write(audio, connection->audio, audio_buffer, audio_buf_len);
-
-	/* Send capi response */
-	isdn_lock();
-	DATA_B3_RESP(&cmsg, session->appl_id, session->message_number++, connection->ncci, DATA_B3_IND_DATAHANDLE(&capi_message));
-	isdn_unlock();
 }
 
 /**

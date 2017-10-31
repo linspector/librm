@@ -486,6 +486,15 @@ RmNotification *rm_profile_get_notification(RmProfile *profile)
 	gchar *name = g_settings_get_string(profile->settings, "notification-plugin");
 
 	notification = rm_notification_get(name);
+	if (!notification) {
+		GSList *notifications = rm_notification_get_plugins();
+
+		if (notifications) {
+			notification = notifications->data;
+
+			g_debug("%s(): No notification set, using first one %s", __FUNCTION__, rm_notification_get_name(notification));
+		}
+	}
 
 	g_free(name);
 

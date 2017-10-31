@@ -261,8 +261,8 @@ static void rm_notification_connection_changed_cb(RmObject *obj, gint event, RmC
 		return;
 	}
 
-	/* If its a disconnect or a connect, close previous notification window */
-	if ((connection->type & RM_CONNECTION_TYPE_DISCONNECT) || (connection->type & RM_CONNECTION_TYPE_CONNECT)) {
+	/* If its a disconnect close previous notification window */
+	if ((connection->type & RM_CONNECTION_TYPE_DISCONNECT)) {
 		RmNotificationMessage *message = rm_notification_message_get(connection);
 
 		// TODO: Stop ringtone

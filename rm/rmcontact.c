@@ -151,7 +151,7 @@ RmContact *rm_contact_find_by_number(gchar *number)
 		}
 	}
 
-	g_debug("%s(): type %d", __FUNCTION__, type);
+	g_debug("%s(): phone number type %d", __FUNCTION__, type);
 	if (type == -1) {
 		return contact;
 	}

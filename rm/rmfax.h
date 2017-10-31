@@ -59,8 +59,8 @@ typedef struct {
 	gchar *remote_number;
 	gchar *local_number;
 	gint bitrate;
-	gint page_current;
-	gint page_total;
+	gint pages_transferred;
+	gint pages_total;
 	gint error_code;
 } RmFaxStatus;
 
@@ -73,12 +73,10 @@ typedef struct {
 	/*< private >*/
 	RmDevice *device;
 	gchar *name;
-	RmConnection *(*send)(gchar * tiff, const gchar * target, gboolean anonymous);
+	RmConnection *(*send)(gchar *tiff, const gchar *target, gboolean anonymous);
 	gboolean (*get_status)(RmConnection *connection, RmFaxStatus *fax_status);
 	gint (*pickup)(RmConnection *connection);
 	void (*hangup)(RmConnection *connection);
-
-	gboolean (*number_is_handled)(gchar *number);
 } RmFax;
 
 void rm_fax_register(RmFax *fax);
