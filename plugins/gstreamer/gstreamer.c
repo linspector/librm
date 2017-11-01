@@ -159,7 +159,7 @@ static void gstreamer_set_buffer_output_size(gpointer priv, unsigned buffer_size
  *
  * Set buffer size we want to use.
  */
-static void gstreamer_set_buffer_input_size(gpointer priv, unsigned buffer_size)
+void gstreamer_set_buffer_input_size(gpointer priv, unsigned buffer_size)
 {
 	GstElement *sink = NULL;
 	GstElement *pipeline = priv;

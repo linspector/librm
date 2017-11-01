@@ -63,7 +63,7 @@ void gnotification_show_missed_calls(void)
 	g_application_withdraw_notification(G_APPLICATION(g_application_get_default()), "missed-calls");
 
 	/* Create notification message */
-	text = g_strdup_printf(R_("You have missed calls"));
+	text = g_strdup_printf("%s", R_("You have missed calls"));
 
 	notify = g_notification_new(R_("Missed call(s)"));
 
