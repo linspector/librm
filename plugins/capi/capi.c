@@ -30,7 +30,6 @@
 
 #include <capi.h>
 #include <fax.h>
-#include <sff.h>
 #include <phone.h>
 #include <isdn-convert.h>
 
@@ -169,12 +168,6 @@ static int capi_connection_set_type(struct capi_connection *connection, int type
 		connection->init_data = capi_fax_init_data;
 		connection->data = capi_fax_data;
 		connection->clean = capi_fax_clean;
-		connection->early_b3 = 0;
-		break;
-	case SESSION_SFF:
-		connection->init_data = sff_init_data;
-		connection->data = NULL;
-		connection->clean = sff_clean;
 		connection->early_b3 = 0;
 		break;
 	default:

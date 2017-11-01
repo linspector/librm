@@ -48,6 +48,8 @@ typedef struct _RmVoxPlayback {
 	gpointer speex;
 	/** audio device */
 	RmAudio *audio;
+	/** Ringtone? */
+	gboolean ringtone;
 	/** audio private data */
 	gpointer audio_priv;
 	/** cancellable object for playback thread */
@@ -214,7 +216,7 @@ static gpointer rm_vox_sf_playback_thread(gpointer user_data)
 	gshort buffer[80];
 
 	/* open audio device */
-	playback->audio_priv = rm_audio_open(playback->audio, NULL);
+	playback->audio_priv = rm_audio_open(playback->audio, playback->ringtone ? rm_profile_get_audio_ringtone(rm_profile_get_active()) : NULL);
 	if (!playback->audio_priv) {
 		g_debug("%s(): Could not open audio device", __FUNCTION__);
 		g_slice_free(RmVoxPlayback, playback);
@@ -447,6 +449,17 @@ gint rm_vox_get_fraction(RmVoxPlayback *playback)
 gfloat rm_vox_get_seconds(RmVoxPlayback *playback)
 {
 	return playback->seconds;
+}
+
+/**
+ * rm_vox_use_ringtone_audio:
+ * @ringtone: ringtone flag
+ *
+ * Sets usage of ringtone device.
+ */
+void rm_vox_use_ringtone_audio(RmVoxPlayback *playback, gboolean ringtone)
+{
+	playback->ringtone = ringtone;
 }
 
 /**

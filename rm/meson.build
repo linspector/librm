@@ -105,3 +105,5 @@ pkg_mod.generate(libraries : rm_shared,
                  filebase : 'librm',
                  description : 'A library to handle AVM FRITZ!Box routers.',
                  requires: 'libsoup-2.4 gio-2.0 glib-2.0 gmodule-2.0 libxml-2.0')
+
+subdir('data')

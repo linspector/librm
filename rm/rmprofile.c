@@ -469,7 +469,7 @@ RmAudio *rm_profile_get_audio(RmProfile *profile)
  */
 gchar *rm_profile_get_audio_ringtone(RmProfile *profile)
 {
-	return g_settings_get_string(profile->settings, "audio-ringtone-plugin");
+	return g_settings_get_string(profile->settings, "audio-output-ringtone");
 }
 
 /**
@@ -509,8 +509,7 @@ RmNotification *rm_profile_get_notification(RmProfile *profile)
  */
 gboolean rm_profile_get_notification_ringtone(RmProfile *profile)
 {
-	//return g_settings_get_boolean(profile->settings, "notification-ringtone");
-	return FALSE;
+	return g_settings_get_boolean(profile->settings, "notification-play-ringtone");
 }
 
 /**

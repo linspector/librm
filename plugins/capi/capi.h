@@ -95,8 +95,7 @@ enum state {
 enum session_type {
 	SESSION_NONE,
 	SESSION_FAX,
-	SESSION_PHONE,
-	SESSION_SFF
+	SESSION_PHONE
 };
 
 #define RECORDING_BUFSIZE 32768

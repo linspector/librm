@@ -30,6 +30,8 @@
 #include <rm/rmrouter.h>
 #include <rm/rmlookup.h>
 #include <rm/rmstring.h>
+#include <rm/rmvox.h>
+#include <rm/rmfile.h>
 
 /**
  * SECTION:rmnotification
@@ -45,6 +47,41 @@ static GSList *rm_notification_plugins = NULL;
 static gint rm_notification_signal_id = 0;
 /** Keeping track of all open notification messages */
 static GSList *rm_notification_messages = NULL;
+static RmVoxPlayback *vox = NULL;
+
+/**
+ * rm_notification_play_ringtone:
+ *
+ * Play call in wave file as ringtone
+ */
+void rm_notification_play_ringtone(void)
+{
+	GError *error;
+	gsize len;
+	gchar *data;
+
+	if (vox) {
+		return;
+	}
+
+	data = rm_file_load("/usr/share/sounds/rm/call_in.wav", &len);
+
+	vox = rm_vox_init(data, len, &error);
+
+	rm_vox_use_ringtone_audio(vox, TRUE);
+	rm_vox_play(vox);
+}
+
+/**
+ * rm_notification_stop_ringtone:
+ *
+ * Stop ringtone and shutdown vox playback
+ */
+void rm_notification_stop_ringtone(void)
+{
+	rm_vox_shutdown(vox);
+	vox = NULL;
+}
 
 /**
  * rm_notification_message_get:
@@ -265,8 +302,8 @@ static void rm_notification_connection_changed_cb(RmObject *obj, gint event, RmC
 	if ((connection->type & RM_CONNECTION_TYPE_DISCONNECT)) {
 		RmNotificationMessage *message = rm_notification_message_get(connection);
 
-		// TODO: Stop ringtone
-		//ringtone_stop();
+		rm_notification_stop_ringtone();
+
 		if (message) {
 			rm_notification_message_close(message);
 		}
@@ -275,8 +312,7 @@ static void rm_notification_connection_changed_cb(RmObject *obj, gint event, RmC
 	}
 
 	if (rm_profile_get_notification_ringtone(profile)) {
-		// TODO: Play ringtone
-		//ringtone_play(connection->type);
+		rm_notification_play_ringtone();
 	}
 
 	/* New call, show message */

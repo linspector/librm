@@ -2,9 +2,7 @@ capi_sources = [
 	'capi.c',
 	'fax.c',
 	'isdn-convert.c',
-	'phone.c',
-	'ringtone.c',
-	'sff.c'
+	'phone.c'
 ]
 
 capi_dep = []

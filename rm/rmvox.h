@@ -37,6 +37,7 @@ gboolean rm_vox_set_pause(RmVoxPlayback *playback, gboolean state);
 gboolean rm_vox_seek(RmVoxPlayback *playback, gdouble pos);
 gint rm_vox_get_fraction(RmVoxPlayback *playback);
 gfloat rm_vox_get_seconds(RmVoxPlayback *playback);
+void rm_vox_use_ringtone_audio(RmVoxPlayback *playback, gboolean ringtone);
 
 G_END_DECLS
 
