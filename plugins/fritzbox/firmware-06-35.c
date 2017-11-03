@@ -314,7 +314,7 @@ void fritzbox_extract_phone_names_06_35(RmProfile *profile, const gchar *data, g
 			for (index = 0; index < PORT_MAX; index++) {
 				if (fritzbox_phone_ports[index].number == val) {
 					g_debug("Port %d: '%s'", index, name);
-					g_settings_set_string(profile->settings, fritzbox_phone_ports[index].setting_name, name);
+					g_settings_set_string(fritzbox_settings, fritzbox_phone_ports[index].setting_name, name);
 				}
 			}
 		}

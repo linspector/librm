@@ -13,7 +13,7 @@ libreverselookup = shared_library('reverselookup',
 custom_target('reverselookup.plugin',
     output : 'reverselookup.plugin',
     input : 'reverselookup.desktop.in',
-    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', rm_podir, '-o', '@OUTPUT@'],
+    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
     install : true,
     install_dir : rm_plugins_path + '/reverselookup/')
 

@@ -19,7 +19,7 @@ libgstreamer = shared_library('gstreamer',
 custom_target('gstreamer.plugin',
     output : 'gstreamer.plugin',
     input : 'gstreamer.desktop.in',
-    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', rm_podir, '-o', '@OUTPUT@'],
+    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
     install : true,
     install_dir : rm_plugins_path + '/gstreamer/')
 

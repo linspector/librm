@@ -18,7 +18,6 @@ libversion = '@0@.@1@.0'.format(soversion, rm_version_minor.to_int() * 100 + rm_
 
 gnome = import('gnome')
 msgfmt = find_program('msgfmt')
-podir = '@0@'.format(meson.current_source_dir())
 
 os_unix   = false
 os_linux  = false

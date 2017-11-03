@@ -21,10 +21,8 @@ libfritzbox = shared_library('fritzbox',
 custom_target('fritzbox.plugin',
     output : 'fritzbox.plugin',
     input : 'fritzbox.desktop.in',
-    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', rm_podir, '-o', '@OUTPUT@'],
+    command : [msgfmt, '--desktop', '--template', '@INPUT@', '-d', podir, '-o', '@OUTPUT@'],
     install : true,
     install_dir : rm_plugins_path + '/fritzbox/')
 
-gnome.compile_schemas()
-install_data('org.tabos.rm.plugins.fritzbox.gschema.xml',
-install_dir : 'share/glib-2.0/schemas')
+install_data('org.tabos.rm.plugins.fritzbox.gschema.xml', install_dir : schema_dir)

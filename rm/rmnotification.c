@@ -311,7 +311,7 @@ static void rm_notification_connection_changed_cb(RmObject *obj, gint event, RmC
 		return;
 	}
 
-	if (rm_profile_get_notification_ringtone(profile)) {
+	if (rm_profile_get_notification_ringtone(profile) && connection->type & RM_CONNECTION_TYPE_INCOMING) {
 		rm_notification_play_ringtone();
 	}
 
