@@ -340,7 +340,7 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 	gsize read;
 	gchar *url;
 
-	g_debug("Get settings");
+	g_debug("%s(): Get settings", __FUNCTION__);
 
 	/* Login */
 	if (!rm_router_login(profile)) {
@@ -357,7 +357,7 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 
 	soup_session_send_message(rm_soup_session, msg);
 	if (msg->status_code != 200) {
-		g_debug("Received status code: %d", msg->status_code);
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
 		g_object_unref(msg);
 		return FALSE;
 	}
@@ -376,7 +376,7 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 		if (g_strv_length(profile_numbers)) {
 			for (idx = 0; idx < g_strv_length(profile_numbers); idx++) {
 				gchar *scramble = rm_number_scramble(profile_numbers[idx]);
-				g_debug("Adding MSN '%s'", scramble);
+				g_debug("%s(): Adding MSN '%s'", __FUNCTION__, scramble);
 				g_free(scramble);
 			}
 			g_settings_set_strv(profile->settings, "numbers", (const gchar*const*)profile_numbers);
@@ -394,7 +394,7 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 
 	soup_session_send_message(rm_soup_session, msg);
 	if (msg->status_code != 200) {
-		g_debug("Received status code: %d", msg->status_code);
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
 		g_object_unref(msg);
 		return FALSE;
 	}
@@ -413,9 +413,8 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 	if (dialport) {
 		gint port = atoi(dialport);
 		gint phone_port = fritzbox_find_phone_port(port);
-		g_debug("Dial port: %s, phone_port: %d", dialport, phone_port);
-		//rm_router_set_phone_port(profile, phone_port);
-		g_warning("%s(): TODO", __FUNCTION__);
+		g_debug("%s(): Dial port: %s, phone_port: %d", __FUNCTION__, dialport, phone_port);
+		g_settings_set_uint(fritzbox_settings, "port", phone_port);
 	}
 	g_free(dialport);
 
@@ -430,7 +429,7 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 
 	soup_session_send_message(rm_soup_session, msg);
 	if (msg->status_code != 200) {
-		g_debug("Received status code: %d", msg->status_code);
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
 		g_object_unref(msg);
 		return FALSE;
 	}
@@ -444,34 +443,34 @@ gboolean fritzbox_get_settings_06_35(RmProfile *profile)
 
 	value = xml_extract_input_value_r(data, "lkz");
 	if (value != NULL && strlen(value) > 0) {
-		g_debug("lkz: '%s'", value);
+		g_debug("%s(): lkz: '%s'", __FUNCTION__, value);
 	}
 	g_settings_set_string(profile->settings, "country-code", value);
 	g_free(value);
 
 	value = xml_extract_input_value_r(data, "lkz_prefix");
 	if (value != NULL && strlen(value) > 0) {
-		g_debug("lkz prefix: '%s'", value);
+		g_debug("%s(): lkz prefix: '%s'", __FUNCTION__, value);
 	}
 	g_settings_set_string(profile->settings, "international-access-code", value);
 	g_free(value);
 
 	value = xml_extract_input_value_r(data, "okz");
 	if (value != NULL && strlen(value) > 0) {
-		g_debug("okz: '%s'", value);
+		g_debug("%s(): okz: '%s'", __FUNCTION__, value);
 	}
 	g_settings_set_string(profile->settings, "area-code", value);
 	g_free(value);
 
 	value = xml_extract_input_value_r(data, "okz_prefix");
 	if (value != NULL && strlen(value) > 0) {
-		g_debug("okz prefix: '%s'", value);
+		g_debug("%s(): okz prefix: '%s'", __FUNCTION__, value);
 	}
 	g_settings_set_string(profile->settings, "national-access-code", value);
 	g_free(value);
 
 	g_object_unref(msg);
-	g_debug("Result: %f", g_test_timer_elapsed());
+	g_debug("%s(): Result: %f", __FUNCTION__, g_test_timer_elapsed());
 
 	/* Extract Fax information */
 	fritzbox_get_fax_information_06_35(profile);

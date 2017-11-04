@@ -60,7 +60,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	g_test_timer_start();
 
 	/* Extract data */
-	url = g_strdup_printf("https://%s/query.lua", rm_router_get_host(profile));
+	url = g_strdup_printf("http://%s/query.lua", rm_router_get_host(profile));
 	msg = soup_form_request_new(SOUP_METHOD_GET, url,
 				    "LKZPrefix", "telcfg:settings/Location/LKZPrefix",
 				    "LKZ", "telcfg:settings/Location/LKZ",
@@ -94,11 +94,12 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 				    "J", "telcfg:settings/Journal/listwindow(0,6,Type,Date,Number,Port,Duration,Route,RouteType,Name,NumberType,PortName)",
 				    "sid", profile->router_info->session_id,
 				    NULL);
+	g_debug("%s(): URL %s", __FUNCTION__, url);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
 	if (msg->status_code != 200) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+		g_debug("%s(): Received status code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
 		g_object_unref(msg);
 
 		fritzbox_logout(profile, FALSE);
