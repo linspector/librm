@@ -43,7 +43,6 @@ static gboolean fritzbox_check_login_blocked(const gchar *data, RmProfile *profi
 
 		if (blocktime) {
 			g_debug("%s(): Block Time = %s", __FUNCTION__, blocktime);
-			g_debug("%s(): Block Time = %d", __FUNCTION__, atoi(blocktime));
 			g_usleep(atoi(blocktime) * G_USEC_PER_SEC);
 
 			if (atoi(blocktime)) {

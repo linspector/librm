@@ -51,10 +51,10 @@ void rm_object_emit_connection_changed(gint event, RmConnection *connection)
 	rm_connection_set_type(connection, event);
 
 	if (!handled) {
-		g_debug("%s(): Device '%s' does not handle this number", __FUNCTION__, rm_device_get_name(device));
+		g_debug("%s(): Device '%s' does not handle number '%s'", __FUNCTION__, rm_device_get_name(device), connection->local_number);
 		return;
 	}
-	g_debug("%s(): Device '%s' handles this number", __FUNCTION__, rm_device_get_name(device));
+	g_debug("%s(): Device '%s' handles number '%s'", __FUNCTION__, rm_device_get_name(device), connection->local_number);
 
 	g_signal_emit(rm_object, rm_object_signals[RM_ACB_CONNECTION_CHANGED], 0, event, connection);
 }

@@ -81,6 +81,7 @@ RmPhone *rm_profile_get_phone(RmProfile *profile);
 void rm_profile_set_phone(RmProfile *profile, RmPhone *phone);
 RmFax *rm_profile_get_fax(RmProfile *profile);
 void rm_profile_set_fax(RmProfile *profile, gchar *name);
+void rm_profile_update_numbers(RmProfile *profile);
 
 G_END_DECLS
 

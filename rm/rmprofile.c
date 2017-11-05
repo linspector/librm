@@ -40,6 +40,11 @@
  * @Short_description: Profile handling functions
  *
  * Profiles are used to distinguish between several routers. This is useful for mobile devices using private and business environements.
+ *
+ * The strategy should always be:
+ *  - Return set device
+ *  - If it is not present, use first available plugin and set it as default
+ *  - Only if no alternative is found, return %NULL
  */
 
 /** Internal profile list */
@@ -270,8 +275,8 @@ RmProfile *rm_profile_detect(void)
 
 		/* Check if router is present */
 		if (rm_router_present(router_info) == TRUE && !strcmp(router_info->serial, g_settings_get_string(profile->settings, "serial-number"))) {
-			g_debug("Configured router found: %s", router_info->name);
-			g_debug("Current router firmware: %d.%d.%d", router_info->box_id, router_info->maj_ver_id, router_info->min_ver_id);
+			g_debug("%s(): Configured router found: %s", __FUNCTION__, router_info->name);
+			g_debug("%s(): Current router firmware: %d.%d.%d", __FUNCTION__, router_info->box_id, router_info->maj_ver_id, router_info->min_ver_id);
 
 			rm_router_info_free(router_info);
 
@@ -283,7 +288,7 @@ RmProfile *rm_profile_detect(void)
 		list = list->next;
 	}
 
-	g_debug("No already configured router found!");
+	g_debug("%s(): No already configured router found!", __FUNCTION__);
 
 	return NULL;
 }
@@ -627,3 +632,50 @@ void rm_profile_set_fax(RmProfile *profile, gchar *name)
 {
 	g_settings_set_string(profile->settings, "fax-plugin", name);
 }
+
+/**
+ * rm_profile_update_numbers:
+ * @profile: a #RmProfile
+ * 
+ * Updates numbers for each #RmDevice (currently only CAPI and Dialer)
+ * This one is hard-coded as we are currently supporting CAPI and Call Monitor only, once
+ * SIP is implemented we need to break this one up
+ */
+void rm_profile_update_numbers(RmProfile *profile)
+{
+	RmDevice *capi_phone = rm_device_get("CAPI");
+	RmDevice *dialer_phone = rm_device_get("Call Monitor");
+	const gchar *profile_name = rm_profile_get_name(profile);
+	gchar **dialer_numbers = rm_router_get_numbers(profile);
+	gchar **capi_numbers = NULL;
+	gchar *phone_msn = g_settings_get_string(profile->settings, "phone-number");
+	gchar *fax_msn = g_settings_get_string(profile->settings, "fax-number");
+
+	if (g_settings_get_boolean(profile->settings, "fax-active")) {
+			gchar **tmp;
+
+			g_debug("%s(): Fax is active, adding '%s'", __FUNCTION__, fax_msn);
+			capi_numbers = rm_strv_add(capi_numbers, fax_msn);
+
+			tmp = dialer_numbers;
+			dialer_numbers = rm_strv_remove(dialer_numbers, fax_msn);
+			g_strfreev(tmp);
+	}
+
+	if (g_settings_get_boolean(profile->settings, "phone-active")) {
+			gchar **tmp;
+
+			g_debug("%s(): Phone is active, adding '%s'", __FUNCTION__, phone_msn);
+			tmp = capi_numbers;
+			capi_numbers = rm_strv_add(capi_numbers, phone_msn);
+			g_strfreev(tmp);
+
+			tmp = dialer_numbers;
+			dialer_numbers = rm_strv_remove(dialer_numbers, phone_msn);
+			g_strfreev(tmp);
+	}
+
+	rm_device_set_numbers(dialer_phone, dialer_numbers, profile_name);
+	rm_device_set_numbers(capi_phone, capi_numbers, profile_name);
+}
+

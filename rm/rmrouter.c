@@ -97,8 +97,8 @@ gboolean rm_router_present(RmRouterInfo *router_info)
 {
 	GSList *list;
 
-	g_debug("%s(): called", __FUNCTION__);
 	if (!rm_router_list) {
+		g_debug("%s(): No router plugin available", __FUNCTION__);
 		return FALSE;
 	}
 
@@ -107,10 +107,12 @@ gboolean rm_router_present(RmRouterInfo *router_info)
 
 		if (router->present(router_info)) {
 			active_router = router;
+			g_debug("%s(): Got active router", __FUNCTION__);
 			return TRUE;
 		}
 	}
 
+	g_debug("%s(): No router found", __FUNCTION__);
 	return FALSE;
 }
 
@@ -166,8 +168,8 @@ gboolean rm_router_login(RmProfile *profile)
  */
 void rm_router_release_lock(void)
 {
-	g_debug("%s(): called", __FUNCTION__);
 	rm_router_login_blocked = FALSE;
+	g_debug("%s()", __FUNCTION__);
 }
 
 /**
@@ -179,7 +181,7 @@ void rm_router_release_lock(void)
  */
 gboolean rm_router_is_locked(void)
 {
-	g_debug("%s(): called", __FUNCTION__);
+	g_debug("%s(): locked? %d", __FUNCTION__, rm_router_login_blocked);
 	return rm_router_login_blocked;
 }
 
@@ -333,13 +335,55 @@ gchar *rm_router_get_country_code(RmProfile *profile)
  * rm_router_get_settings:
  * @profile: a #RmProfile
  *
- * Get router settings
+ * Get router settings (and setup devices)
  *
  * Returns: router settings
  */
 gboolean rm_router_get_settings(RmProfile *profile)
 {
-	return active_router ? active_router->get_settings(profile) : FALSE;
+	gboolean ret = active_router ? active_router->get_settings(profile) : FALSE;
+
+	/*************************************************************/
+	/** Temporary workaround to be transparent to the client app */
+	/*************************************************************/
+	if (ret == TRUE) {
+		gchar **numbers;
+
+		/* Store router serial number for detection purpose */
+		g_settings_set_string(profile->settings, "serial-number", profile->router_info->serial);
+
+		/* Set initial fax report dir */
+		g_settings_set_string(profile->settings, "fax-report-dir", g_get_user_special_dir(G_USER_DIRECTORY_DOCUMENTS));
+
+		/* Set initial softphone number */
+		numbers = rm_router_get_numbers(profile);
+		if (numbers && numbers[0]) {
+			RmDevice *capi_phone = rm_device_get("CAPI");
+			RmDevice *dialer_phone = rm_device_get("Call Monitor");
+			gchar **dialer_numbers = rm_strv_remove(numbers, numbers[0]);
+			gchar **capi_numbers = rm_strv_add(NULL, numbers[0]);
+			const gchar *name = rm_profile_get_name(profile);
+			gchar *fax_msn = g_settings_get_string(profile->settings, "fax-number");
+
+			if (g_strcmp0(numbers[0], fax_msn)) {
+				gchar **tmp = capi_numbers;
+
+				capi_numbers = rm_strv_add(capi_numbers, fax_msn);
+				g_strfreev(tmp);
+
+				tmp = dialer_numbers;
+				dialer_numbers = rm_strv_remove(dialer_numbers, fax_msn);
+				g_strfreev(tmp);
+			}
+ 
+			rm_device_set_numbers(dialer_phone, dialer_numbers, name);
+			rm_device_set_numbers(capi_phone, capi_numbers, name);
+ 
+			g_settings_set_string(profile->settings, "phone-number", numbers[0]);
+		}
+	}
+
+	return ret;
 }
 
 /**
@@ -721,7 +765,7 @@ GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 	GDir *dir;
 	GError *error = NULL;
 	const gchar *file_name;
-	gchar *dir_name = g_build_filename(rm_get_user_plugins_dir(), G_DIR_SEPARATOR_S, NULL);
+	const gchar *dir_name = rm_get_user_plugins_dir();
 
 	if (!dir_name) {
 		return journal;
@@ -729,7 +773,7 @@ GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 
 	dir = g_dir_open(dir_name, 0, &error);
 	if (!dir) {
-		g_debug("Could not open voice records directory");
+		g_debug("%s(): Could not open voice records directory (%s)", __FUNCTION__, dir_name);
 		return journal;
 	}
 
@@ -795,6 +839,9 @@ gboolean rm_router_get_suppress_state(RmProfile *profile)
  */
 gboolean rm_router_need_ftp(RmProfile *profile)
 {
-	g_debug("%s(): called", __FUNCTION__);
-	return active_router ? active_router->need_ftp(profile) : TRUE;
+	gboolean ret = active_router ? active_router->need_ftp(profile) : TRUE;
+
+	g_debug("%s(): ftp needed? %d", __FUNCTION__, ret);
+
+	return ret;
 }

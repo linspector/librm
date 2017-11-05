@@ -50,10 +50,10 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	gchar *scramble;
 	gint i;
 
-	g_debug("%s(): Get settings", __FUNCTION__);
-
 	/* Login */
 	if (!rm_router_login(profile)) {
+		g_debug("%s(): Failed to log on", __FUNCTION__);
+
 		return FALSE;
 	}
 
@@ -94,7 +94,6 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 				    "J", "telcfg:settings/Journal/listwindow(0,6,Type,Date,Number,Port,Duration,Route,RouteType,Name,NumberType,PortName)",
 				    "sid", profile->router_info->session_id,
 				    NULL);
-	g_debug("%s(): URL %s", __FUNCTION__, url);
 	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
@@ -156,7 +155,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 	json_reader_read_member(reader, "storage");
 	const gchar *storage = json_reader_get_string_value(reader);
-	g_debug("Fax Storage: %s", storage);
+	g_debug("%s(): Fax Storage: %s", __FUNCTION__, storage);
 	g_settings_set_string(fritzbox_settings, "fax-volume", storage);
 	json_reader_end_member(reader);
 
@@ -185,7 +184,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 		json_reader_read_member(reader, name_in);
 		name = json_reader_get_string_value(reader);
-		g_debug("%s(): %s = %s", __FUNCTION__, name_in, name);
+		g_debug("%s():  %s = %s", __FUNCTION__, name_in, name);
 
 		memset(name_analog, 0, sizeof(name_analog));
 		g_snprintf(name_analog, sizeof(name_analog), "name-analog%d", i + 1);
@@ -204,7 +203,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 		json_reader_read_member(reader, name_in);
 		name = json_reader_get_string_value(reader);
-		g_debug("%s(): %s = %s", __FUNCTION__, name_in, name);
+		g_debug("%s():  %s = %s", __FUNCTION__, name_in, name);
 
 		memset(name_isdn, 0, sizeof(name_isdn));
 		g_snprintf(name_isdn, sizeof(name_isdn), "name-isdn%d", i + 1);
@@ -224,12 +223,12 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 		json_reader_read_element(reader, i);
 		json_reader_read_member(reader, "Name");
 		tmp = json_reader_get_string_value(reader);
-		g_debug("%s(): Name: %s", __FUNCTION__, tmp);
+		g_debug("%s():  Name: %s", __FUNCTION__, tmp);
 		json_reader_end_member(reader);
 
 		json_reader_read_member(reader, "Intern");
 		intern = json_reader_get_string_value(reader);
-		g_debug("%s(): Intern: %s", __FUNCTION__, intern);
+		g_debug("%s():  Intern: %s", __FUNCTION__, intern);
 		json_reader_end_member(reader);
 
 		memset(name_dect, 0, sizeof(name_dect));
@@ -259,7 +258,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 		if (!RM_EMPTY_STRING(tmp)) {
 			scramble = rm_number_scramble(tmp);
-			g_debug("%s(): MSN: %s", __FUNCTION__, scramble);
+			g_debug("%s():  MSN: %s", __FUNCTION__, scramble);
 			g_free(scramble);
 			phones++;
 			numbers = g_realloc(numbers, (phones + 1) * sizeof(char*));
@@ -268,7 +267,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 
 			json_reader_read_member(reader, "Name");
 			tmp = json_reader_get_string_value(reader);
-			g_debug("%s(): Name: %s", __FUNCTION__, tmp);
+			g_debug("%s():  Name: %s", __FUNCTION__, tmp);
 			json_reader_end_member(reader);
 		}
 
@@ -301,11 +300,10 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	g_object_unref(parser);
 
 	g_object_unref(msg);
-	g_debug("%s(): Result: %f", __FUNCTION__, g_test_timer_elapsed());
+	g_debug("%s(): Execution time: %f", __FUNCTION__, g_test_timer_elapsed());
 
 	/* The end - exit */
 	fritzbox_logout(profile, FALSE);
 
 	return TRUE;
 }
-

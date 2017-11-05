@@ -71,7 +71,7 @@ typedef struct {
 #define RM_DEVICE(x) (((RmDeviceCast*)(x))->device)
 
 gboolean rm_device_handles_number(RmDevice *device, gchar *number);
-void rm_device_set_numbers(RmDevice *device, gchar **numbers);
+void rm_device_set_numbers(RmDevice *device, gchar **numbers, const gchar *name);
 gchar **rm_device_get_numbers(RmDevice *device);
 RmDevice *rm_device_get(gchar *name);
 gchar *rm_device_get_name(RmDevice *device);

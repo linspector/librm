@@ -394,7 +394,7 @@ void fritzbox_set_active(RmProfile *profile)
 	GPtrArray *array;
 
 	fritzbox_settings = rm_settings_new_profile("org.tabos.rm.plugins.fritzbox", "fritzbox", (gchar*)rm_profile_get_name(profile));
-	g_debug("%s(): Router set active, settings created", __FUNCTION__);
+	g_debug("%s(): Settings created", __FUNCTION__);
 
 	array = fritzbox_get_phone_list(rm_profile_get_active());
 	if (array) {

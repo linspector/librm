@@ -71,10 +71,11 @@ gboolean rm_device_handles_number(RmDevice *device, gchar *number)
  * rm_device_set_numbers:
  * @device: a #RmDevice
  * @numbers: phone numbers
+ * @profile_name: profile name
  *
  * Set numbers which should be handled by device
  */
-void rm_device_set_numbers(RmDevice *device, gchar **numbers)
+void rm_device_set_numbers(RmDevice *device, gchar **numbers, const gchar *profile_name)
 {
 	GSettings *settings;
 
@@ -83,9 +84,10 @@ void rm_device_set_numbers(RmDevice *device, gchar **numbers)
 		return;
 	}
 
-	settings = rm_settings_new_profile("org.tabos.rm.profile.devicenumbers", device->settings_name, (gchar*)rm_profile_get_name(rm_profile_get_active()));
+	settings = rm_settings_new_profile("org.tabos.rm.profile.devicenumbers", device->settings_name, (gchar*)profile_name);
 
 	if (settings) {
+		g_debug("%s(): Setting numbers for %s", __FUNCTION__, device->settings_name);
 		g_settings_set_strv(settings, "numbers", (const gchar*const*)numbers);
 
 		g_object_unref(settings);
