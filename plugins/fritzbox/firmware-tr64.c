@@ -565,62 +565,6 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 }
 
 /**
- * firmware_tr64_get_dial_config:
- * @profile: a #RmProfle
- *
- * Get dial configuration
- *
- * Returns: %TRUE on success
- */
-gboolean firmware_tr64_get_dial_config(RmProfile *profile)
-{
-	SoupMessage *msg;
-
-	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialGetConfig", "urn:dslforum-org:service:X_VoIP:1", NULL);
-	if (!msg) {
-		return FALSE;
-	}
-
-	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		g_object_unref(msg);
-		return FALSE;
-	}
-	rm_log_save_data("getdialconfig.xml", msg->response_body->data, msg->response_body->length);
-	g_object_unref(msg);
-
-	return TRUE;
-}
-
-/**
- * firmware_tr64_set_dial_config:
- * @profile: a #RmProfile
- *
- * Set dial config (hard coded to Roger atm)
- *
- * Returns: %TRUE on success
- */
-gboolean firmware_tr64_set_dial_config(RmProfile *profile)
-{
-	SoupMessage *msg;
-
-	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialSetConfig", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneName", "Roger", NULL);
-	if (!msg) {
-		return FALSE;
-	}
-
-	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		g_object_unref(msg);
-		return FALSE;
-	}
-	rm_file_save("setdialconfig.xml", msg->response_body->data, msg->response_body->length);
-	g_object_unref(msg);
-
-	return TRUE;
-}
-
-/**
  * firmware_tr64_get_numbers:
  * @profile: a #RmProfile
  *
@@ -666,4 +610,3 @@ gboolean firmware_tr64_is_available(RmProfile *profile)
 
 	return firmware_tr64_security_port != 0;
 }
-

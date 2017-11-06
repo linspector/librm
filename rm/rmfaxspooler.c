@@ -42,9 +42,6 @@
 
 #define SPOOLER_DIR "/var/spool/"
 
-#define SPOOLER_DEBUG 1
-
-#ifdef SPOOLER_DEBUG
 /** translations from event to text for file monitor events */
 struct event_translate {
 	GFileMonitorEvent event;
@@ -83,7 +80,6 @@ static const char *rm_faxspooler_event_to_text(GFileMonitorEvent event)
 
 	return "Undefined event";
 }
-#endif
 
 /**
  * rm_faxspooler_has_file_extension:
@@ -128,10 +124,7 @@ static void rm_faxspooler_changed_cb(GFileMonitor *monitor, GFile *file, GFile *
 	GFileType type;
 	gchar *file_name = NULL;
 
-	g_debug("%s(): event_type: %d", __FUNCTION__, event_type);
-#ifdef SPOOLER_DEBUG
-	g_debug("%s(): => %s", __FUNCTION__, rm_faxspooler_event_to_text(event_type));
-#endif
+	g_debug("%s(): event type: %d (%s)", __FUNCTION__, event_type, rm_faxspooler_event_to_text(event_type));
 
 	if (event_type != G_FILE_MONITOR_EVENT_CREATED) {
 		return;
@@ -141,7 +134,6 @@ static void rm_faxspooler_changed_cb(GFileMonitor *monitor, GFile *file, GFile *
 	g_assert(file_name != NULL);
 
 	type = g_file_query_file_type(file, G_FILE_QUERY_INFO_NONE, NULL);
-	g_debug("%s(): type: %d", __FUNCTION__, type);
 	if (type != G_FILE_TYPE_REGULAR) {
 		return;
 	}

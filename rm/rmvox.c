@@ -496,9 +496,10 @@ RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 	}
 
 	if (!g_ascii_strncasecmp(data, "RIFF", 4)) {
+		gchar *vox_file = g_build_filename(rm_get_user_cache_dir(), "vox.wav", NULL);
 		g_debug("%s(): Wave file", __FUNCTION__);
-		rm_file_save("vox.wav", data, len);
-		playback->sf = sf_open("vox.wav", SFM_READ, &playback->info);
+		rm_file_save(vox_file, data, len);
+		playback->sf = sf_open(vox_file, SFM_READ, &playback->info);
 
 		if (playback->info.format != (SF_FORMAT_WAV | SF_FORMAT_PCM_16)) {
 			g_debug("%s(): Not a valid WAVE file", __FUNCTION__);

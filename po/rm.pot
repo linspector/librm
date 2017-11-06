@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: rm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-20 17:55+0100\n"
+"POT-Creation-Date: 2017-11-06 18:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,167 +17,203 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: subprojects/librm/rm/rmaddressbook.c:321
+#: rm/rmaddressbook.c:326
 msgid "All contacts"
 msgstr ""
 
-#: subprojects/librm/rm/rmfaxspooler.c:211
-#, c-format
-msgid "Spooler directory %s does not exists!"
-msgstr ""
-
-#: subprojects/librm/rm/rmfaxspooler.c:219
-#, c-format
-msgid ""
-"Could not access spooler directory. Is user in group fax?\n"
-"%s"
-msgstr ""
-
-#: subprojects/librm/rm/rmfilter.c:547
+#: rm/rmfilter.c:551
 msgid "All calls"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:551
+#: rm/rmfilter.c:555
 msgid "Incoming calls"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:555
+#: rm/rmfilter.c:559
 msgid "Missed calls"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:559
+#: rm/rmfilter.c:563
 msgid "Outgoing calls"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:563
+#: rm/rmfilter.c:567
 msgid "Fax"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:567
+#: rm/rmfilter.c:571
 msgid "Answering machine"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:571
+#: rm/rmfilter.c:575
 msgid "Fax Report"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:575
+#: rm/rmfilter.c:579
 msgid "Record"
 msgstr ""
 
-#: subprojects/librm/rm/rmfilter.c:579
+#: rm/rmfilter.c:583
 msgid "Blocked"
 msgstr ""
 
-#: subprojects/librm/rm/rmrouter.c:156 subprojects/librm/rm/rmrouter.c:157
+#: rm/rmrouter.c:156 rm/rmrouter.c:157
 msgid ""
 "Login data are wrong or permissions are missing.\n"
 "Please check your login data."
 msgstr ""
 
-#: subprojects/librm/rm/rmrouter.c:157
+#: rm/rmrouter.c:157
 msgid "Login failed"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/firmware-common.c:637
-#: subprojects/librm/plugins/fritzbox/firmware-common.c:768
+#: plugins/fritzbox/firmware-common.c:593
+#: plugins/fritzbox/firmware-common.c:724
 msgid "FTP Login failed"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/firmware-common.c:637
-#: subprojects/librm/plugins/fritzbox/firmware-common.c:768
+#: plugins/fritzbox/firmware-common.c:593
+#: plugins/fritzbox/firmware-common.c:724
 msgid "Please check your ftp credentials"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/fritzbox.c:228
-#: subprojects/librm/plugins/fritzbox/fritzbox.c:263
+#: plugins/fritzbox/fritzbox.c:300
 msgid "Phone dialer"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/fritzbox.c:228
+#: plugins/fritzbox/fritzbox.c:300
 msgid "Pickup phone when ringing"
 msgstr ""
 
-#: subprojects/librm/plugins/capi/phone.c:573
+#: plugins/capi/phone.c:548
 msgid "CAPI Softphone"
 msgstr ""
 
-#: subprojects/librm/plugins/areacodes_global/areacodes_global.desktop.in:4
+#: plugins/gnotification/gnotification.c:66
+msgid "You have missed calls"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:68
+msgid "Missed call(s)"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:73
+msgid "Open journal"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:102
+#, c-format
+msgid ""
+"Name:\t\t%s\n"
+"Number:\t\t%s\n"
+"Company:\t%s\n"
+"Street:\t\t%s\n"
+"City:\t\t\t%s%s%s\n"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:113
+#, c-format
+msgid "Incoming call (on %s)"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:115
+#, c-format
+msgid "Outgoing call (on %s)"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:127
+msgid "Accept"
+msgstr ""
+
+#: plugins/gnotification/gnotification.c:128
+msgid "Decline"
+msgstr ""
+
+#: plugins/areacodes_global/areacodes_global.desktop.in:4
 msgid "Areacodes (Global)"
 msgstr ""
 
-#: subprojects/librm/plugins/areacodes_global/areacodes_global.desktop.in:5
+#: plugins/areacodes_global/areacodes_global.desktop.in:5
 msgid "Display city name in journal"
 msgstr ""
 
-#: subprojects/librm/plugins/capi/capi.desktop.in:4
+#: plugins/capi/capi.desktop.in:4
 msgid "CAPI"
 msgstr ""
 
-#: subprojects/librm/plugins/capi/capi.desktop.in:5
+#: plugins/capi/capi.desktop.in:5
 msgid "Fax & phone support based on CAPI"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/fritzbox.desktop.in:4
+#: plugins/fritzbox/fritzbox.desktop.in:4
 msgid "AVM FRITZ!Box"
 msgstr ""
 
-#: subprojects/librm/plugins/fritzbox/fritzbox.desktop.in:5
+#: plugins/fritzbox/fritzbox.desktop.in:5
 msgid "FRITZ!Box router integration for firmware >= 04.74"
 msgstr ""
 
-#: subprojects/librm/plugins/gstreamer/gstreamer.desktop.in:4
+#: plugins/fritzfon/fritzfon.desktop.in:4
+msgid "FritzFon"
+msgstr ""
+
+#: plugins/fritzfon/fritzfon.desktop.in:5
+msgid "FRITZ!Box address book support"
+msgstr ""
+
+#: plugins/gstreamer/gstreamer.desktop.in:4
 msgid "GStreamer 1.x plugin"
 msgstr ""
 
-#: subprojects/librm/plugins/gstreamer/gstreamer.desktop.in:5
+#: plugins/gstreamer/gstreamer.desktop.in:5
 msgid "Audio plugin for GStreamer"
 msgstr ""
 
-#: subprojects/librm/plugins/portaudio/portaudio.desktop.in:4
-msgid "PortAudio plugin"
-msgstr ""
-
-#: subprojects/librm/plugins/portaudio/portaudio.desktop.in:5
-msgid "Audio plugin for PortAudio"
-msgstr ""
-
-#: subprojects/librm/plugins/pulseaudio/pulseaudio.desktop.in:4
+#: plugins/pulseaudio/pulseaudio.desktop.in:4
 msgid "PulseAudio plugin"
 msgstr ""
 
-#: subprojects/librm/plugins/pulseaudio/pulseaudio.desktop.in:5
+#: plugins/pulseaudio/pulseaudio.desktop.in:5
 msgid "Audio plugin for PulseAudio"
 msgstr ""
 
-#: subprojects/librm/plugins/reverselookup/reverselookup.desktop.in:4
+#: plugins/reverselookup/reverselookup.desktop.in:4
 msgid "Reverse Lookup"
 msgstr ""
 
-#: subprojects/librm/plugins/reverselookup/reverselookup.desktop.in:5
+#: plugins/reverselookup/reverselookup.desktop.in:5
 msgid "Reverse lookup through 3rd-party"
 msgstr ""
 
-#: subprojects/librm/plugins/secret/secret.desktop.in:4
+#: plugins/secret/secret.desktop.in:4
 msgid "Secret"
 msgstr ""
 
-#: subprojects/librm/plugins/secret/secret.desktop.in:5
+#: plugins/secret/secret.desktop.in:5
 msgid "Secret password storage"
 msgstr ""
 
-#: subprojects/librm/plugins/simple_pwd/simple_pwd.desktop.in:4
+#: plugins/simple_pwd/simple_pwd.desktop.in:4
 msgid "Simple Password"
 msgstr ""
 
-#: subprojects/librm/plugins/simple_pwd/simple_pwd.desktop.in:5
+#: plugins/simple_pwd/simple_pwd.desktop.in:5
 msgid "Simple password storage"
 msgstr ""
 
-#: subprojects/librm/plugins/wincred/wincred.desktop.in:4
+#: plugins/wincred/wincred.desktop.in:4
 msgid "Windows Credentials"
 msgstr ""
 
-#: subprojects/librm/plugins/wincred/wincred.desktop.in:5
+#: plugins/wincred/wincred.desktop.in:5
 msgid "Windows Credentials password storage"
+msgstr ""
+
+#: plugins/gnotification/gnotification.desktop.in:4
+msgid "Notifications (using GNotification)"
+msgstr ""
+
+#: plugins/gnotification/gnotification.desktop.in:5
+msgid ""
+"Display notification about incoming/outgoing/missed calls and plays sounds"
 msgstr ""
