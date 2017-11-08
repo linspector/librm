@@ -116,7 +116,7 @@ gchar *rm_get_directory(gchar *type)
 	if (gtkosx_application_get_bundle_id()) {
 		ret = g_strdup_printf("%s/Contents/Resources/%s", bundle, type);
 	} else {
-		ret = g_strdup_printf("%s/../%s", bundle, type);
+		ret = g_strdup_printf("%s", type);
 	}
 #else
 	ret = g_strdup(type);

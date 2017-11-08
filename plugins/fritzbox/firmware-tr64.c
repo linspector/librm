@@ -34,7 +34,7 @@
 #include "firmware-common.h"
 #include "firmware-query.h"
 
-//#define FIRMWARE_TR64_DEBUG 1
+#define FIRMWARE_TR64_DEBUG 1
 
 static gint firmware_tr64_security_port = 0;
 
@@ -170,7 +170,7 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 	g_string_free(request, TRUE);
 
 	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+		g_debug("%s(): Received status code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
 		rm_log_save_data("tr64-request-error1.xml", msg->response_body->data, -1);
 		g_object_unref(msg);
 		return NULL;

@@ -65,13 +65,20 @@ static gint rm_plugins_load_plugin(char *name)
 	GKeyFile *keyfile;
 	gchar *module_name;
 	gchar *lib_name;
+	gchar *suffix;
 
 	keyfile = g_key_file_new();
 	g_key_file_load_from_file(keyfile, name, G_KEY_FILE_NONE, NULL);
 
 	module_name = g_key_file_get_string(keyfile, "Plugin", "Module", NULL);
 
-	lib_name = g_strdup_printf("%s/lib%s.%s", g_dirname(name), module_name, G_MODULE_SUFFIX);
+#ifdef __APPLE__
+	suffix = "dylib";
+#else
+	suffix = G_MODULE_SUFFIX;
+#endif
+
+	lib_name = g_strdup_printf("%s/lib%s.%s", g_dirname(name), module_name, suffix);
 	//g_debug("%s(): lib_name: %s", __FUNCTION__, lib_name);
 	module = g_module_open(lib_name, G_MODULE_BIND_LAZY);
 	if (!module) {
@@ -153,6 +160,7 @@ void rm_plugins_load_dir(gchar *plugin_dir)
 
 	dir = g_dir_open(plugin_dir, 0, NULL);
 
+	//g_debug("%s(): Using '%s' as plugin dir", __FUNCTION__, plugin_dir);
 	if (dir) {
 		while ((file = g_dir_read_name(dir)) != NULL) {
 			path = g_build_filename(plugin_dir, file, NULL);
