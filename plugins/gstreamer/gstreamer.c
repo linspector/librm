@@ -285,12 +285,13 @@ static void *gstreamer_open(gchar *output)
 		GstElement *source = gst_element_factory_make("appsrc", "rm_src");
 		g_assert(source != NULL);
 
-		g_object_set(G_OBJECT(source),
+		/* Removed this code part as it causes a crash on windows/wine */
+		/*g_object_set(G_OBJECT(source),
 			     "is-live", 1,
 			     "format", 3,
 			     "block", 1,
 			     "max-bytes", SAMPLE_SIZE,
-			     NULL);
+			     NULL);*/
 
 		filter = gst_element_factory_make("capsfilter", "filter");
 

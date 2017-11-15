@@ -4,12 +4,13 @@ subdir('areacodes_global')
 subdir('capi')
 subdir('fritzbox')
 subdir('fritzfon')
-subdir('gnotification')
-subdir('gstreamer')
 
-if get_option('enable-pulseaudio')
-	subdir('pulseaudio')
+if host_machine.system() != 'windows'
+# Currently gnotification does not work on windows
+subdir('gnotification')
 endif
+
+subdir('gstreamer')
 
 subdir('reverselookup')
 
