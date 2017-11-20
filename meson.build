@@ -26,7 +26,7 @@ os_darwin = false
 
 if host_machine.system().contains('darwin')
     os_darwin = true
-elif host_machine.system().contains('mingw')
+elif host_machine.system() == 'windows'
     os_win32 = true
 elif host_machine.system().contains('linux')
     os_linux = true
