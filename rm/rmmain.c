@@ -64,8 +64,6 @@ static gchar *rm_user_cache_dir = NULL;
 static gchar *rm_user_data_dir = NULL;
 /** Requested user profile */
 static gchar *rm_requested_profile = NULL;
-/** Fax server flag */
-static gboolean rm_fax_server_active = FALSE;
 
 /**
  * rm_print_error_quark:
@@ -272,17 +270,6 @@ gboolean rm_new(gboolean debug, GError **error)
 }
 
 /**
- * rm_use_fax_server:
- * @on: flag indicating if fax server should be used
- *
- * Activate/Deactivate fax server
- */
-void rm_use_fax_server(gboolean on)
-{
-	rm_fax_server_active = on;
-}
-
-/**
  * rm_init:
  * @error: a @GError
  *
@@ -296,11 +283,7 @@ gboolean rm_init(GError **error)
 	g_info("%s %s", RM_NAME, RM_VERSION);
 
 	/* Init fax printer */
-	if (rm_fax_server_active) {
-		rm_faxserver_init();
-	} else {
-		rm_faxspooler_init();
-	}
+	rm_faxserver_init();
 
 	/* Initialize network */
 	rm_network_init();

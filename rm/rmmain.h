@@ -83,8 +83,6 @@ gchar *rm_get_user_cache_dir(void);
 gchar *rm_get_user_data_dir(void);
 gchar *rm_get_user_plugins_dir(void);
 
-void rm_use_fax_server(gboolean on);
-
 G_END_DECLS
 
 #endif

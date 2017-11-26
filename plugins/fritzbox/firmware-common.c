@@ -798,7 +798,6 @@ gchar *fritzbox_load_fax(RmProfile *profile, const gchar *filename, gsize *len)
 			return NULL;
 		}
 
-		rm_file_save("loadfax.xml", msg->response_body->data, -1);
 		ret = g_malloc0(msg->response_body->length);
 		memcpy(ret, msg->response_body->data, msg->response_body->length);
 		*len = msg->response_body->length;
