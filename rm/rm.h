@@ -38,7 +38,6 @@
 #include <rm/rmaddressbook.h>
 #include <rm/rmconnection.h>
 #include <rm/rmdevice.h>
-#include <rm/rmfaxspooler.h>
 #include <rm/rmftp.h>
 #include <rm/rmlog.h>
 #include <rm/rmnetmonitor.h>

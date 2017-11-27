@@ -36,7 +36,6 @@
 #include <rm/rmnetwork.h>
 #include <rm/rmnetmonitor.h>
 #include <rm/rmphone.h>
-#include <rm/rmfaxspooler.h>
 #include <rm/rmfaxserver.h>
 #include <rm/rmaction.h>
 #include <rm/rmpassword.h>
