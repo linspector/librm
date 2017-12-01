@@ -123,6 +123,11 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 	SoupURI *uri;
 	gchar *status;
 	gint port;
+	gchar *login_user = rm_router_get_login_user(profile);
+
+	if (RM_EMPTY_STRING(login_user)) {
+		login_user = "admin";
+	}
 
 	if (!auth) {
 		url = g_strdup_printf("http://%s/upnp/control/%s", rm_router_get_host(profile), control);
@@ -141,7 +146,7 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 
 	if (auth) {
 		g_string_append_printf(request, SOUP_MSG_HEADER_START "<h:InitChallenge xmlns:h=\"http://soap-authentication.org/digest/2001/10/\" s:mustUnderstand=\"1\">\
-        <UserID>%s</UserID></h:InitChallenge>" SOUP_MSG_HEADER_END, rm_router_get_login_user(profile));
+        <UserID>%s</UserID></h:InitChallenge>" SOUP_MSG_HEADER_END, login_user);
 	}
 
 	g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
@@ -188,7 +193,7 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 		gchar *realm = xml_extract_tag(msg->response_body->data, "Realm");
 		gchar *response;
 
-		response = firmware_tr64_create_response(nonce, realm, rm_router_get_login_user(profile), rm_router_get_login_password(profile));
+		response = firmware_tr64_create_response(nonce, realm, login_user, rm_router_get_login_password(profile));
 
 		request = g_string_new(SOUP_MSG_START);
 
@@ -201,7 +206,7 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 				       "<Realm>%s</Realm>"
 				       "</h:ClientAuth>"
 				       SOUP_MSG_HEADER_END,
-				       nonce, response, rm_router_get_login_user(profile), realm);
+				       nonce, response, login_user, realm);
 
 		g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
 
