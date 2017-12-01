@@ -1,3 +1,9 @@
+rm_gresources = gnome.compile_resources(
+  'rm-gresources', 'rm.gresource.xml',
+  source_dir : '.',
+  c_name : '')
+
+
 rm_sources = [
 	'rmaction.c',
 	'rmaddressbook.c',
@@ -32,7 +38,8 @@ rm_sources = [
 	'rmsettings.c',
 	'rmssdp.c',
 	'rmvox.c',
-	'rmxml.c'
+	'rmxml.c',
+	rm_gresources
 ]
 
 rm_headers = [

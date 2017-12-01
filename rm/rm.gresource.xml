@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/org/tabos/rm">
+		<file>data/call_in.wav</file>
+	</gresource>
+</gresources>

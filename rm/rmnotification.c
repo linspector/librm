@@ -57,16 +57,23 @@ static RmVoxPlayback *vox = NULL;
 void rm_notification_play_ringtone(void)
 {
 	GError *error;
-	gsize len;
-	gchar *data;
+	GBytes *bytes;
+	gconstpointer data;
+	gsize length;
 
 	if (vox) {
 		return;
 	}
 
-	data = rm_file_load("/usr/share/sounds/rm/call_in.wav", &len);
+	bytes = g_resources_lookup_data("/org/tabos/rm/data/call_in.wav", G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
+	if (!bytes) {
+		g_warning("%s(): Could not load audio file", __FUNCTION__);
+		return;
+	}
 
-	vox = rm_vox_init(data, len, &error);
+	data = g_bytes_get_data(bytes, &length);
+
+	vox = rm_vox_init((gchar*)data, length, &error);
 	if (vox) {
 		rm_vox_use_ringtone_audio(vox, TRUE);
 		rm_vox_play(vox);
