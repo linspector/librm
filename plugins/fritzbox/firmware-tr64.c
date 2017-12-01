@@ -336,6 +336,10 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 
 	call_type = atoi(type);
 
+	if (call_type == 10) {
+		call_type = RM_CALL_ENTRY_TYPE_BLOCKED;
+	}
+
 #ifdef FIRMWARE_TR64_DEBUG
 	if (!RM_EMPTY_STRING(path)) {
 		g_debug("%s(): path %s, port %s", __FUNCTION__, path, port);
