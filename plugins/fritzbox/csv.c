@@ -64,6 +64,11 @@ static inline gpointer csv_parse_fritzbox(gpointer ptr, gchar **split)
 		case 4:
 			call_type = RM_CALL_ENTRY_TYPE_OUTGOING;
 			break;
+		case 10:
+			call_type = RM_CALL_ENTRY_TYPE_BLOCKED;
+			break;
+		default:
+			break;
 		}
 
 		call = rm_call_entry_new(call_type, split[1], split[2], split[3], split[4], split[5], split[6], NULL);
