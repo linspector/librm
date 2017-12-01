@@ -67,9 +67,10 @@ void rm_notification_play_ringtone(void)
 	data = rm_file_load("/usr/share/sounds/rm/call_in.wav", &len);
 
 	vox = rm_vox_init(data, len, &error);
-
-	rm_vox_use_ringtone_audio(vox, TRUE);
-	rm_vox_play(vox);
+	if (vox) {
+		rm_vox_use_ringtone_audio(vox, TRUE);
+		rm_vox_play(vox);
+	}
 }
 
 /**

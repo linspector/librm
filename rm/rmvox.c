@@ -478,6 +478,11 @@ RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 	const SpeexMode *mode;
 	spx_int32_t rate = 0;
 
+	if (!data || !len) {
+		g_warning("%s(): Called without valid data", __FUNCTION__);
+		return NULL;
+	}
+
 	/* Create internal structue and store data pointer and data length */
 	playback = g_slice_new0(RmVoxPlayback);
 	playback->data = data;
