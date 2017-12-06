@@ -1,7 +1,7 @@
 simple_pwd_sources = ['simple_pwd.c']
 simple_pwd_dep = [rm_dep]
 
-libsimple_pwd = shared_library('simple_pwd',
+libsimple_pwd = shared_module('simple_pwd',
                         simple_pwd_sources,
                         include_directories : rm_inc,
                         dependencies : simple_pwd_dep,

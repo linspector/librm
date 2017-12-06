@@ -3,7 +3,7 @@ reverselookup_sources = ['reverselookup.c']
 reverselookup_dep = []
 reverselookup_dep += rm_dep
 
-libreverselookup = shared_library('reverselookup',
+libreverselookup = shared_module('reverselookup',
                         reverselookup_sources,
                         include_directories : rm_inc,
                         dependencies : reverselookup_dep,

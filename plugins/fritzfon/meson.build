@@ -5,7 +5,7 @@ fritzfon_dep = rm_dep
 
 fritzfon_inc = [rm_inc]
 
-libfritzfon = shared_library('fritzfon',
+libfritzfon = shared_module('fritzfon',
                         fritzfon_sources,
                         include_directories : fritzfon_inc,
                         dependencies : fritzfon_dep,

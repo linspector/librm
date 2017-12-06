@@ -1,7 +1,7 @@
 wincred_sources = ['wincred.c']
 wincred_dep = [rm_dep]
 
-libwincred = shared_library('wincred',
+libwincred = shared_module('wincred',
                         wincred_sources,
                         include_directories : rm_inc,
                         dependencies : wincred_dep,

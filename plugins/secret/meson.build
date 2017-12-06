@@ -8,7 +8,7 @@ secret_dep = []
 secret_dep += rm_dep
 secret_dep += secret
 
-libsecret = shared_library('secret',
+libsecret = shared_module('secret',
                         secret_sources,
                         include_directories : rm_inc,
                         dependencies : secret_dep,

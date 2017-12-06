@@ -11,7 +11,7 @@ fritzbox_sources = [
 	'fritzbox.c'
 ]
 
-libfritzbox = shared_library('fritzbox',
+libfritzbox = shared_module('fritzbox',
                         fritzbox_sources,
                         include_directories : rm_inc,
                         dependencies : rm_dep,

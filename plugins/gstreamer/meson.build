@@ -9,7 +9,7 @@ gstreamer_dep += rm_dep
 gstreamer_dep += gstreamer
 gstreamer_dep += dependency('gstreamer-app-1.0')
 
-libgstreamer = shared_library('gstreamer',
+libgstreamer = shared_module('gstreamer',
                         gstreamer_sources,
                         include_directories : rm_inc,
                         dependencies : gstreamer_dep,

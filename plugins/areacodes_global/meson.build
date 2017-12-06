@@ -5,7 +5,7 @@ areacodes_global_sources = [
 
 areacodes_global_dep = [rm_dep]
 
-libareacodes_global = shared_library('areacodes_global',
+libareacodes_global = shared_module('areacodes_global',
                         areacodes_global_sources,
                         include_directories : rm_inc,
                         dependencies : areacodes_global_dep,

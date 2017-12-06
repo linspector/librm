@@ -5,8 +5,7 @@ subdir('capi')
 subdir('fritzbox')
 subdir('fritzfon')
 
-if host_machine.system() != 'windows'
-# Currently gnotification does not work on windows
+if host_machine.system().contains('linux')
 subdir('gnotification')
 endif
 
@@ -19,8 +18,3 @@ if get_option('enable-secret')
 endif
 
 subdir('simple_pwd')
-
-# Disabled - needs more love
-#if host_machine.system() == 'windows'
-#	subdir('wincred')
-#endif
