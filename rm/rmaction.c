@@ -327,6 +327,7 @@ static void rm_action_save(RmProfile *profile)
 {
 	GSList *list;
 	gchar **actions = g_new0(gchar *, g_slist_length(profile->action_list) + 1);
+	gchar **current_actions = g_settings_get_strv(profile->settings, "actions");
 	gsize counter = 0;
 
 	/* Traverse through profile action list and add it to string array actions */
@@ -341,7 +342,7 @@ static void rm_action_save(RmProfile *profile)
 	g_settings_set_strv(profile->settings, "actions", (const gchar*const*)actions);
 
 	/* Clean up */
-	g_strfreev(actions);
+	g_strfreev(current_actions);
 }
 
 /**
