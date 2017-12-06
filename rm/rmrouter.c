@@ -737,7 +737,7 @@ GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
 			continue;
 		}
 
-		uri = g_strdup_printf("file:///%s%s%s", dir_name, G_DIR_SEPARATOR_S, file_name);
+		uri = g_build_filename(dir_name, file_name, NULL);
 
 		date_time = g_strdup_printf("%s.%s.%s %2.2s:%2.2s", split[3], split[4], split[5] + 2, split[6], split[7]);
 
