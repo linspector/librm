@@ -61,10 +61,10 @@ endif
 
 rm_inc = include_directories('.')
 
-if os_win32
-    rm_plugins_path = join_paths('lib', rm_name)
-else
+if os_linux
     rm_plugins_path = join_paths(get_option('prefix'), get_option('libdir'), rm_name)
+else
+    rm_plugins_path = join_paths('lib', rm_name)
 endif
 
 # Set config data
@@ -74,10 +74,10 @@ cdata.set('RM_VERSION', '"@0@"'.format(rm_version))
 cdata.set('RM_PLUGINS', '"' + rm_plugins_path + '"')
 cdata.set('RM_GETTEXT_PACKAGE', '"rm"')
 
-if os_win32
-	cdata.set('APP_LOCALE', '"' + get_option('localedir') + '"')
-else
+if os_linux
 	cdata.set('APP_LOCALE', '"' + join_paths(get_option('prefix'), get_option('localedir')) + '"')
+else
+	cdata.set('APP_LOCALE', '"' + get_option('localedir') + '"')
 endif
 
 configure_file(
