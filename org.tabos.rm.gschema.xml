@@ -127,7 +127,7 @@
 			<summary>Fax identification (fax number of sender)</summary>
 		</key>
 		<key name="fax-resolution" type="i">
-			<default>0</default>
+			<default>1</default>
 			<summary>Fax resolution</summary>
 			<description>Fax resolution. 0 for 'Standard' (98dpi), 1 for 'Fine' (196dpi).</description>
 		</key>
