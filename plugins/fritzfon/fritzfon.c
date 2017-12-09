@@ -217,7 +217,6 @@ static gint fritzfon_read_book(void)
 	gint read = msg->response_body->length;
 
 	g_return_val_if_fail(data != NULL, -2);
-#define FRITZFON_DEBUG 1
 #if FRITZFON_DEBUG
 	if (read > 0) {
 		rm_log_save_data("test-in.xml", data, read);
