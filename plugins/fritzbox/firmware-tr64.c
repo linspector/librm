@@ -385,7 +385,7 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 	RmXmlNode *child;
 
 	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Got invalid data, return code: %d", __FUNCTION__, msg->status_code);
+		g_debug("%s(): Got invalid data, return code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
 		g_object_unref(msg);
 		return;
 	}
