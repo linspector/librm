@@ -126,6 +126,8 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 	if (connection->type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_SOFTPHONE)) {
 		g_notification_add_button_with_target(notify, R_("Accept"), "app.pickup", "i", connection->id);
 		g_notification_add_button_with_target(notify, R_("Decline"), "app.hangup", "i", connection->id);
+
+		g_notification_set_default_action_and_target(notify, "app.pickup", "i", connection->id);
 	} else if (connection->type & RM_CONNECTION_TYPE_OUTGOING) {
 		gint duration = 5;
 
@@ -137,7 +139,12 @@ gpointer gnotification_show(RmConnection *connection, RmContact *contact)
 		g_notification_set_icon(notify, icon);
 	}
 
-	g_notification_set_priority(notify, G_NOTIFICATION_PRIORITY_URGENT);
+	const gchar *xdg_desktop = g_environ_getenv(g_get_environ(), "XDG_CURRENT_DESKTOP");
+
+	if (!g_strcmp0(xdg_desktop, "GNOME")) {
+		g_notification_set_priority(notify, G_NOTIFICATION_PRIORITY_URGENT);
+	}
+
 	g_application_send_notification(G_APPLICATION(g_application_get_default()), uid, notify);
 	g_object_unref(notify);
 
