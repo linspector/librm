@@ -82,7 +82,6 @@ static void parse_person(RmContact *contact, RmXmlNode *person)
 				loader = gdk_pixbuf_loader_new();
 				if (gdk_pixbuf_loader_write(loader, buffer, len, NULL)) {
 					contact->image = gdk_pixbuf_loader_get_pixbuf(loader);
-					contact->image_len = len;
 				}
 				gdk_pixbuf_loader_close(loader, NULL);
 			}
@@ -275,8 +274,9 @@ static gint fritzfon_get_books(void)
 
 	const gchar *data = msg->response_body->data;
 
-	gint read = msg->response_body->length;
-	rm_log_save_data("fritzfon-getbooks.html", data, read);
+#if FRITZFON_DEBUG
+	rm_log_save_data("fritzfon-getbooks.html", data, msg->response_body->length);
+#endif
 
 	g_return_val_if_fail(data != NULL, -2);
 
@@ -562,21 +562,21 @@ void fritzfon_set_image(RmContact *contact)
 	gchar *path;
 	gchar *file_name;
 	gchar *hash;
-	gchar *data;
-	gsize size;
+	//gchar *data;
+	//gsize size;
 
 	contact->priv = priv;
 	rm_ftp_login(client, rm_router_get_ftp_user(profile), rm_router_get_ftp_password(profile));
 
 	volume_path = g_settings_get_string(profile->settings, "fax-volume");
-	hash = g_strdup_printf("%s%s", volume_path, contact->image_uri);
+	hash = g_strdup_printf("%s/%s", volume_path, g_uuid_string_random());
 	file_name = g_strdup_printf("%d.jpg", g_str_hash(hash));
 	g_free(hash);
 	path = g_strdup_printf("%s/FRITZ/fonpix/", volume_path);
 	g_free(volume_path);
 
-	data = rm_file_load(contact->image_uri, &size);
-	rm_ftp_put_file(client, file_name, path, data, size);
+	//data = rm_file_load(contact->image_uri, &size);
+	//rm_ftp_put_file(client, file_name, path, data, size);
 	rm_ftp_shutdown(client);
 
 	priv->image_url = g_strdup_printf("file:///var/media/ftp/%s%s", path, file_name);
@@ -587,12 +587,12 @@ void fritzfon_set_image(RmContact *contact)
 gboolean fritzfon_save_contact(RmContact *contact)
 {
 	if (!contact->priv) {
-		if (contact->image_uri) {
+		if (contact->image) {
 			fritzfon_set_image(contact);
 		}
 		contacts = g_slist_insert_sorted(contacts, contact, rm_contact_name_compare);
 	} else {
-		if (contact->image_uri) {
+		if (contact->image) {
 			fritzfon_set_image(contact);
 		}
 	}

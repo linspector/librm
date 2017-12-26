@@ -25,6 +25,7 @@
 #endif
 
 #include <glib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 G_BEGIN_DECLS
 
@@ -52,11 +53,7 @@ typedef struct {
 	/* Name */
 	gchar *name;
 	/* Picture */
-	gpointer image;
-	/* Picture len */
-	gsize image_len;
-	/* Picture URI for online services */
-	gchar *image_uri;
+	GdkPixbuf *image;
 	/* Company */
 	gchar *company;
 
@@ -83,6 +80,7 @@ RmContact *rm_contact_dup(RmContact *src);
 gint rm_contact_name_compare(gconstpointer a, gconstpointer b);
 RmContact *rm_contact_find_by_number(gchar *number);
 void rm_contact_free(RmContact *contact);
+void rm_contact_set_image_from_file(RmContact *contact, gchar *file);
 
 G_END_DECLS
 

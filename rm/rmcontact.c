@@ -34,6 +34,15 @@
  * Contacts represents entries within an address book.
  */
 
+/**
+ * rm_contact_copy_numbers:
+ * @src: a @RmPhoneNUmber
+ * @data: NULL
+ *
+ * Copy phone numbers to copy
+ *
+ * Returns: new #RmPhoneNumber
+ */
 gpointer rm_contact_copy_numbers(gconstpointer src, gpointer data)
 {
 	RmPhoneNumber *copy = NULL;
@@ -43,6 +52,31 @@ gpointer rm_contact_copy_numbers(gconstpointer src, gpointer data)
 
 	copy->type = src_number->type;
 	copy->number = g_strdup(src_number->number);
+
+	return copy;
+}
+
+/**
+ * rm_contact_copy_addresses:
+ * @src: a @RmContactAddress
+ * @data: NULL
+ *
+ * Copy addresses to copy
+ *
+ * Returns: new #RmContactAddress
+ */
+gpointer rm_contact_copy_addresses(gconstpointer src, gpointer data)
+{
+	RmContactAddress *copy = NULL;
+	RmContactAddress *src_address = (RmContactAddress*)src;
+
+	copy = g_slice_new0(RmContactAddress);
+
+	copy->type = src_address->type;
+	copy->street = g_strdup(src_address->street);
+	copy->zip = g_strdup(src_address->zip);
+	copy->city = g_strdup(src_address->city);
+	copy->lookup = src_address->lookup;
 
 	return copy;
 }
@@ -58,13 +92,10 @@ void rm_contact_copy(RmContact *src, RmContact *dst)
 {
 	dst->name = g_strdup(src->name);
 
-	if (src->image_len && src->image) {
-		dst->image_len = src->image_len;
-		dst->image = g_malloc(dst->image_len);
-		memcpy(dst->image, src->image, dst->image_len);
+	if (src->image) {
+		dst->image = gdk_pixbuf_copy(src->image);
 	} else {
 		dst->image = NULL;
-		dst->image_len = 0;
 	}
 
 	if (src->numbers) {
@@ -74,7 +105,7 @@ void rm_contact_copy(RmContact *src, RmContact *dst)
 	}
 
 	if (src->addresses) {
-		dst->addresses = g_slist_copy(src->addresses);
+		dst->addresses = g_slist_copy_deep(src->addresses, rm_contact_copy_addresses, NULL);
 	} else {
 		dst->addresses = NULL;
 	}
@@ -153,7 +184,8 @@ RmContact *rm_contact_find_by_number(gchar *number)
 
 	g_debug("%s(): phone number type %d", __FUNCTION__, type);
 	if (type == -1) {
-		return contact;
+		//return contact;
+		type = RM_PHONE_NUMBER_TYPE_HOME;
 	}
 
 	switch (type) {
@@ -233,13 +265,16 @@ static void rm_contact_free_number(gpointer data)
  */
 void rm_contact_free(RmContact *contact)
 {
+	g_debug("%s(): Freeing %s", __FUNCTION__, contact->name);
 	g_free(contact->name);
 	g_free(contact->company);
 	g_free(contact->number);
 	g_free(contact->street);
 	g_free(contact->zip);
 	g_free(contact->city);
-	g_free(contact->image);
+	if (contact->image) {
+		g_object_unref(contact->image);
+	}
 
 	if (contact->addresses) {
 		g_slist_free_full(contact->addresses, rm_contact_free_address);
@@ -249,4 +284,27 @@ void rm_contact_free(RmContact *contact)
 	}
 
 	g_slice_free(RmContact, contact);
+}
+
+/**
+ * rm_contact_set_image_from_file:
+ * @contact: a #RmContact
+ * @file: image file name
+ *
+ * Replaces current contact image with the image file.
+ */
+void rm_contact_set_image_from_file(RmContact *contact, gchar *file)
+{
+	if (!contact) {
+		return;
+	}
+
+	if (contact->image) {
+		g_object_unref(contact->image);
+		contact->image = NULL;
+	}
+
+	if (file != NULL) {
+		contact->image = gdk_pixbuf_new_from_file(file, NULL);
+	}
 }
