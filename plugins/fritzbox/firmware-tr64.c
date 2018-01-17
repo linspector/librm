@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2018 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,41 +34,19 @@
 #include "firmware-common.h"
 #include "firmware-query.h"
 
-//#define FIRMWARE_TR64_DEBUG 1
+#define SOUP_MSG_START  "<?xml version='1.0' encoding='utf-8'?>" \
+	"<s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
+
+#define SOUP_MSG_END "</s:Envelope>\r\n"
+#define SOUP_MSG_HEADER_START "<s:Header>"
+#define SOUP_MSG_HEADER_END "</s:Header>"
+#define SOUP_MSG_BODY_START "<s:Body>"
+#define SOUP_MSG_BODY_END "</s:Body>"
+
+#define FIRMWARE_TR64_DEBUG 1
 
 static gint firmware_tr64_security_port = 0;
-
-/**
- * firmware_tr64_get_service:
- * @profile: a #RmProfile
- *
- * Try to get tr64 service
- */
-void firmware_tr64_get_service(RmProfile *profile)
-{
-	SoupMessage *msg;
-	gchar *url;
-
-	/* Create message */
-	url = g_strdup_printf("http://%s:49000/tr64desc.xml", rm_router_get_host(profile));
-
-	msg = soup_message_new(SOUP_METHOD_GET, url);
-	g_free(url);
-
-	soup_session_send_message(rm_soup_session, msg);
-
-	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		g_object_unref(msg);
-		return;
-	}
-
-#ifdef FIRMWARE_TR64_DEBUG
-	rm_log_save_data("tr64desc.xml", msg->response_body->data, -1);
-#endif
-
-	g_object_unref(msg);
-}
+static gchar *auth_header = NULL;
 
 /**
  * firmware_tr64_create_response:
@@ -84,23 +62,14 @@ void firmware_tr64_get_service(RmProfile *profile)
 gchar *firmware_tr64_create_response(gchar *nonce, gchar *realm, gchar *user, gchar *password)
 {
 	/** secret = MD5( concat(uid, ":", realm, ":", pwd) ) */
-	gchar *secret = g_strconcat(user, ":", realm, ":", password, NULL);
-	gchar *secret_md5 = md5_simple(secret);
+	g_autofree gchar *secret = g_strconcat(user, ":", realm, ":", password, NULL);
+	g_autofree gchar *secret_md5 = md5_simple(secret);
 	/** response = MD5( concat(secret, ":", sn) ) */
-	gchar *response = g_strconcat(secret_md5, ":", nonce, NULL);
+	g_autofree gchar *response = g_strconcat(secret_md5, ":", nonce, NULL);
 	gchar *response_md5 = md5_simple(response);
 
 	return response_md5;
 }
-
-#define SOUP_MSG_START  "<?xml version='1.0' encoding='utf-8'?>" \
-	"<s:Envelope s:encodingStyle='http://schemas.xmlsoap.org/soap/encoding/' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>"
-
-#define SOUP_MSG_END "</s:Envelope>\r\n"
-#define SOUP_MSG_HEADER_START "<s:Header>"
-#define SOUP_MSG_HEADER_END "</s:Header>"
-#define SOUP_MSG_BODY_START "<s:Body>"
-#define SOUP_MSG_BODY_END "</s:Body>"
 
 /**
  * firmware_tr64_request:
@@ -118,36 +87,36 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 {
 	SoupMessage *msg;
 	SoupMessageHeaders *headers;
-	gchar *url;
-	GString *request = g_string_new(NULL);
+	GString *request = g_string_new(SOUP_MSG_START);
 	SoupURI *uri;
 	gchar *status;
 	gint port;
-	gchar *login_user = rm_router_get_login_user(profile);
+	g_autofree gchar *login_user = rm_router_get_login_user(profile);
+	g_autofree gchar *host = rm_router_get_host(profile);
+	g_autofree gchar *url = NULL;
 
 	if (RM_EMPTY_STRING(login_user)) {
-		login_user = "admin";
+		login_user = g_strdup("admin");
 	}
 
 	if (!auth) {
-		url = g_strdup_printf("http://%s/upnp/control/%s", rm_router_get_host(profile), control);
+		url = g_strdup_printf("http://%s/upnp/control/%s", host, control);
 		port = 49000;
 	} else {
-		url = g_strdup_printf("https://%s/upnp/control/%s", rm_router_get_host(profile), control);
+		url = g_strdup_printf("https://%s/upnp/control/%s", host, control);
 		port = firmware_tr64_security_port;
+
+		if (!auth_header) {
+			g_string_append_printf(request, SOUP_MSG_HEADER_START "<h:InitChallenge xmlns:h=\"http://soap-authentication.org/digest/2001/10/\" s:mustUnderstand=\"1\">\
+			        <UserID>%s</UserID></h:InitChallenge>" SOUP_MSG_HEADER_END, login_user);
+		} else {
+			g_string_append_printf(request, auth_header);
+		}
 	}
 
 	uri = soup_uri_new(url);
 	soup_uri_set_port(uri, port);
 	msg = soup_message_new_from_uri(SOUP_METHOD_POST, uri);
-	g_free(url);
-
-	g_string_append(request, SOUP_MSG_START);
-
-	if (auth) {
-		g_string_append_printf(request, SOUP_MSG_HEADER_START "<h:InitChallenge xmlns:h=\"http://soap-authentication.org/digest/2001/10/\" s:mustUnderstand=\"1\">\
-        <UserID>%s</UserID></h:InitChallenge>" SOUP_MSG_HEADER_END, login_user);
-	}
 
 	g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
 
@@ -178,10 +147,11 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 		g_debug("%s(): Received status code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
 		rm_log_save_data("tr64-request-error1.xml", msg->response_body->data, -1);
 		g_object_unref(msg);
+
 		return NULL;
 	}
 #ifdef FIRMWARE_TR64_DEBUG
-	rm_log_save_data("tr64-request-ok-1.xml", msg->response_body->data, -1);
+	rm_log_save_data("tr64-request-ok-1.xml", msg->response_body->data, msg->response_body->length);
 #endif
 
 	status = xml_extract_tag(msg->response_body->data, "Status");
@@ -192,12 +162,13 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 		gchar *nonce = xml_extract_tag(msg->response_body->data, "Nonce");
 		gchar *realm = xml_extract_tag(msg->response_body->data, "Realm");
 		gchar *response;
+		gchar *new_auth_header = NULL;
 
 		response = firmware_tr64_create_response(nonce, realm, login_user, rm_router_get_login_password(profile));
 
 		request = g_string_new(SOUP_MSG_START);
 
-		g_string_append_printf(request,
+		new_auth_header = g_strdup_printf(
 				       SOUP_MSG_HEADER_START
 				       "<h:ClientAuth xmlns:h='http://soap-authentication.org/digest/2001/10/' s:mustUnderstand='1'>"
 				       "<Nonce>%s</Nonce>"
@@ -208,6 +179,7 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 				       SOUP_MSG_HEADER_END,
 				       nonce, response, login_user, realm);
 
+		g_string_append(request, new_auth_header);
 		g_string_append_printf(request, SOUP_MSG_BODY_START "<u:%s xmlns:u='%s'>", action, service);
 
 		va_list arg;
@@ -239,12 +211,17 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
 		if (msg->status_code != SOUP_STATUS_OK) {
 			g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
 			rm_log_save_data("tr64-request-error2.xml", msg->response_body->data, -1);
-			g_object_unref(msg);
+			g_object_unref(msg)
+;
+			auth_header = NULL;
+
 			return NULL;
 		}
 
+		auth_header = new_auth_header;
+
 #ifdef FIRMWARE_TR64_DEBUG
-		rm_log_save_data("tr64-request-ok-2.xml", msg->response_body->data, -1);
+		rm_log_save_data("tr64-request-ok-2.xml", msg->response_body->data, msg->response_body->length);
 #endif
 	}
 
@@ -261,19 +238,17 @@ static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gch
  */
 static gint firmware_tr64_get_security_port(RmProfile *profile)
 {
-	SoupMessage *msg;
-	gchar *port = NULL;
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autofree gchar *port = NULL;
 
 	msg = firmware_tr64_request(profile, FALSE, "deviceinfo", "GetSecurityPort", "urn:dslforum-org:service:DeviceInfo:1", NULL);
-	if (!msg) {
+	if (msg == NULL) {
 		return 0;
 	}
 
 	port = xml_extract_tag(msg->response_body->data, "NewSecurityPort");
 
-	g_object_unref(msg);
-
-	return atoi(port);
+	return port ? atoi(port) : 0;
 }
 
 /**
@@ -391,7 +366,7 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 	}
 
 #ifdef FIRMWARE_TR64_DEBUG
-	rm_log_save_data("callist.xml", msg->response_body->data, -1);
+	rm_log_save_data("tr64-callist.xml", msg->response_body->data, msg->response_body->length);
 #endif
 
 	RmXmlNode *node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
@@ -428,27 +403,25 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
  */
 gboolean firmware_tr64_load_journal(RmProfile *profile)
 {
-	SoupMessage *msg;
+	g_autoptr(SoupMessage) url_msg = NULL;
+	SoupMessage *msg = NULL;
+	g_autofree gchar *url = NULL;
 
-	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetCallList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
-	if (!msg) {
+	url_msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetCallList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
+	if (url_msg == NULL) {
 		return FALSE;
 	}
 
-	gchar *url = xml_extract_tag(msg->response_body->data, "NewCallListURL");
+	url = xml_extract_tag(url_msg->response_body->data, "NewCallListURL");
 	if (RM_EMPTY_STRING(url)) {
-		g_object_unref(msg);
 		return FALSE;
 	}
 
 #ifdef FIRMWARE_TR64_DEBUG
-	rm_log_save_data("getcalllist.xml", msg->response_body->data, -1);
+	rm_log_save_data("tr64-getcalllist.xml", url_msg->response_body->data, url_msg->response_body->length);
 #endif
 
-	g_object_unref(msg);
-
 	msg = soup_message_new(SOUP_METHOD_GET, url);
-	g_free(url);
 
 	/* Queue message to session */
 	soup_session_queue_message(rm_soup_session, msg, firmware_tr64_journal_cb, profile);
@@ -468,35 +441,29 @@ gboolean firmware_tr64_load_journal(RmProfile *profile)
  */
 gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize *len)
 {
-	SoupMessage *msg;
-	gchar *url;
-	gchar *ret = NULL;
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autofree gchar *url = NULL;
+	g_autofree gchar *host = rm_router_get_host(profile);
 
 	if (!rm_router_login(profile)) {
-		return ret;
+		return NULL;
 	}
 
 	/* Create message */
-	url = g_strdup_printf("https://%s:%d%s&sid=%s", rm_router_get_host(profile), firmware_tr64_security_port, filename, profile->router_info->session_id);
+	url = g_strdup_printf("https://%s:%d%s&sid=%s", host, firmware_tr64_security_port, filename, profile->router_info->session_id);
 	msg = soup_message_new(SOUP_METHOD_GET, url);
-	g_free(url);
 
 	soup_session_send_message(rm_soup_session, msg);
 
 	if (msg->status_code != SOUP_STATUS_OK) {
 		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		rm_log_save_data("loadvoice-error.xml", msg->response_body->data, -1);
-		g_object_unref(msg);
+		rm_log_save_data("tr64-loadvoice-error.xml", msg->response_body->data, -1);
 		return NULL;
 	}
 
 	*len = msg->response_body->length;
-	ret = g_malloc0(*len);
-	memcpy(ret, msg->response_body->data, *len);
 
-	g_object_unref(msg);
-
-	return ret;
+	return g_memdup(msg->response_body->data, *len);
 }
 
 /**
@@ -511,10 +478,8 @@ gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize
  */
 gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *number)
 {
-	SoupMessage *msg;
+	g_autoptr(SoupMessage) msg = NULL;
 	gint idx = -1;
-	gchar *name;
-	gchar *prefix = NULL;
 	gint i;
 
 	for (i = 0; i < PORT_MAX - 2; i++) {
@@ -528,33 +493,16 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 		return FALSE;
 	}
 
-	switch (port) {
-	case PORT_ISDNALL ... PORT_ISDN8:
-		prefix = g_strdup("ISDN: ");
-		break;
-	case PORT_ANALOG1 ... PORT_ANALOG3:
-		prefix = g_strdup("POTS: ");
-		break;
-	case PORT_DECT1 ... PORT_DECT6:
-	default:
-		prefix = g_strdup("DECT: ");
-		break;
-	}
-
-	name = g_strdup_printf("%s%s", prefix, g_settings_get_string(fritzbox_settings, fritzbox_phone_ports[idx].setting_name));
-
-	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialSetConfig", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneName", name, NULL);
+	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialSetConfig", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneName", fritzbox_phone_ports[idx].setting_name, NULL);
 	if (!msg) {
 		return FALSE;
 	}
 
 	if (msg->status_code != SOUP_STATUS_OK) {
 		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		rm_log_save_data("dialsetconfig-error.xml", msg->response_body->data, -1);
-		g_object_unref(msg);
+		rm_log_save_data("tr64-dialsetconfig-error.xml", msg->response_body->data, -1);
 		return FALSE;
 	}
-	g_object_unref(msg);
 
 	/* Now dial number */
 	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialNumber", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneNumber", number, NULL);
@@ -564,27 +512,41 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 
 	if (msg->status_code != SOUP_STATUS_OK) {
 		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		rm_log_save_data("dialnumber-error.xml", msg->response_body->data, -1);
-		g_object_unref(msg);
+		rm_log_save_data("tr64-dialnumber-error.xml", msg->response_body->data, -1);
 		return FALSE;
 	}
-	g_object_unref(msg);
 
 	return TRUE;
 }
 
 /**
- * firmware_tr64_get_numbers:
+ * firmware_tr64_get_settings:
  * @profile: a #RmProfile
  *
- * Get numbers of router
+ * Get settings of router
  *
  * Returns: %TRUE on success
  */
-gboolean firmware_tr64_get_numbers(RmProfile *profile)
+gboolean firmware_tr64_get_settings(RmProfile *profile)
 {
-	SoupMessage *msg;
+	RmXmlNode *node;
+	RmXmlNode *child;
+	g_autoptr(SoupMessage) msg = NULL;
+	GRegex *lt;
+	GRegex *gt;
+	gchar *new_number_list;
+	gchar *lt_out;
+	gchar *gt_out;
+	gchar *fax_msn;
+	gchar **numbers = NULL;
+	gchar *areacode;
+	gchar *okz_prefix;
+	gchar *countrycode;
+	gchar *lkz_prefix;
+	gsize i;
+	gsize len;
 
+	g_test_timer_start();
 	msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_GetNumbers", "urn:dslforum-org:service:X_VoIP:1", NULL);
 	if (!msg) {
 		return FALSE;
@@ -592,11 +554,131 @@ gboolean firmware_tr64_get_numbers(RmProfile *profile)
 
 	if (msg->status_code != SOUP_STATUS_OK) {
 		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		g_object_unref(msg);
 		return FALSE;
 	}
-	rm_file_save("numbers.xml", msg->response_body->data, msg->response_body->length);
-	g_object_unref(msg);
+#ifdef FIRMWARE_TR64_DEBUG
+	rm_log_save_data("tr64-getnumbers.xml", msg->response_body->data, msg->response_body->length);
+#endif
+
+	/* Extract numbers */
+	new_number_list = xml_extract_tag(msg->response_body->data, "NewNumberList");
+	lt = g_regex_new("&lt;", G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
+	lt_out = g_regex_replace_literal(lt, new_number_list, -1, 0, "<", 0, NULL);
+	gt = g_regex_new("&gt;", G_REGEX_DOTALL | G_REGEX_OPTIMIZE, 0, NULL);
+	gt_out = g_regex_replace_literal(gt, lt_out, -1, 0, ">", 0, NULL);
+
+	node = rm_xmlnode_from_str(gt_out, msg->response_body->length);
+	if (node == NULL) {
+		g_debug("%s(): No node....\n", __FUNCTION__);
+		return FALSE;
+	}
+
+	for (child = rm_xmlnode_get_child(node, "Item"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
+		RmXmlNode *tmp;
+		g_autofree gchar *type;
+		g_autofree gchar *index;
+		g_autofree gchar *name;
+		gchar *number;
+
+		tmp = rm_xmlnode_get_child(child, "Number");
+		number = rm_xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(child, "Type");
+		type = rm_xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(child, "Index");
+		index = rm_xmlnode_get_data(tmp);
+		tmp = rm_xmlnode_get_child(child, "Name");
+		name = rm_xmlnode_get_data(tmp);
+
+		g_debug("%s(): %s, %s, %s, %s", __FUNCTION__, number, index, type, name);
+
+		numbers = rm_strv_add(numbers, number);
+	}
+	g_settings_set_strv(profile->settings, "numbers", (const gchar*const*)numbers);
+
+	/* Extract area code */
+	msg = firmware_tr64_request(profile, TRUE, "x_voip", "GetVoIPCommonAreaCode", "urn:dslforum-org:service:X_VoIP:1", NULL);
+	if (msg == NULL) {
+		return FALSE;
+	}
+
+	if (msg->status_code != SOUP_STATUS_OK) {
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+		return FALSE;
+	}
+
+	areacode = xml_extract_tag(msg->response_body->data, "NewVoIPAreaCode");
+	g_debug("%s(): Area code %s", __FUNCTION__, areacode);
+	g_settings_set_string(profile->settings, "area-code", areacode + 1);
+
+	okz_prefix = g_strdup_printf("%1.1s", areacode);
+	g_settings_set_string(profile->settings, "national-access-code", okz_prefix);
+	g_debug("%s(): OKZ prefix %s", __FUNCTION__, okz_prefix);
+
+	/* Extract country code */
+	msg = firmware_tr64_request(profile, TRUE, "x_voip", "GetVoIPCommonCountryCode", "urn:dslforum-org:service:X_VoIP:1", NULL);
+	if (msg == NULL) {
+		return FALSE;
+	}
+
+	if (msg->status_code != SOUP_STATUS_OK) {
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+		return FALSE;
+	}
+
+	countrycode = xml_extract_tag(msg->response_body->data, "NewVoIPCountryCode");
+	g_debug("%s(): Country code %s", __FUNCTION__, countrycode);
+	g_settings_set_string(profile->settings, "country-code", countrycode + 2);
+	lkz_prefix = g_strdup_printf("%2.2s", countrycode);
+	g_settings_set_string(profile->settings, "international-access-code", lkz_prefix);
+	g_debug("%s(): LKZ prefix %s", __FUNCTION__, lkz_prefix);
+
+	/* Set fax information */
+	g_settings_set_string(profile->settings, "fax-header", "Roger Router");
+
+	len = g_strv_length(numbers);
+	g_settings_set_string(fritzbox_settings, "fax-number", "");
+	g_settings_set_string(profile->settings, "fax-ident", "");
+
+	if (len) {
+		fax_msn = len > 1 ? numbers[1] : numbers[0];
+
+		g_settings_set_string(profile->settings, "fax-number", fax_msn);
+
+		gchar *formated_number = rm_number_format(profile, fax_msn, RM_NUMBER_FORMAT_INTERNATIONAL_PLUS);
+		g_settings_set_string(profile->settings, "fax-ident", formated_number);
+		g_free(formated_number);
+	}
+
+	/* Extract phone names for dialer */
+	for (i = 1; i < PORT_MAX; i++) {
+		gchar *phone;
+		gchar *num = g_strdup_printf("%ld", i);
+
+
+		msg = firmware_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_GetPhonePort", "urn:dslforum-org:service:X_VoIP:1", "NewIndex", num, NULL);
+		if (msg == NULL) {
+			g_settings_set_string(fritzbox_settings, fritzbox_phone_ports[i - 1].setting_name, "");
+			break;
+		}
+
+		if (msg->status_code != SOUP_STATUS_OK) {
+			g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+			g_settings_set_string(fritzbox_settings, fritzbox_phone_ports[i - 1].setting_name, "");
+			break;
+		}
+
+		phone = xml_extract_tag(msg->response_body->data, "NewX_AVM-DE_PhoneName");
+		g_debug("%s(): Phone '%s' to '%s'", __FUNCTION__, phone, fritzbox_phone_ports[i - 1].setting_name);
+		g_settings_set_string(fritzbox_settings, fritzbox_phone_ports[i - 1].setting_name, phone);
+	}
+
+	g_debug("%s(): Execution time: %f", __FUNCTION__, g_test_timer_elapsed());
+
+	/* START: Set defaults for values which aren't used with TR-064 implementation */
+	g_settings_set_string(fritzbox_settings, "fax-volume", "");
+	g_settings_set_uint(fritzbox_settings, "port", 0);
+	g_settings_set_uint(fritzbox_settings, "tam-stick", 0);
+	/* END: Set defaults for values which aren't used with TR-064 implementation */
 
 	return TRUE;
 }

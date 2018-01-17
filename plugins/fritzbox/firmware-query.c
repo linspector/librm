@@ -50,6 +50,7 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 	gchar *scramble;
 	gint i;
 
+	g_test_timer_start();
 	/* Login */
 	if (!rm_router_login(profile)) {
 		g_debug("%s(): Failed to log on", __FUNCTION__);
@@ -57,7 +58,6 @@ gboolean fritzbox_get_settings_query(RmProfile *profile)
 		return FALSE;
 	}
 
-	g_test_timer_start();
 
 	/* Extract data */
 	url = g_strdup_printf("http://%s/query.lua", rm_router_get_host(profile));

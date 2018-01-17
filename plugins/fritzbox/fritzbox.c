@@ -112,6 +112,12 @@ gboolean fritzbox_login(RmProfile *profile)
  */
 gboolean fritzbox_get_settings(RmProfile *profile)
 {
+	if (fritzbox_use_tr64) {
+		if (firmware_tr64_get_settings(profile)) {
+			return TRUE;
+		}
+	}
+
 	if (fritzbox_get_settings_query(profile)) {
 		return TRUE;
 	}

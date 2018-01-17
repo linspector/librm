@@ -28,6 +28,7 @@ gboolean firmware_tr64_is_available(RmProfile *profile);
 gboolean firmware_tr64_load_journal(RmProfile *profile);
 gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize *len);
 gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *number);
+gboolean firmware_tr64_get_settings(RmProfile *profile);
 
 G_END_DECLS
 
