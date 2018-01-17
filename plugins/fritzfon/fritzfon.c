@@ -328,12 +328,6 @@ static gint fritzfon_get_books(void)
 	return 0;
 }
 
-gboolean fritzfon_reload_contacts(void)
-{
-	return fritzfon_read_book() == 0;
-}
-
-
 RmXmlNode *create_phone(char *type, char *number)
 {
 	RmXmlNode *number_node;
@@ -643,7 +637,6 @@ RmAddressBook fritzfon_book = {
 	"FritzFon",
 	fritzfon_get_active_book_name,
 	fritzfon_get_contacts,
-	fritzfon_reload_contacts,
 	fritzfon_remove_contact,
 	fritzfon_save_contact,
 	fritzfon_get_sub_books,

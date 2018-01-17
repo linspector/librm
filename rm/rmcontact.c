@@ -26,6 +26,8 @@
 #include <rm/rmobjectemit.h>
 #include <rm/rmrouter.h>
 
+G_DEFINE_TYPE(RmContact, rm_contact, G_TYPE_OBJECT);
+
 /**
  * SECTION:rmcontact
  * @title: RmContact
@@ -184,8 +186,7 @@ RmContact *rm_contact_find_by_number(gchar *number)
 
 	g_debug("%s(): phone number type %d", __FUNCTION__, type);
 	if (type == -1) {
-		//return contact;
-		type = RM_PHONE_NUMBER_TYPE_HOME;
+		return contact;
 	}
 
 	switch (type) {
@@ -265,7 +266,6 @@ static void rm_contact_free_number(gpointer data)
  */
 void rm_contact_free(RmContact *contact)
 {
-	g_debug("%s(): Freeing %s", __FUNCTION__, contact->name);
 	g_free(contact->name);
 	g_free(contact->company);
 	g_free(contact->number);
@@ -308,3 +308,17 @@ void rm_contact_set_image_from_file(RmContact *contact, gchar *file)
 		contact->image = gdk_pixbuf_new_from_file(file, NULL);
 	}
 }
+
+static void rm_contact_class_init(RmContactClass *klass)
+{
+}
+
+static void rm_contact_init(RmContact *widget)
+{
+}
+
+GObject *rm_contact_new(void)
+{
+        return g_object_new(RM_TYPE_CONTACT, NULL);
+}
+

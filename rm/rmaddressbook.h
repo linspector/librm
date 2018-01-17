@@ -39,7 +39,6 @@ typedef struct {
 	gchar *name;
 	gchar *(*get_active_book_name)(void);
 	GSList *(*get_contacts)(void);
-	gboolean (*reload_contacts)(void);
 	gboolean (*remove_contact)(RmContact *contact);
 	gboolean (*save_contact)(RmContact *contact);
 	gchar **(*get_sub_books)(void);
@@ -48,7 +47,6 @@ typedef struct {
 
 RmAddressBook *rm_addressbook_get(gchar *name);
 GSList *rm_addressbook_get_contacts(RmAddressBook *book);
-gboolean rm_addressbook_reload_contacts(RmAddressBook *book);
 gboolean rm_addressbook_remove_contact(RmAddressBook *book, RmContact *contact);
 gboolean rm_addressbook_save_contact(RmAddressBook *book, RmContact *contact);
 gboolean rm_addressbook_can_save(RmAddressBook *book);

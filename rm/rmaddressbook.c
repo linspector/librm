@@ -123,23 +123,6 @@ gboolean rm_addressbook_save_contact(RmAddressBook *book, RmContact *contact)
 }
 
 /**
- * rm_addressbook_reload_contacts:
- * @book: a #RmAddressBook
- *
- * Reloads contacts of address book
- *
- * Returns: %TRUE if contacts have been reloaded, %FALSE on error
- */
-gboolean rm_addressbook_reload_contacts(RmAddressBook *book)
-{
-	if (book && book->reload_contacts) {
-		return book->reload_contacts();
-	}
-
-	return FALSE;
-}
-
-/**
  * rm_addressbook_can_save:
  * @book: a #RmAddressBook
  *
@@ -199,14 +182,11 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 
 	if (RM_EMPTY_STRING(contact->number)) {
 		/* Contact number is not present, abort */
-		g_debug("%s(): Abort, no number to lookup", __FUNCTION__);
 		return;
 	}
-	g_debug("%s(): Processing %s", __FUNCTION__, contact->number);
 
 	contacts = rm_addressbook_get_contacts(book);
 	if (!contacts) {
-		g_debug("%s(): Abort, no contacts", __FUNCTION__);
 		return;
 	}
 
@@ -216,7 +196,6 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 			rm_contact_copy(tmp_contact, contact);
 		} else {
 			/* Previous lookup done but no result found */
-			g_debug("%s(): Exiting, found existing contact", __FUNCTION__);
 			return;
 		}
 	} else {
@@ -225,7 +204,6 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 
 		list = g_slist_find_custom(contacts, full_number, rm_addressbook_number_in_contact);
 		if (list) {
-			g_debug("%s(): Found contact", __FUNCTION__);
 			tmp_contact = list->data;
 
 			g_hash_table_insert(rm_addressbook_table, g_strdup(contact->number), rm_contact_dup(tmp_contact));
@@ -233,7 +211,6 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 			rm_contact_copy(tmp_contact, contact);
 		} else {
 			/* We have found no entry, mark it in rm_addressbook_table to speedup further lookup */
-			g_debug("%s(): Not found", __FUNCTION__);
 			tmp_contact = g_slice_alloc0(sizeof(RmContact));
 			g_hash_table_insert(rm_addressbook_table, g_strdup(contact->number), tmp_contact);
 		}

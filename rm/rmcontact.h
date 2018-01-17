@@ -24,6 +24,7 @@
 #error "Only <rm/rm.h> can be included directly."
 #endif
 
+#include <gio/gio.h>
 #include <glib.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -48,7 +49,9 @@ typedef struct {
  *
  * The #RmContact-struct contains only private fileds and should not be directly accessed.
  */
-typedef struct {
+struct _RmContact {
+	GObject parent_instance;
+
 	/*< private >*/
 	/* Name */
 	gchar *name;
@@ -73,7 +76,11 @@ typedef struct {
 
 	/* Private data */
 	gpointer priv;
-} RmContact;
+};
+
+#define RM_TYPE_CONTACT (rm_contact_get_type())
+
+G_DECLARE_FINAL_TYPE(RmContact, rm_contact, RM, CONTACT, GObject)
 
 void rm_contact_copy(RmContact *src, RmContact *dst);
 RmContact *rm_contact_dup(RmContact *src);

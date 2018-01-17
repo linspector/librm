@@ -204,11 +204,11 @@ gboolean rm_router_logout(RmProfile *profile)
  *
  * Get router host
  *
- * Returns: router host or "" if no profile is active
+ * Returns: newly allocated string with router host or "" if no profile is active
  */
 gchar *rm_router_get_host(RmProfile *profile)
 {
-	return profile ? g_settings_get_string(profile->settings, "host") : "";
+	return profile ? g_settings_get_string(profile->settings, "host") : g_strdup("");
 }
 
 /**
