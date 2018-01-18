@@ -43,7 +43,7 @@
 #define SOUP_MSG_BODY_START "<s:Body>"
 #define SOUP_MSG_BODY_END "</s:Body>"
 
-#define FIRMWARE_TR64_DEBUG 1
+//#define FIRMWARE_TR64_DEBUG 1
 
 static gint firmware_tr64_security_port = 0;
 static gchar *auth_header = NULL;
