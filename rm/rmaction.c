@@ -148,10 +148,15 @@ static void rm_action_connection_changed_cb(RmObject *object, gint event, RmConn
 			((type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_INCOMING_END)) ||
 			/* Outgoing connection terminated */
 			((type == (RM_CONNECTION_TYPE_OUTGOING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_OUTGOING_END))) {
+			GError *error = NULL;
 			gchar *tmp = rm_action_regex(rm_action_get_exec(action), connection);
 
 			g_debug("%s(): Action requested = '%s', executing = '%s'", __FUNCTION__, rm_action_get_exec(action), tmp);
-			g_spawn_command_line_async(tmp, NULL);
+
+			if (!g_spawn_command_line_async(tmp, &error)) {
+				g_debug("%s(): Execution failed: %s", __FUNCTION__, error->message);
+			}
+
 			g_free(tmp);
 		}
 	}
