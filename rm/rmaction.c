@@ -123,6 +123,7 @@ static void rm_action_connection_changed_cb(RmObject *object, gint event, RmConn
 		RmAction *action = list->data;
 		gchar **numbers = rm_action_get_numbers(action);
 		gchar flags = rm_action_get_flags(action);
+		guchar type;
 
 		/* If connection number is not within the action or no flags are set, continue with next entry */
 		if (!rm_action_get_flags(action) || !rm_strv_contains((const gchar*const*)numbers, connection->local_number)) {
@@ -131,20 +132,22 @@ static void rm_action_connection_changed_cb(RmObject *object, gint event, RmConn
 		}
 		g_strfreev(numbers);
 
+		type = connection->type & ~RM_CONNECTION_TYPE_SOFTPHONE;
+
 		if (/* Incoming connection */
-			((connection->type == RM_CONNECTION_TYPE_INCOMING) && (flags & RM_ACTION_INCOMING_RING)) ||
+			((type == RM_CONNECTION_TYPE_INCOMING) && (flags & RM_ACTION_INCOMING_RING)) ||
 			/* Outgoing connection */
-			((connection->type == RM_CONNECTION_TYPE_OUTGOING) && (flags & RM_ACTION_OUTGOING_DIAL)) ||
+			((type == RM_CONNECTION_TYPE_OUTGOING) && (flags & RM_ACTION_OUTGOING_DIAL)) ||
 			/* Incoming connection missed */
-			((connection->type == RM_CONNECTION_TYPE_MISSED) && (flags & RM_ACTION_INCOMING_MISSED)) ||
+			((type == RM_CONNECTION_TYPE_MISSED) && (flags & RM_ACTION_INCOMING_MISSED)) ||
 			/* Incoming connection established */
-			((connection->type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_CONNECT)) && (flags & RM_ACTION_INCOMING_BEGIN)) ||
+			((type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_CONNECT)) && (flags & RM_ACTION_INCOMING_BEGIN)) ||
 			/* Outgoing connection established */
-			((connection->type == (RM_CONNECTION_TYPE_OUTGOING | RM_CONNECTION_TYPE_CONNECT)) && (flags & RM_ACTION_OUTGOING_BEGIN)) ||
+			((type == (RM_CONNECTION_TYPE_OUTGOING | RM_CONNECTION_TYPE_CONNECT)) && (flags & RM_ACTION_OUTGOING_BEGIN)) ||
 			/* Incoming connection terminated */
-			((connection->type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_INCOMING_END)) ||
+			((type == (RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_INCOMING_END)) ||
 			/* Outgoing connection terminated */
-			((connection->type == (RM_CONNECTION_TYPE_OUTGOING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_OUTGOING_END))) {
+			((type == (RM_CONNECTION_TYPE_OUTGOING | RM_CONNECTION_TYPE_CONNECT | RM_CONNECTION_TYPE_DISCONNECT)) && (flags & RM_ACTION_OUTGOING_END))) {
 			gchar *tmp = rm_action_regex(rm_action_get_exec(action), connection);
 
 			g_debug("%s(): Action requested = '%s', executing = '%s'", __FUNCTION__, rm_action_get_exec(action), tmp);
