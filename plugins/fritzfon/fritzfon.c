@@ -54,6 +54,7 @@ static void parse_person(RmContact *contact, RmXmlNode *person)
 
 	/* Get image */
 	image = rm_xmlnode_get_child(person, "imageURL");
+#if 0
 	if (image != NULL) {
 		image_ptr = rm_xmlnode_get_data(image);
 		priv->image_url = image_ptr;
@@ -87,6 +88,7 @@ static void parse_person(RmContact *contact, RmXmlNode *person)
 			}
 		}
 	}
+#endif
 }
 
 static void parse_telephony(RmContact *contact, RmXmlNode *telephony)
@@ -549,6 +551,7 @@ gboolean fritzfon_remove_contact(RmContact *contact)
 
 void fritzfon_set_image(RmContact *contact)
 {
+#if 0
 	struct fritzfon_priv *priv = g_slice_new0(struct fritzfon_priv);
 	RmProfile *profile = rm_profile_get_active();
 	RmFtp *client = rm_ftp_init(rm_router_get_host(profile));
@@ -576,6 +579,7 @@ void fritzfon_set_image(RmContact *contact)
 	priv->image_url = g_strdup_printf("file:///var/media/ftp/%s%s", path, file_name);
 	g_free(path);
 	g_free(file_name);
+#endif
 }
 
 gboolean fritzfon_save_contact(RmContact *contact)
