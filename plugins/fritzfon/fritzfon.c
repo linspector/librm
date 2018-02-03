@@ -444,8 +444,8 @@ static gint fritzfon_get_books_tr64(void)
 	RmProfile *profile = rm_profile_get_active();
 	g_autoptr(SoupMessage) msg = NULL;
 	g_autofree gchar *url = NULL;
-	g_autofree gchar *list;
-	g_autofree gchar **split;
+	g_autofree gchar *list = NULL;
+	g_autofree gchar **split = NULL;
 	struct fritzfon_book *book = NULL;
 	gint i;
 
