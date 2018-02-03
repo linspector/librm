@@ -83,7 +83,7 @@ gchar *firmware_tr64_create_response(gchar *nonce, gchar *realm, gchar *user, gc
  *
  * Returns: #SoupMessage as a result of tr64 send request
  */
-static SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gchar *control, gchar *action, gchar *service, ...)
+SoupMessage *firmware_tr64_request(RmProfile *profile, gboolean auth, gchar *control, gchar *action, gchar *service, ...)
 {
 	SoupMessage *msg;
 	SoupMessageHeaders *headers;

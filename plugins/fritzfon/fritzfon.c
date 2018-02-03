@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2018 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,9 @@
 #include <string.h>
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
+
+#include "../fritzbox/firmware-tr64.h"
+#include "../fritzbox/firmware-common.h"
 
 #include <rm/rm.h>
 
@@ -41,12 +44,74 @@ struct fritzfon_priv {
 
 static GSList *fritzfon_books = NULL;
 
+static gchar *fritzfon_load_image_ftp(RmProfile *profile, gchar *image_ptr, gsize *len)
+{
+	gchar *buffer = NULL;
+
+	/* file:///var/InternerSpeicher/FRITZ/fonpix/946684999-0.jpg */
+	if (!strncmp(image_ptr, "file://", 7) && strlen(image_ptr) > 28) {
+		gchar *url = strstr(image_ptr, "/ftp/");
+		RmFtp *client;
+
+		if (!url) {
+			url = strstr(image_ptr, "/FRITZ/");
+		} else {
+			url += 5;
+		}
+
+		client = rm_ftp_init(rm_router_get_host(profile));
+		rm_ftp_login(client, rm_router_get_ftp_user(profile), rm_router_get_ftp_password(profile));
+		rm_ftp_passive(client);
+		buffer = rm_ftp_get_file(client, url, len);
+		rm_ftp_shutdown(client);
+	}
+
+	return buffer;
+}
+
+static gchar *fritzfon_load_image(RmProfile *profile, gchar *image_ptr, gsize *len)
+{
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autofree gchar *url = NULL;
+	g_autofree gchar *host = rm_router_get_host(profile);
+
+	if (!rm_router_login(profile)) {
+		return NULL;
+	}
+
+	/* Skip external images as they would need authentication that RM does not have */
+	if (!strncmp(image_ptr, "/download.lua?path=http", 22)) {
+		return NULL;
+	}
+
+	/* Create message */
+	url = g_strdup_printf("https://%s:%d%s&sid=%s", host, 49443, image_ptr, profile->router_info->session_id);
+	g_debug("%s(): url %s", __FUNCTION__, url);
+	msg = soup_message_new(SOUP_METHOD_GET, url);
+	if (msg == NULL) {
+		return NULL;
+	}
+
+	soup_session_send_message(rm_soup_session, msg);
+
+	if (msg->status_code != SOUP_STATUS_OK) {
+		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+		rm_log_save_data("tr64-loadimage-error.xml", msg->response_body->data, -1);
+		return NULL;
+	}
+
+	*len = msg->response_body->length;
+
+	return g_memdup(msg->response_body->data, *len);
+}
+
 static void parse_person(RmContact *contact, RmXmlNode *person)
 {
 	RmXmlNode *name;
 	RmXmlNode *image;
 	gchar *image_ptr;
 	struct fritzfon_priv *priv = contact->priv;
+	RmProfile *profile = rm_profile_get_active();
 
 	/* Get real name entry */
 	name = rm_xmlnode_get_child(person, "realName");
@@ -54,41 +119,30 @@ static void parse_person(RmContact *contact, RmXmlNode *person)
 
 	/* Get image */
 	image = rm_xmlnode_get_child(person, "imageURL");
-#if 0
 	if (image != NULL) {
 		image_ptr = rm_xmlnode_get_data(image);
 		priv->image_url = image_ptr;
 		if (image_ptr != NULL) {
-			/* file:///var/InternerSpeicher/FRITZ/fonpix/946684999-0.jpg */
-			if (!strncmp(image_ptr, "file://", 7) && strlen(image_ptr) > 28) {
-				RmProfile *profile = rm_profile_get_active();
-				gchar *url = strstr(image_ptr, "/ftp/");
-				gsize len;
-				guchar *buffer;
-				RmFtp *client;
+			gchar *buffer;
+			gsize len;
+
+			if (rm_router_need_ftp(profile)) {
+				buffer = fritzfon_load_image_ftp(profile, image_ptr, &len);
+			} else {
+				buffer = fritzfon_load_image(profile, image_ptr, &len);
+			}
+
+			if (buffer) {
 				GdkPixbufLoader *loader;
 
-				if (!url) {
-					url = strstr(image_ptr, "/FRITZ/");
-				} else {
-					url += 5;
-				}
-
-				client = rm_ftp_init(rm_router_get_host(rm_profile_get_active()));
-				rm_ftp_login(client, rm_router_get_ftp_user(profile), rm_router_get_ftp_password(profile));
-				rm_ftp_passive(client);
-				buffer = (guchar*)rm_ftp_get_file(client, url, &len);
-				rm_ftp_shutdown(client);
-
 				loader = gdk_pixbuf_loader_new();
-				if (gdk_pixbuf_loader_write(loader, buffer, len, NULL)) {
+				if (gdk_pixbuf_loader_write(loader, (guchar*)buffer, len, NULL)) {
 					contact->image = gdk_pixbuf_loader_get_pixbuf(loader);
 				}
 				gdk_pixbuf_loader_close(loader, NULL);
 			}
 		}
 	}
-#endif
 }
 
 static void parse_telephony(RmContact *contact, RmXmlNode *telephony)
@@ -176,7 +230,7 @@ static void phonebook_add(RmProfile *profile, RmXmlNode *node)
 	}
 }
 
-static gint fritzfon_read_book(void)
+static gint fritzfon_read_book_ftp(void)
 {
 	gchar uri[1024];
 	RmXmlNode *node = NULL;
@@ -243,6 +297,61 @@ static gint fritzfon_read_book(void)
 	return 0;
 }
 
+static gint fritzfon_read_book_tr64(void)
+{
+	RmXmlNode *node = NULL;
+	RmXmlNode *child;
+	RmProfile *profile = rm_profile_get_active();
+	gchar *owner;
+	gchar *name;
+	g_autoptr(SoupMessage) msg = NULL;
+
+	contacts = NULL;
+
+	owner = g_settings_get_string(fritzfon_settings, "book-owner");
+	name = g_settings_get_string(fritzfon_settings, "book-name");
+	g_debug("%s(): owner %s, name %s", __FUNCTION__, owner, name);
+
+	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", owner, NULL);
+	if (msg == NULL) {
+		return FALSE;
+	}
+
+	gchar *url = xml_extract_tag(msg->response_body->data, "NewPhonebookURL");
+	g_debug("%s(): url: %s", __FUNCTION__, url);
+
+	msg = soup_message_new(SOUP_METHOD_GET, url);
+	soup_session_send_message(rm_soup_session, msg);
+	rm_log_save_data("fritzfon-phonebook.html", msg->response_body->data, msg->response_body->length);
+
+	node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
+	if (node == NULL) {
+		g_object_unref(msg);
+		return -1;
+	}
+
+	master_node = node;
+
+	for (child = rm_xmlnode_get_child(node, "phonebook"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
+		phonebook_add(profile, child);
+	}
+
+	g_object_unref(msg);
+
+	return 0;
+}
+
+static gint fritzfon_read_book(void)
+{
+	RmProfile *profile = rm_profile_get_active();
+
+	if (rm_router_need_ftp(profile)) {
+		return fritzfon_read_book_ftp();
+	}
+
+	return fritzfon_read_book_tr64();
+}
+
 GSList *fritzfon_get_contacts(void)
 {
 	GSList *list = contacts;
@@ -250,12 +359,12 @@ GSList *fritzfon_get_contacts(void)
 	return list;
 }
 
-static gint fritzfon_get_books(void)
+static gint fritzfon_get_books_ftp(void)
 {
-	gchar *url;
 	RmProfile *profile = rm_profile_get_active();
 	SoupMessage *msg;
 	struct fritzfon_book *book = NULL;
+	gchar *url;
 
 	if (!rm_router_login(profile)) {
 		return -1;
@@ -328,6 +437,56 @@ static gint fritzfon_get_books(void)
 	//rm_router_logout(profile);
 
 	return 0;
+}
+
+static gint fritzfon_get_books_tr64(void)
+{
+	RmProfile *profile = rm_profile_get_active();
+	g_autoptr(SoupMessage) msg = NULL;
+	g_autofree gchar *url = NULL;
+	g_autofree gchar *list;
+	g_autofree gchar **split;
+	struct fritzfon_book *book = NULL;
+	gint i;
+
+	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebookList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
+	if (msg == NULL) {
+		return FALSE;
+	}
+
+	rm_log_save_data("tr64-getphonebooklist.xml", msg->response_body->data, msg->response_body->length);
+	list = xml_extract_tag(msg->response_body->data, "NewPhonebookList");
+	split = g_strsplit(list, ",", -1);
+
+	for (i = 0; i < g_strv_length(split); i++) {
+		msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", split[i], NULL);
+		if (msg == NULL) {
+			return FALSE;
+		}
+
+		gchar *name = xml_extract_tag(msg->response_body->data, "NewPhonebookName");
+
+		book = g_slice_new(struct fritzfon_book);
+		book->id = g_strdup_printf("%d", i);
+		book->name = name;
+
+		fritzfon_books = g_slist_prepend(fritzfon_books, book);
+
+		rm_log_save_data("tr64-getphonebook.xml", msg->response_body->data, msg->response_body->length);
+	}
+
+	return TRUE;
+}
+
+static gint fritzfon_get_books(void)
+{
+	RmProfile *profile = rm_profile_get_active();
+
+	if (rm_router_need_ftp(profile)) {
+		return fritzfon_get_books_ftp();
+	}
+
+	return fritzfon_get_books_tr64 ();
 }
 
 RmXmlNode *create_phone(char *type, char *number)
@@ -507,7 +666,6 @@ gboolean fritzfon_save(void)
 	node = phonebook_to_xmlnode();
 
 	data = rm_xmlnode_to_formatted_str(node, &len);
-#define FRITZFON_DEBUG 1
 #ifdef FRITZFON_DEBUG
 	gchar *file;
 	g_debug("len: %d", len);
@@ -559,8 +717,8 @@ void fritzfon_set_image(RmContact *contact)
 	gchar *path;
 	gchar *file_name;
 	gchar *hash;
-	//gchar *data;
-	//gsize size;
+	gchar *data;
+	gsize size;
 
 	contact->priv = priv;
 	rm_ftp_login(client, rm_router_get_ftp_user(profile), rm_router_get_ftp_password(profile));
@@ -572,8 +730,8 @@ void fritzfon_set_image(RmContact *contact)
 	path = g_strdup_printf("%s/FRITZ/fonpix/", volume_path);
 	g_free(volume_path);
 
-	//data = rm_file_load(contact->image_uri, &size);
-	//rm_ftp_put_file(client, file_name, path, data, size);
+	data = rm_file_load(contact->image_uri, &size);
+	rm_ftp_put_file(client, file_name, path, data, size);
 	rm_ftp_shutdown(client);
 
 	priv->image_url = g_strdup_printf("file:///var/media/ftp/%s%s", path, file_name);
