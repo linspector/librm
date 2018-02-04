@@ -322,7 +322,7 @@ static gint fritzfon_read_book_tr64(void)
 	g_debug("%s(): url: %s", __FUNCTION__, url);
 
 	msg = soup_message_new(SOUP_METHOD_GET, url);
-	if (msg == NULL); {
+	if (msg == NULL) {
 		g_debug("%s(): Invalid message, abort...", __FUNCTION__);
 		return -1;
 	}
