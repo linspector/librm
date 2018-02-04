@@ -107,7 +107,6 @@ struct voice_box {
 extern FritzBoxPhonePort fritzbox_phone_ports[PORT_MAX];
 
 gchar **xml_extract_tags(const gchar *data, gchar *tag_start, gchar *tag_end);
-gchar *xml_extract_tag(const gchar *data, gchar *tag);
 gchar *xml_extract_input_value(const gchar *data, gchar *tag);
 gchar *xml_extract_input_value_r(const gchar *data, gchar *tag);
 gchar *xml_extract_list_value(const gchar *data, gchar *tag);
@@ -176,29 +175,6 @@ static inline gchar *md5(gchar *input)
 	if (error == NULL) {
 		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar*)bin, written);
 		g_free(bin);
-	} else {
-		g_debug("Error converting utf8 to utf16: '%s'", error->message);
-		g_error_free(error);
-	}
-
-	return ret;
-}
-
-/**
- * md5_simple:
- * @input: input string
- *
- * Compute md5 sum of input string
- *
- * Returns: md5 in hex or NULL on error
- */
-static inline gchar *md5_simple(gchar *input)
-{
-	GError *error = NULL;
-	gchar *ret = NULL;
-
-	if (error == NULL) {
-		ret = g_compute_checksum_for_string(G_CHECKSUM_MD5, (gchar*)input, -1);
 	} else {
 		g_debug("Error converting utf8 to utf16: '%s'", error->message);
 		g_error_free(error);

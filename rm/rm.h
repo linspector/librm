@@ -56,6 +56,7 @@
 #include <rm/rmpassword.h>
 #include <rm/rmprofile.h>
 #include <rm/rmsettings.h>
+#include <rm/rmutils.h>
 #include <rm/rmvox.h>
 #include <rm/rmimage.h>
 

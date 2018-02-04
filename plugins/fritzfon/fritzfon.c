@@ -312,12 +312,12 @@ static gint fritzfon_read_book_tr64(void)
 	name = g_settings_get_string(fritzfon_settings, "book-name");
 	g_debug("%s(): owner %s, name %s", __FUNCTION__, owner, name);
 
-	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", owner, NULL);
+	msg = rm_network_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", owner, NULL);
 	if (msg == NULL) {
 		return FALSE;
 	}
 
-	gchar *url = xml_extract_tag(msg->response_body->data, "NewPhonebookURL");
+	gchar *url = rm_utils_xml_extract_tag(msg->response_body->data, "NewPhonebookURL");
 	g_debug("%s(): url: %s", __FUNCTION__, url);
 
 	msg = soup_message_new(SOUP_METHOD_GET, url);
@@ -449,22 +449,22 @@ static gint fritzfon_get_books_tr64(void)
 	struct fritzfon_book *book = NULL;
 	gint i;
 
-	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebookList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
+	msg = rm_network_tr64_request(profile, TRUE, "x_contact", "GetPhonebookList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
 	if (msg == NULL) {
 		return FALSE;
 	}
 
 	rm_log_save_data("tr64-getphonebooklist.xml", msg->response_body->data, msg->response_body->length);
-	list = xml_extract_tag(msg->response_body->data, "NewPhonebookList");
+	list = rm_utils_xml_extract_tag(msg->response_body->data, "NewPhonebookList");
 	split = g_strsplit(list, ",", -1);
 
 	for (i = 0; i < g_strv_length(split); i++) {
-		msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", split[i], NULL);
+		msg = rm_network_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", split[i], NULL);
 		if (msg == NULL) {
 			return FALSE;
 		}
 
-		gchar *name = xml_extract_tag(msg->response_body->data, "NewPhonebookName");
+		gchar *name = rm_utils_xml_extract_tag(msg->response_body->data, "NewPhonebookName");
 
 		book = g_slice_new(struct fritzfon_book);
 		book->id = g_strdup_printf("%d", i);
