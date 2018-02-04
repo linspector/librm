@@ -38,6 +38,7 @@ rm_sources = [
 	'rmrouter.c',
 	'rmsettings.c',
 	'rmssdp.c',
+	'rmutils.c',
 	'rmvox.c',
 	'rmxml.c',
 	rm_gresources
@@ -76,6 +77,7 @@ rm_headers = [
 	'rmsettings.h',
 	'rmssdp.h',
 	'rmstring.h',
+	'rmutils.h',
 	'rmvox.h',
 	'rmrouter.h',
 	'rmrouterinfo.h',

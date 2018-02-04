@@ -36,49 +36,6 @@
 static struct voice_box voice_boxes[5];
 
 /**
- * \brief Extract XML Tag: <TAG>VALUE</TAG>
- * \param data data to parse
- * \param tag tag to extract
- * \return tag value
- */
-gchar *xml_extract_tag(const gchar *data, gchar *tag)
-{
-	gchar *regex_str = g_strdup_printf("<%s>[^<]*</%s>", tag, tag);
-	GRegex *regex = NULL;
-	GError *error = NULL;
-	GMatchInfo *match_info;
-	gchar *entry = NULL;
-	gint tag_len = strlen(tag);
-
-	regex = g_regex_new(regex_str, 0, 0, &error);
-	g_assert(regex != NULL);
-
-	g_regex_match(regex, data, 0, &match_info);
-
-	while (match_info && g_match_info_matches(match_info)) {
-		gint start;
-		gint end;
-		gboolean fetched = g_match_info_fetch_pos(match_info, 0, &start, &end);
-
-		if (fetched == TRUE) {
-			gint entry_size = end - start - 2 * tag_len - 5;
-			entry = g_malloc0(entry_size + 1);
-			strncpy(entry, data + start + tag_len + 2, entry_size);
-			break;
-		}
-
-		if (g_match_info_next(match_info, NULL) == FALSE) {
-			break;
-		}
-	}
-
-	g_match_info_free(match_info);
-	g_free(regex_str);
-
-	return entry;
-}
-
-/**
  * \brief Extract XML Tags: <TAG>VALUE</TAG>
  * \param data data to parse
  * \param tag tag to extract
@@ -368,11 +325,11 @@ gboolean fritzbox_present(RmRouterInfo *router_info)
 	rm_log_save_data("fritzbox-present.html", data, read);
 	g_return_val_if_fail(data != NULL, FALSE);
 
-	name = xml_extract_tag(data, "j:Name");
-	version = xml_extract_tag(data, "j:Version");
-	lang = xml_extract_tag(data, "j:Lang");
-	serial = xml_extract_tag(data, "j:Serial");
-	annex = xml_extract_tag(data, "j:Annex");
+	name = rm_utils_xml_extract_tag(data, "j:Name");
+	version = rm_utils_xml_extract_tag(data, "j:Version");
+	lang = rm_utils_xml_extract_tag(data, "j:Lang");
+	serial = rm_utils_xml_extract_tag(data, "j:Serial");
+	annex = rm_utils_xml_extract_tag(data, "j:Annex");
 
 	g_object_unref(msg);
 	g_free(url);
@@ -922,7 +879,7 @@ gchar *fritzbox_get_ip(RmProfile *profile)
 		return NULL;
 	}
 
-	ip = xml_extract_tag(msg->response_body->data, "NewExternalIPAddress");
+	ip = rm_utils_xml_extract_tag(msg->response_body->data, "NewExternalIPAddress");
 
 	g_object_unref(msg);
 

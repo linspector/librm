@@ -83,10 +83,10 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 	g_assert(data != NULL);
 
 	/* <SID>X</SID> */
-	profile->router_info->session_id = xml_extract_tag(data, "SID");
+	profile->router_info->session_id = rm_utils_xml_extract_tag(data, "SID");
 
 	/* <iswriteaccess>X</iswriteaccess> */
-	writeaccess = xml_extract_tag(data, "iswriteaccess");
+	writeaccess = rm_utils_xml_extract_tag(data, "iswriteaccess");
 	if (writeaccess == NULL) {
 		g_debug("writeaccess is NULL");
 		g_object_unref(msg);
@@ -97,7 +97,7 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 	}
 
 	/* <Challenge>X</Challenge> */
-	challenge = xml_extract_tag(data, "Challenge");
+	challenge = rm_utils_xml_extract_tag(data, "Challenge");
 	if (challenge == NULL) {
 		g_debug("challenge is NULL");
 		g_object_unref(msg);
@@ -148,10 +148,10 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 		g_free(response);
 
 		/* <iswriteaccess>X</iswriteaccess> */
-		writeaccess = xml_extract_tag(data, "iswriteaccess");
+		writeaccess = rm_utils_xml_extract_tag(data, "iswriteaccess");
 
 		/* <Challenge>X</Challenge> */
-		challenge = xml_extract_tag(data, "Challenge");
+		challenge = rm_utils_xml_extract_tag(data, "Challenge");
 
 		if ((atoi(writeaccess) == 0) || strcmp(profile->router_info->session_id, "0000000000000000")) {
 			g_debug("Login failure (%d should be non 0, %s should not be 0000000000000000)", atoi(writeaccess), profile->router_info->session_id);
@@ -167,7 +167,7 @@ gboolean fritzbox_login_04_74(RmProfile *profile)
 		g_debug("Login successful");
 
 		g_free(profile->router_info->session_id);
-		profile->router_info->session_id = xml_extract_tag(data, "SID");
+		profile->router_info->session_id = rm_utils_xml_extract_tag(data, "SID");
 
 		g_object_unref(msg);
 	} else {

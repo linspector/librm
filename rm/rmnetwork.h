@@ -26,6 +26,8 @@
 
 #include <libsoup/soup.h>
 
+#include <rm/rmprofile.h>
+
 G_BEGIN_DECLS
 
 /**
@@ -48,6 +50,9 @@ extern SoupSession *rm_soup_session;
 gboolean rm_network_init(void);
 void rm_network_shutdown(void);
 void rm_network_authenticate(gboolean auth_set, RmAuthData *auth_data);
+SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *control, gchar *action, gchar *service, ...);
+gboolean rm_network_tr64_available(RmProfile *profile);
+gint rm_network_tr64_get_port(void);
 
 G_END_DECLS
 

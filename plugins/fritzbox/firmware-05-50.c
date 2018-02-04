@@ -39,7 +39,7 @@ static gboolean fritzbox_check_login_blocked(const gchar *data, RmProfile *profi
 	result = !!strcmp(profile->router_info->session_id, "0000000000000000");
 
 	if (!result) {
-		const gchar *blocktime = xml_extract_tag(data, "BlockTime");
+		const gchar *blocktime = rm_utils_xml_extract_tag(data, "BlockTime");
 
 		if (blocktime) {
 			g_debug("%s(): Block Time = %s", __FUNCTION__, blocktime);
@@ -104,7 +104,7 @@ gboolean fritzbox_login_05_50(RmProfile *profile)
 	g_assert(data != NULL);
 
 	/* <SID>session_id</SID> */
-	profile->router_info->session_id = xml_extract_tag(data, "SID");
+	profile->router_info->session_id = rm_utils_xml_extract_tag(data, "SID");
 
 	result = fritzbox_check_login_blocked(data, profile);
 
@@ -112,7 +112,7 @@ gboolean fritzbox_login_05_50(RmProfile *profile)
 		gchar *user = rm_router_get_login_user(profile);
 		gchar *password = rm_router_get_login_password(profile);
 
-		challenge = xml_extract_tag(data, "Challenge");
+		challenge = rm_utils_xml_extract_tag(data, "Challenge");
 		g_object_unref(msg);
 
 		dots = make_dots(password);
@@ -152,7 +152,7 @@ gboolean fritzbox_login_05_50(RmProfile *profile)
 
 		g_free(response);
 
-		profile->router_info->session_id = xml_extract_tag(data, "SID");
+		profile->router_info->session_id = rm_utils_xml_extract_tag(data, "SID");
 
 		result = fritzbox_check_login_blocked(data, profile);
 	}

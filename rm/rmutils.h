@@ -17,18 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef FIRMWARE_TR64_H
-#define FIRMWARE_TR64_H
+#ifndef RM_UTILS_H
+#define RM_UTILS_H
 
-#include <rm/rm.h>
-
-G_BEGIN_DECLS
-
-gboolean firmware_tr64_is_available(RmProfile *profile);
-gboolean firmware_tr64_load_journal(RmProfile *profile);
-gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize *len);
-gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *number);
-gboolean firmware_tr64_get_settings(RmProfile *profile);
+gchar *rm_utils_xml_extract_tag(const gchar *data, gchar *tag);
 
 G_END_DECLS
 
