@@ -305,6 +305,7 @@ static gint fritzfon_read_book_tr64(void)
 	gchar *owner;
 	gchar *name;
 	g_autoptr(SoupMessage) msg = NULL;
+	gint ret;
 
 	contacts = NULL;
 
@@ -314,14 +315,26 @@ static gint fritzfon_read_book_tr64(void)
 
 	msg = firmware_tr64_request(profile, TRUE, "x_contact", "GetPhonebook", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", "NewPhonebookID", owner, NULL);
 	if (msg == NULL) {
-		return FALSE;
+		return -1;
 	}
 
 	gchar *url = xml_extract_tag(msg->response_body->data, "NewPhonebookURL");
 	g_debug("%s(): url: %s", __FUNCTION__, url);
 
 	msg = soup_message_new(SOUP_METHOD_GET, url);
-	soup_session_send_message(rm_soup_session, msg);
+	if (msg == NULL); {
+		g_debug("%s(): Invalid message, abort...", __FUNCTION__);
+		return -1;
+	}
+
+	ret = soup_session_send_message(rm_soup_session, msg);
+	g_debug("%s(): send message result %d", __FUNCTION__, ret);
+
+	if (msg == NULL || !msg->response_body->length || msg->response_body->data == NULL) {
+		g_debug("%s(): Invalid data, abort...", __FUNCTION__);
+		return -1;
+	}
+
 	rm_log_save_data("fritzfon-phonebook.html", msg->response_body->data, msg->response_body->length);
 
 	node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
