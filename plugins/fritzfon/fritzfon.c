@@ -117,6 +117,11 @@ static void parse_person(RmContact *contact, RmXmlNode *person)
 	name = rm_xmlnode_get_child(person, "realName");
 	contact->name = name ? rm_xmlnode_get_data(name) : g_strdup("");
 
+	if (contact->name == NULL) {
+		g_debug("%s(): real name not valid, setting fallback\n", __FUNCTION__);
+		contact->name = g_strdup("");
+	}
+
 	/* Get image */
 	image = rm_xmlnode_get_child(person, "imageURL");
 	if (image != NULL) {
@@ -319,19 +324,16 @@ static gint fritzfon_read_book_tr64(void)
 	}
 
 	gchar *url = rm_utils_xml_extract_tag(msg->response_body->data, "NewPhonebookURL");
-	g_debug("%s(): url: %s", __FUNCTION__, url);
 
 	msg = soup_message_new(SOUP_METHOD_GET, url);
 	if (msg == NULL) {
-		g_debug("%s(): Invalid message, abort...", __FUNCTION__);
+		g_debug("%s(): Invalid message, abort (%s)...", __FUNCTION__, url);
 		return -1;
 	}
 
 	ret = soup_session_send_message(rm_soup_session, msg);
-	g_debug("%s(): send message result %d", __FUNCTION__, ret);
-
 	if (msg == NULL || !msg->response_body->length || msg->response_body->data == NULL) {
-		g_debug("%s(): Invalid data, abort...", __FUNCTION__);
+		g_debug("%s(): Invalid data, abort... (%d)", __FUNCTION__, ret);
 		return -1;
 	}
 
@@ -345,12 +347,9 @@ static gint fritzfon_read_book_tr64(void)
 
 	master_node = node;
 
-	g_debug("%s(): Parsing books", __FUNCTION__);
 	for (child = rm_xmlnode_get_child(node, "phonebook"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
-		g_debug("%s(): Parsing child %p", __FUNCTION__, child);
 		phonebook_add(profile, child);
 	}
-	g_debug("%s(): Done", __FUNCTION__);
 
 	return 0;
 }
