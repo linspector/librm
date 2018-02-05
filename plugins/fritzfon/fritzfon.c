@@ -339,17 +339,18 @@ static gint fritzfon_read_book_tr64(void)
 
 	node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
 	if (node == NULL) {
-		g_object_unref(msg);
+		g_debug("%s(): Could not parse xml node, abort...", __FUNCTION__);
 		return -1;
 	}
 
 	master_node = node;
 
+	g_debug("%s(): Parsing books", __FUNCTION__);
 	for (child = rm_xmlnode_get_child(node, "phonebook"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
+		g_debug("%s(): Parsing child %p", __FUNCTION__, child);
 		phonebook_add(profile, child);
 	}
-
-	g_object_unref(msg);
+	g_debug("%s(): Done", __FUNCTION__);
 
 	return 0;
 }
