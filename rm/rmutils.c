@@ -17,6 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <string.h>
+
 #include <rm/rmmain.h>
 #include <rm/rmutils.h>
 
@@ -36,7 +38,7 @@ gchar *rm_utils_xml_extract_tag(const gchar *data, gchar *tag)
 	GError *error = NULL;
 	GMatchInfo *match_info;
 	gchar *entry = NULL;
-	glong tag_len = g_utf8_strlen(tag, -1);
+	glong tag_len = strlen(tag);
 
 	regex = g_regex_new(regex_str, 0, 0, &error);
 	g_assert(regex != NULL);
@@ -51,7 +53,7 @@ gchar *rm_utils_xml_extract_tag(const gchar *data, gchar *tag)
 		if (fetched == TRUE) {
 			gint entry_size = end - start - 2 * tag_len - 5;
 			entry = g_malloc0(entry_size + 1);
-			g_utf8_strncpy(entry, data + start + tag_len + 2, entry_size);
+			strncpy(entry, data + start + tag_len + 2, entry_size);
 			break;
 		}
 
@@ -65,4 +67,3 @@ gchar *rm_utils_xml_extract_tag(const gchar *data, gchar *tag)
 
 	return entry;
 }
-
