@@ -143,7 +143,7 @@ SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *c
 			g_string_append_printf(request, SOUP_MSG_HEADER_START "<h:InitChallenge xmlns:h=\"http://soap-authentication.org/digest/2001/10/\" s:mustUnderstand=\"1\">\
 			        <UserID>%s</UserID></h:InitChallenge>" SOUP_MSG_HEADER_END, login_user);
 		} else {
-			g_string_append_printf(request, auth_header);
+			g_string_append(request, auth_header);
 		}
 	}
 
