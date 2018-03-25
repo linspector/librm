@@ -103,22 +103,19 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 		call_type = RM_CALL_ENTRY_TYPE_BLOCKED;
 	}
 
-#ifdef FIRMWARE_TR64_DEBUG
-	if (!RM_EMPTY_STRING(path)) {
-		g_debug("%s(): path %s, port %s", __FUNCTION__, path, port);
-	}
-#endif
-
 	if (port && path) {
 		gint port_nr = atoi(port);
+
+
+		if (!RM_EMPTY_STRING(path)) {
+			g_debug("%s(): path %s, port %s", __FUNCTION__, path, port);
+		}
 
 		if (port_nr == 6 || (port_nr >= 40 && port_nr < 50)) {
 			call_type = RM_CALL_ENTRY_TYPE_VOICE;
 		} else if (port_nr == 5) {
 			call_type = RM_CALL_ENTRY_TYPE_FAX;
-#ifdef FIRMWARE_TR64_DEBUG
 			g_debug("%s(): path: %s", __FUNCTION__, path);
-#endif
 		}
 	}
 
@@ -148,9 +145,7 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 		return;
 	}
 
-#ifdef FIRMWARE_TR64_DEBUG
 	rm_log_save_data("tr64-callist.xml", msg->response_body->data, msg->response_body->length);
-#endif
 
 	RmXmlNode *node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
 	if (node == NULL) {
@@ -162,9 +157,7 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 		journal = firmware_tr64_add_call(journal, profile, child);
 	}
 
-#ifdef FIRMWARE_TR64_DEBUG
 	g_debug("%s(): process journal (%d)", __FUNCTION__, g_slist_length(journal));
-#endif
 
 	/* Load fax reports */
 	journal = rm_router_load_fax_reports(profile, journal);
@@ -200,9 +193,7 @@ gboolean firmware_tr64_load_journal(RmProfile *profile)
 		return FALSE;
 	}
 
-#ifdef FIRMWARE_TR64_DEBUG
 	rm_log_save_data("tr64-getcalllist.xml", url_msg->response_body->data, url_msg->response_body->length);
-#endif
 
 	msg = soup_message_new(SOUP_METHOD_GET, url);
 
@@ -339,9 +330,7 @@ gboolean firmware_tr64_get_settings(RmProfile *profile)
 		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
 		return FALSE;
 	}
-#ifdef FIRMWARE_TR64_DEBUG
 	rm_log_save_data("tr64-getnumbers.xml", msg->response_body->data, msg->response_body->length);
-#endif
 
 	/* Extract numbers */
 	new_number_list = rm_utils_xml_extract_tag(msg->response_body->data, "NewNumberList");
