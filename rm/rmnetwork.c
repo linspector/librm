@@ -31,6 +31,8 @@
 #include <rm/rmlog.h>
 #include <rm/rmutils.h>
 
+#define FIRMWARE_TR64_DEBUG 1
+
 /**
  * SECTION:rmnetwork
  * @Title: RmNetwork
@@ -183,9 +185,7 @@ SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *c
 
 		return NULL;
 	}
-#ifdef FIRMWARE_TR64_DEBUG
 	rm_log_save_data("tr64-request-ok-1.xml", msg->response_body->data, msg->response_body->length);
-#endif
 
 	status = rm_utils_xml_extract_tag(msg->response_body->data, "Status");
 	if (status && !strcmp(status, "Unauthenticated")) {
@@ -253,9 +253,7 @@ SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *c
 
 		auth_header = new_auth_header;
 
-#ifdef FIRMWARE_TR64_DEBUG
 		rm_log_save_data("tr64-request-ok-2.xml", msg->response_body->data, msg->response_body->length);
-#endif
 	}
 
 	return msg;
@@ -324,7 +322,6 @@ static void rm_network_save_password_cb(SoupMessage* msg, RmAuthData *auth_data)
 		g_debug("%s(): Storing data for later processing", __FUNCTION__);
 	}
 
-	g_debug("%s(): MOEP", __FUNCTION__);
 	g_signal_handlers_disconnect_by_func(msg, rm_network_save_password_cb, auth_data);
 
 	rm_network_free_auth_data(auth_data);
