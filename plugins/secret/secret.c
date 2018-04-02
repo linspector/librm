@@ -150,6 +150,8 @@ gboolean secret_available(void)
 	const gchar *desktop_session = g_environ_getenv(g_get_environ(), "DESKTOP_SESSION");
 	gboolean ret = FALSE;
 
+	g_debug("%s(): %s/%s", __FUNCTION__, xdg_desktop, desktop_session);
+
 	if (!g_strcmp0(xdg_desktop, "GNOME")) {
 		ret = TRUE;
 	} else if (!g_strcmp0(xdg_desktop, "Unity")) {
