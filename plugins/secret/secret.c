@@ -150,7 +150,7 @@ gboolean secret_available(void)
 	const gchar *desktop_session = g_environ_getenv(g_get_environ(), "DESKTOP_SESSION");
 	gboolean ret = FALSE;
 
-	g_debug("%s(): %s/%s", __FUNCTION__, xdg_desktop, desktop_session);
+	g_debug("%s(): Checking '%s'/'%s'", __FUNCTION__, xdg_desktop, desktop_session);
 
 	if (!g_strcmp0(xdg_desktop, "GNOME")) {
 		ret = TRUE;
@@ -160,9 +160,9 @@ gboolean secret_available(void)
 
 	if (!g_strcmp0(desktop_session, "gnome")) {
 		ret = TRUE;
-	} else if (!rm_strcasestr(desktop_session, "xfce")) {
+	} else if (rm_strcasestr(desktop_session, "xfce")) {
 		ret = TRUE;
-	} else if (!rm_strcasestr(desktop_session, "xubuntu")) {
+	} else if (rm_strcasestr(desktop_session, "xubuntu")) {
 		ret = TRUE;
 	}
 
