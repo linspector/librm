@@ -22,18 +22,16 @@
 
 #include <rm/rm.h>
 
-const SecretSchema *secret_get_schema(void) G_GNUC_CONST;
-
-#define SECRET_SCHEMA  secret_get_schema()
+#define SECRET_SCHEMA  libsecret_get_schema()
 
 /**
- * secret_get_schema:
+ * libsecret_get_schema:
  *
  * Get secret schema for this plugin
  *
  * Returns: a #SecretSchema
  */
-const SecretSchema *secret_get_schema(void)
+const SecretSchema *libsecret_get_schema(void)
 {
 	static const SecretSchema the_schema = {
 		"org.tabos.rm.Password", SECRET_SCHEMA_NONE,
