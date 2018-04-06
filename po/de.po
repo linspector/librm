@@ -86,7 +86,7 @@ msgstr "Wählhilfe"
 
 #: plugins/fritzbox/fritzbox.c:300
 msgid "Pickup phone when ringing"
-msgstr "Höhrer aufnehmen wenn es klingelt"
+msgstr "Hörer aufnehmen wenn es klingelt"
 
 #: plugins/capi/phone.c:548
 msgid "CAPI Softphone"
