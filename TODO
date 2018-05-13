@@ -3,8 +3,6 @@
 * move password plugin info to profile
 * profile should be the global place
 
-* ftplib
-
 * addressbook:
   - optimize contact lookup
   - set plugin directly to profile to remove lookup?

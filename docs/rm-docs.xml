@@ -26,8 +26,6 @@
     <xi:include href="xml/rmcsv.xml"/>
     <xi:include href="xml/rmdevice.xml"/>
     <xi:include href="xml/rmfax.xml"/>
-    <xi:include href="xml/rmfaxserver.xml"/>
-    <xi:include href="xml/rmfaxspooler.xml"/>
     <xi:include href="xml/rmfile.xml"/>
     <xi:include href="xml/rmfilter.xml"/>
     <xi:include href="xml/rmftp.xml"/>
@@ -41,7 +39,6 @@
     <xi:include href="xml/rmnumber.xml"/>
     <xi:include href="xml/rmobject.xml"/>
     <xi:include href="xml/rmobjectemit.xml"/>
-    <xi:include href="xml/rmosdep.xml"/>
     <xi:include href="xml/rmpassword.xml"/>
     <xi:include href="xml/rmphone.xml"/>
     <xi:include href="xml/rmplugins.xml"/>
