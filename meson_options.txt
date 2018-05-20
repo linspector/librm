@@ -1,2 +1,3 @@
 option('enable-documentation', type: 'boolean', value: 'false', description : 'Build API reference and tools documentation')
 option('enable-secret', type: 'boolean', value: 'true', description : 'Enable libsecret plugin')
+option('enable-post-install', type: 'boolean', value: 'true', description : 'Enable post install (schema compiling)')

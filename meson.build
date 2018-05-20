@@ -56,15 +56,15 @@ rm_dep += dependency('gssdp-1.0')
 # Include GTK integration libs for OS X
 if os_darwin
     rm_dep += dependency('gtk+-3.0')
-    rm_dep += dependency('gtk-mac-integration')
+    rm_dep += dependency('gtk-mac-integration-gtk3')
 endif
 
 rm_inc = include_directories('.')
 
-if os_linux
-    rm_plugins_path = join_paths(get_option('prefix'), get_option('libdir'), rm_name)
-else
+if host_machine.system() == 'windows'
     rm_plugins_path = join_paths('lib', rm_name)
+else
+    rm_plugins_path = join_paths(get_option('prefix'), get_option('libdir'), rm_name)
 endif
 
 # Set config data
@@ -99,4 +99,6 @@ if get_option('enable-documentation')
 endif
 
 # Post install script
-meson.add_install_script('meson_post_install.sh')
+if get_option('enable-post-install')
+    meson.add_install_script('meson_post_install.sh')
+endif
