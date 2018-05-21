@@ -1,9 +1,8 @@
 stages:
-    - test
-    - cross_distro
-    - deploy
+    - build
 
-.test_template: &distro_test
+linux:
+  stage: build
   script:
       - meson _build .
       - cd _build
