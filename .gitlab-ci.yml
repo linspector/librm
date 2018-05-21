@@ -5,7 +5,7 @@ fedora:28:
   image: fedora:28
   stage: build
   before_script:
-      - dnf install -y meson gcc glib2-devel libsoup-devel speex-devel libxml2-devel libtiff-devel spandsp-devel json-glib-devel libsndfile-devel gupnp-devel isdn4k-utils-devel gstreamer-plugins-base-devel libsecret-devel
+      - dnf install -y meson gcc glib2-devel libsoup-devel speex-devel libxml2-devel libtiff-devel spandsp-devel json-glib-devel libsndfile-devel gupnp-devel isdn4k-utils-devel gstreamer-plugins-base-devel libsecret-devel gettext
   script:
       - meson _build .
       - cd _build
