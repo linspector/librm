@@ -1,0 +1,10 @@
+stages:
+    - test
+    - cross_distro
+    - deploy
+
+.test_template: &distro_test
+  script:
+      - meson _build .
+      - cd _build
+      - ninja test
