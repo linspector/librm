@@ -156,7 +156,7 @@ gboolean secret_available(void)
 		ret = TRUE;
 	}
 
-	if (!g_strcmp0(desktop_session, "gnome")) {
+	if (rm_strcasestr(desktop_session, "gnome")) {
 		ret = TRUE;
 	} else if (rm_strcasestr(desktop_session, "xfce")) {
 		ret = TRUE;
