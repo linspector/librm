@@ -140,6 +140,10 @@ static gpointer rm_vox_playback_thread(gpointer user_data)
 #endif
 
 	max_cnt = playback->cnt;
+	if (!max_cnt) {
+		return NULL;
+	}
+
 	playback->offset = 0;
 	playback->cnt = 0;
 

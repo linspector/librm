@@ -407,18 +407,20 @@ gboolean firmware_tr64_get_settings(RmProfile *profile)
 	/* Set fax information */
 	g_settings_set_string(profile->settings, "fax-header", "Roger Router");
 
-	len = g_strv_length(numbers);
 	g_settings_set_string(fritzbox_settings, "fax-number", "");
 	g_settings_set_string(profile->settings, "fax-ident", "");
 
-	if (len) {
-		fax_msn = len > 1 ? numbers[1] : numbers[0];
+	if (numbers != NULL) {
+		len = g_strv_length(numbers);
+		if (len) {
+			fax_msn = len > 1 ? numbers[1] : numbers[0];
 
-		g_settings_set_string(profile->settings, "fax-number", fax_msn);
+			g_settings_set_string(profile->settings, "fax-number", fax_msn);
 
-		gchar *formated_number = rm_number_format(profile, fax_msn, RM_NUMBER_FORMAT_INTERNATIONAL_PLUS);
-		g_settings_set_string(profile->settings, "fax-ident", formated_number);
-		g_free(formated_number);
+			gchar *formated_number = rm_number_format(profile, fax_msn, RM_NUMBER_FORMAT_INTERNATIONAL_PLUS);
+			g_settings_set_string(profile->settings, "fax-ident", formated_number);
+			g_free(formated_number);
+		}
 	}
 
 	/* Extract phone names for dialer */

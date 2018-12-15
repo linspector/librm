@@ -59,7 +59,7 @@ RmAudio *rm_audio_get(gchar *name)
 	if (rm_audio_plugins) {
 		audio = rm_audio_plugins->data;
 
-		g_warning("%s(): Using fallback audio plugin '%s'", __FUNCTION__, audio->name);
+		g_warning("%s(): Using fallback audio plugin '%s'", __FUNCTION__, audio != NULL ? audio->name : "-");
 
 		return audio;
 	}

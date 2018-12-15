@@ -231,7 +231,7 @@ void convert_isdn_to_audio(struct capi_connection *connection, unsigned char *in
 	}
 
 	/* Record data */
-	if (connection->recording && rec_buf != NULL) {
+	if (connection != NULL && connection->recording && rec_buf != NULL) {
 		recording_write(recorder, rec_buf, in_buf_len, RECORDING_REMOTE);
 	}
 
@@ -240,7 +240,7 @@ void convert_isdn_to_audio(struct capi_connection *connection, unsigned char *in
 		ll_ratio = 1.0;
 	}
 
-	if (connection) {
+	if (connection != NULL) {
 		connection->line_level_in_state = connection->line_level_in_state * (1.0 - ll_ratio) + ((double)max / 128) * ll_ratio;
 	}
 
@@ -306,7 +306,9 @@ void convert_audio_to_isdn(struct capi_connection *connection, unsigned char *in
 		ll_ratio = 1.0;
 	}
 
-	connection->line_level_out_state = connection->line_level_out_state * (1.0 - ll_ratio) + ((double)max / 128) * ll_ratio;
+	if (connection != NULL) {
+		connection->line_level_out_state = connection->line_level_out_state * (1.0 - ll_ratio) + ((double)max / 128) * ll_ratio;
+	}
 
 	*out_buf_len = out_ptr;
 }
