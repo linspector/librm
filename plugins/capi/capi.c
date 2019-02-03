@@ -22,7 +22,7 @@
  * \brief CAPI routines and main capi functions
  */
 
-#ifndef WIN32
+#ifndef G_OS_WIN32
 #include <sys/resource.h>
 #endif
 
@@ -1808,7 +1808,7 @@ struct session *capi_session_init(const char *host, gint controller)
 	/* start capi transmission loop */
 	capi_loop_cancel = g_cancellable_new();
 	g_thread_new("capi", capi_loop, capi_loop_cancel);
-#ifndef WIN32
+#ifndef G_OS_WIN32
 	setpriority(PRIO_PROCESS, 0, -10);
 #endif
 
