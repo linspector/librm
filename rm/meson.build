@@ -109,7 +109,7 @@ rm_dep = declare_dependency(link_with : rm_shared,
 
 pkg_mod = import('pkgconfig')
 pkg_mod.generate(libraries : rm_shared,
-                 version : '1.2',
+                 version : meson.project_version(),
                  name : 'librm',
                  filebase : 'librm',
                  description : 'A library to handle AVM FRITZ!Box routers.',

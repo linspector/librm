@@ -183,7 +183,6 @@ void rm_log_set_debug(gboolean state)
 		g_free(dirname);
 
 		file = g_file_new_for_path(filename);
-		g_free(filename);
 
 		rm_file_stream = g_file_replace(file, NULL, TRUE, G_FILE_CREATE_PRIVATE, NULL, &error);
 		if (!rm_file_stream) {
@@ -191,6 +190,8 @@ void rm_log_set_debug(gboolean state)
 		} else {
 			g_debug("%s(): Writing debug log to %s", __FUNCTION__, filename);
 		}
+
+		g_free(filename);
 	}
 
 	debug_state = state;

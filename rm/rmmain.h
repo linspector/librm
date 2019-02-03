@@ -73,6 +73,8 @@ typedef enum {
 GQuark rm_print_error_quark(void);
 gboolean rm_new(gboolean debug, GError **error);
 gboolean rm_init(GError **error);
+void rm_set_force_online(gboolean state);
+gboolean rm_get_force_online(void);
 void rm_shutdown(void);
 gchar *rm_get_directory(gchar *type);
 void rm_set_requested_profile(gchar *name);

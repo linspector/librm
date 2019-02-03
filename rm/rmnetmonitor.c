@@ -21,6 +21,7 @@
 #include <rm/rmnetmonitor.h>
 #include <rm/rmprofile.h>
 #include <rm/rmssdp.h>
+#include <rm/rmmain.h>
 
 /**
  * SECTION:rmnetmonitor
@@ -186,11 +187,11 @@ void rm_netmonitor_reconnect(void)
 
 	rm_netmonitor_state_changed(FALSE);
 
-#ifdef G_OS_UNIX
-	GNetworkMonitor *monitor = g_network_monitor_get_default();
+	if (!rm_get_force_online()) {
+		GNetworkMonitor *monitor = g_network_monitor_get_default();
 
-	state = g_network_monitor_get_network_available(monitor);
-#endif
+		state = g_network_monitor_get_network_available(monitor);
+	}
 
 	rm_netmonitor_state_changed(state);
 }
@@ -217,20 +218,19 @@ void rm_netmonitor_changed_cb(GNetworkMonitor *monitor, gboolean available, gpoi
  */
 gboolean rm_netmonitor_init(void)
 {
-	gboolean state = TRUE;
-
-#ifdef G_OS_UNIX
 	GNetworkMonitor *monitor = g_network_monitor_get_default();
+	gboolean state = TRUE;
 
 	g_return_val_if_fail(monitor != NULL, FALSE);
 
-	/* Connect signal handler */
-	g_signal_connect(monitor, "network-changed", G_CALLBACK(rm_netmonitor_changed_cb), NULL);
+	if (!rm_get_force_online()) {
+		/* Connect signal handler */
+		g_signal_connect(monitor, "network-changed", G_CALLBACK(rm_netmonitor_changed_cb), NULL);
 
-	rm_ssdp_init();
+		rm_ssdp_init();
 
-	state = g_network_monitor_get_network_available(monitor);
-#endif
+		state = g_network_monitor_get_network_available(monitor);
+	}
 
 	rm_netmonitor_state_changed(state);
 
@@ -244,12 +244,12 @@ gboolean rm_netmonitor_init(void)
  */
 void rm_netmonitor_shutdown(void)
 {
-#ifdef G_OS_UNIX
 	GNetworkMonitor *monitor = g_network_monitor_get_default();
 
-	/* Disconnect signal handler */
-	g_signal_handlers_disconnect_by_func(monitor, G_CALLBACK(rm_netmonitor_changed_cb), NULL);
+	if (!rm_get_force_online()) {
+		/* Disconnect signal handler */
+		g_signal_handlers_disconnect_by_func(monitor, G_CALLBACK(rm_netmonitor_changed_cb), NULL);
+	}
 
 	rm_netmonitor_state_changed(FALSE);
-#endif
 }

@@ -292,14 +292,16 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 
 		/* SIP */
 		for (index = 0; index < 19; index++) {
-			skip = strstr(skip, "nrs.sip.push");
 			if (skip != NULL) {
-				start = strchr(skip, '"');
-				end = strchr(start + 1, '"');
-				if (end - start - 1 > 0) {
-					copy_number_04_74(&number_list, start + 1, end - start - 1);
+				skip = strstr(skip, "nrs.sip.push");
+				if (skip != NULL) {
+					start = strchr(skip, '"');
+					end = strchr(start + 1, '"');
+					if (end - start - 1 > 0) {
+						copy_number_04_74(&number_list, start + 1, end - start - 1);
+					}
+					skip = end;
 				}
-				skip = end;
 			}
 		}
 	}

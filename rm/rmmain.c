@@ -63,6 +63,8 @@ static gchar *rm_user_cache_dir = NULL;
 static gchar *rm_user_data_dir = NULL;
 /** Requested user profile */
 static gchar *rm_requested_profile = NULL;
+/** Force online state (needed for platforms which do not support network manager or have network detection troubles */
+static gboolean rm_force_online = FALSE;
 
 /**
  * rm_print_error_quark:
@@ -233,6 +235,29 @@ gchar *rm_get_requested_profile(void)
 char *rm_gettext(const char *msgid)
 {
 	return dgettext(RM_GETTEXT_PACKAGE, msgid);
+}
+
+/**
+ * rm_set_force_online:
+ * @state: Force online state
+ *
+ * Set force online state
+ */
+void rm_set_force_online(gboolean state)
+{
+	rm_force_online = state;
+}
+
+/**
+ * rm_get_force_online:
+ *
+ * Returns force online state.
+ *
+ * Returns: force online state
+ */
+gboolean rm_get_force_online(void)
+{
+	return rm_force_online;
 }
 
 /**

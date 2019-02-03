@@ -137,9 +137,6 @@ static void capi_error(long error)
 		} else if (error == 0x2001) {
 			g_warning("Message not supported in current state");
 		}
-		if (session) {
-			connection_status(NULL, error);
-		}
 	}
 }
 
@@ -514,20 +511,6 @@ static void capi_get_source_no(_cmsg *cmsg, char number[256])
 	if (len <= 1) {
 		strcpy(number, "unknown");
 	} else {
-		if (len > 256) {
-			len = 256 - 1;
-		}
-
-		/*switch (pnX[1] & 112) {
-		        case 32:
-		                strcat(number, getLineAccesscode());
-		                break;
-		        case 64:
-		                strcat(number, getLineAccesscode());
-		                strcat(number, getAreacode());
-		                break;
-		   }*/
-
 		/* get number */
 		if (pnX[2] & 128) {
 			number[strlen(number) + pnX[0] - 1] = 0;
@@ -574,21 +557,9 @@ static void capi_get_target_no(_cmsg *cmsg, char number[256])
 	if (len <= 1) {
 		strcpy(number, "unknown");
 	} else {
-		if (len > 256) {
-			len = 256 - 1;
-		}
-
-		/* get number */
-		/*if (strncmp((char *) x + 2, getCountrycode(), 2) == 0) {
-		        number[strlen(number) + (size_t) x[0]] = 0;
-		        number[strlen(number) + (size_t) x[0] - 1] = 0;
-		        strcpy(number, "0");
-		        memcpy(number + 1, x + 2 + 2, len - 3);
-		   } else*/{
-			number[strlen(number) + (size_t)x[0]] = 0;
-			number[strlen(number) + (size_t)x[0] - 1] = 0;
-			memcpy(number + strlen(number), x + 2, (size_t)(x[0] - 1));
-		}
+		number[strlen(number) + (size_t)x[0]] = 0;
+		number[strlen(number) + (size_t)x[0] - 1] = 0;
+		memcpy(number + strlen(number), x + 2, (size_t)(x[0] - 1));
 	}
 
 	if (!strlen(number)) {
@@ -1336,15 +1307,6 @@ static int capi_indication(_cmsg capi_message)
 	case CAPI_DISCONNECT_B3:
 		g_debug("IND: DISCONNECT_B3");
 		ncci = DISCONNECT_B3_IND_NCCI(&capi_message);
-		plci = ncci & 0x0000ffff;
-		ncpi = (unsigned char*)DISCONNECT_B3_IND_NCPI(&capi_message);
-
-		/*if (ncpi) {
-		        g_debug("rate: %d", get_word(&ncpi[1]));
-		        g_debug("resolution: %d", get_word(&ncpi[3]) & 1);
-		   } else {
-		        g_debug("no ncpi");
-		   }*/
 
 		isdn_lock();
 		DISCONNECT_B3_RESP(&cmsg1, session->appl_id, session->message_number++, ncci);
@@ -1372,7 +1334,6 @@ static int capi_indication(_cmsg capi_message)
 	/* CAPI_DISCONNECT - Disconnect */
 	case CAPI_DISCONNECT:
 		plci = DISCONNECT_IND_PLCI(&capi_message);
-		info = DISCONNECT_IND_REASON(&capi_message);
 
 		g_debug("IND: DISCONNECT - plci %d", plci);
 
@@ -1473,10 +1434,10 @@ static void capi_confirmation(_cmsg capi_message)
 #ifdef CAPI_DEBUG
 		g_debug("CNF: DATA_B3");
 #endif
-		info = DATA_B3_CONF_INFO(&capi_message);
 		ncci = DATA_B3_CONF_NCCI(&capi_message);
 
 #ifdef CAPI_DEBUG
+		info = DATA_B3_CONF_INFO(&capi_message);
 		g_debug("CNF: CAPI_ALERT: info %d, ncci %d", info, ncci);
 #endif
 
@@ -1516,8 +1477,6 @@ static void capi_confirmation(_cmsg capi_message)
 		}
 		break;
 	case CAPI_CONNECT_B3:
-		plci = CONNECT_CONF_PLCI(&capi_message);
-
 		g_debug("CNF: CAPI_CONNECT_B3");
 		capi_error(capi_message.Info);
 		break;
