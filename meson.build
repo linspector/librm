@@ -50,8 +50,17 @@ rm_dep += dependency('spandsp')
 rm_dep += dependency('json-glib-1.0')
 rm_dep += dependency('gmodule-2.0')
 rm_dep += dependency('sndfile')
-rm_dep += dependency('gupnp-1.0')
-rm_dep += dependency('gssdp-1.0')
+
+gupnp10_dep = dependency('gupnp-1.0', required : false)
+if gupnp10_dep.found()
+  rm_dep += gupnp10_dep
+  rm_dep += dependency('gssdp-1.0')
+else
+  rm_dep += dependency('gupnp-1.2')
+  rm_dep += dependency('gssdp-1.2')
+endif
+
+rm_dep += dependency('gssdp-1.2')
 
 # Include GTK integration libs for OS X
 if os_darwin

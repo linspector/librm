@@ -129,7 +129,7 @@ static void rm_on_context_available(GUPnPContextManager *manager, GUPnPContext *
 void rm_ssdp_init(void)
 {
 	g_debug("%s(): Initialize upnp context manager", __FUNCTION__);
-	rm_context_manager = gupnp_context_manager_new(NULL, 1900);
+	rm_context_manager = gupnp_context_manager_create(1900);
 
 	g_signal_connect(rm_context_manager, "context-available", G_CALLBACK(rm_on_context_available), NULL);
 }
