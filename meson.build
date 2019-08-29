@@ -60,8 +60,6 @@ else
   rm_dep += dependency('gssdp-1.2')
 endif
 
-rm_dep += dependency('gssdp-1.2')
-
 # Include GTK integration libs for OS X
 if os_darwin
     rm_dep += dependency('gtk+-3.0')
