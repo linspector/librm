@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gst/audio/audio.h>
 #include <gst/base/gstadapter.h>
 #include <gst/app/gstappsrc.h>
 #include <gst/app/gstappsink.h>
@@ -225,6 +226,7 @@ static void *gstreamer_open(gchar *output)
 	GstCaps *filtercaps;
 	GstDevice *output_device = NULL;
 	GstDevice *input_device = NULL;
+	GstAudioInfo info;
 	GList *list;
 	GList *gst_devices;
 	gchar *output_name;
@@ -294,11 +296,8 @@ static void *gstreamer_open(gchar *output)
 
 		filter = gst_element_factory_make("capsfilter", "filter");
 
-		filtercaps = gst_caps_new_simple("audio/x-raw",
-						 "format", G_TYPE_STRING, "S16LE",
-						 "channels", G_TYPE_INT, gstreamer_channels,
-						 "rate", G_TYPE_INT, gstreamer_sample_rate,
-						 NULL);
+		gst_audio_info_set_format (&info, GST_AUDIO_FORMAT_S16LE, gstreamer_sample_rate, gstreamer_channels, NULL);
+		filtercaps = gst_audio_info_to_caps (&info);
 
 		g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
@@ -330,12 +329,8 @@ static void *gstreamer_open(gchar *output)
 
 		filter = gst_element_factory_make("capsfilter", "filter");
 
-		filtercaps = gst_caps_new_simple("audio/x-raw",
-						 "format", G_TYPE_STRING, "S16LE",
-						 "channels", G_TYPE_INT, gstreamer_channels,
-						 "rate", G_TYPE_INT, gstreamer_sample_rate,
-						 NULL);
-
+		gst_audio_info_set_format (&info, GST_AUDIO_FORMAT_S16LE, gstreamer_sample_rate, gstreamer_channels, NULL);
+		filtercaps = gst_audio_info_to_caps (&info);
 		g_object_set(G_OBJECT(filter), "caps", filtercaps, NULL);
 		gst_caps_unref(filtercaps);
 

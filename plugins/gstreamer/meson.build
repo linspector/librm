@@ -8,6 +8,7 @@ gstreamer_dep = []
 gstreamer_dep += rm_dep
 gstreamer_dep += gstreamer
 gstreamer_dep += dependency('gstreamer-app-1.0')
+gstreamer_dep += dependency('gstreamer-audio-1.0')
 
 libgstreamer = shared_module('gstreamer',
                         gstreamer_sources,
