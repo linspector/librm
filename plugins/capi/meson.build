@@ -8,7 +8,7 @@ capi_sources = [
 capi_dep = []
 capi_dep += rm_dep
 capi_dep += dependency('sndfile', fallback : ['libsndfile', 'sndfile_dep'])
-capi_dep += dependency('capi20', fallback : ['libcapi20', 'capi20_dep'])
+capi_dep += dependency('capi20', fallback : ['libcapi20', 'capi_shared_dep'])
 
 libcapi = shared_module('capi',
                         capi_sources,
