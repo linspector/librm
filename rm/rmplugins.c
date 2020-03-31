@@ -78,7 +78,7 @@ static gint rm_plugins_load_plugin(char *name)
 	suffix = G_MODULE_SUFFIX;
 #endif
 
-	lib_name = g_strdup_printf("%s/lib%s.%s", g_dirname(name), module_name, suffix);
+	lib_name = g_strdup_printf("%s/lib%s.%s", g_path_get_dirname(name), module_name, suffix);
 	//g_debug("%s(): lib_name: %s", __FUNCTION__, lib_name);
 	module = g_module_open(lib_name, G_MODULE_BIND_LAZY);
 	if (!module) {
