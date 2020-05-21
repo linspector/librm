@@ -160,7 +160,7 @@ gboolean secret_available(void)
 		ret = TRUE;
 	} else if (rm_strcasestr(desktop_session, "xfce")) {
 		ret = TRUE;
-	} else if (rm_strcasestr(desktop_session, "xubuntu")) {
+	} else if (rm_strcasestr(desktop_session, "ubuntu")) {
 		ret = TRUE;
 	}
 
