@@ -268,6 +268,7 @@ GSList *rm_journal_add_call_entry(GSList *journal, RmCallEntry *call)
 		if (!strcmp(journal_call->date_time, call->date_time) && !strcmp(journal_call->remote->number, call->remote->number)) {
 			if (journal_call->type == call->type) {
 				/* Call with the same type already exists, return unchanged journal */
+				rm_call_entry_free (call);
 				return journal;
 			}
 
@@ -276,6 +277,7 @@ GSList *rm_journal_add_call_entry(GSList *journal, RmCallEntry *call)
 				journal_call->type = call->type;
 				journal_call->priv = call->priv;
 
+				rm_call_entry_free (call);
 				return journal;
 			}
 		}

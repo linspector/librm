@@ -211,7 +211,7 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 			rm_contact_copy(tmp_contact, contact);
 		} else {
 			/* We have found no entry, mark it in rm_addressbook_table to speedup further lookup */
-			tmp_contact = g_slice_alloc0(sizeof(RmContact));
+			tmp_contact = g_malloc0(sizeof(RmContact));
 			g_hash_table_insert(rm_addressbook_table, g_strdup(contact->number), tmp_contact);
 		}
 

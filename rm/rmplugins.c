@@ -62,7 +62,7 @@ static gint rm_plugins_load_plugin(char *name)
 	typedef void (*rmInitPlugin)(RmPlugin *plugin);
 	rmInitPlugin init_plugin;
 	gpointer tmp;
-	GKeyFile *keyfile;
+	g_autoptr(GKeyFile) keyfile = NULL;
 	gchar *module_name;
 	gchar *lib_name;
 	gchar *suffix;

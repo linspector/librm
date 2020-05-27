@@ -73,7 +73,7 @@ static gpointer csv_parse_global_areacodes(gpointer ptr, gchar **split)
 			areacode->country = csv_trim(split[0]);
 			areacode->skip = strlen(split[1]);
 
-			areacode->table = g_hash_table_new(g_str_hash, g_str_equal);
+			areacode->table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 			g_hash_table_insert(global_table, g_strdup(split[1]), areacode);
 		}
 

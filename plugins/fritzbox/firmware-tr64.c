@@ -122,6 +122,8 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 	call_entry = rm_call_entry_new(call_type, date_time, remote_name, remote_number, local_name, local_number, duration, g_strdup(path));
 	list = rm_journal_add_call_entry(list, call_entry);
 
+	g_free(date_time);
+
 	return list;
 }
 
@@ -156,6 +158,8 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 	for (child = rm_xmlnode_get_child(node, "Call"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		journal = firmware_tr64_add_call(journal, profile, child);
 	}
+
+	rm_xmlnode_free(node);
 
 	g_debug("%s(): process journal (%d)", __FUNCTION__, g_slist_length(journal));
 

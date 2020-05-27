@@ -221,7 +221,7 @@ static gboolean areacodes_plugin_shutdown(RmPlugin *plugin)
 
 	/* Free hash table */
 	if (areacodes_plugin->table) {
-		g_hash_table_destroy(areacodes_plugin->table);
+		g_hash_table_unref(areacodes_plugin->table);
 	}
 
 	return TRUE;

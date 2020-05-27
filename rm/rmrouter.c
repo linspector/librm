@@ -706,7 +706,7 @@ gboolean rm_router_is_cable(RmProfile *profile)
  */
 GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
 {
-	GDir *dir;
+	g_autoptr (GDir) dir = NULL;
 	GError *error = NULL;
 	const gchar *file_name;
 	gchar *dir_name = g_settings_get_string(profile->settings, "fax-report-dir");
@@ -762,7 +762,7 @@ GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
  */
 GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
 {
-	GDir *dir;
+	g_autoptr(GDir) dir = NULL;
 	GError *error = NULL;
 	const gchar *file_name;
 	const gchar *dir_name = rm_get_user_data_dir();

@@ -144,8 +144,8 @@ RmPasswordManager secret = {
  */
 gboolean secret_available(void)
 {
-	const gchar *xdg_desktop = g_environ_getenv(g_get_environ(), "XDG_CURRENT_DESKTOP");
-	const gchar *desktop_session = g_environ_getenv(g_get_environ(), "DESKTOP_SESSION");
+	const gchar *xdg_desktop = g_getenv("XDG_CURRENT_DESKTOP");
+	const gchar *desktop_session = g_getenv("DESKTOP_SESSION");
 	gboolean ret = FALSE;
 
 	g_debug("%s(): Checking '%s'/'%s'", __FUNCTION__, xdg_desktop, desktop_session);

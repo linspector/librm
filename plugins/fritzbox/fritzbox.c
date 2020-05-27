@@ -405,7 +405,7 @@ void fritzbox_set_active(RmProfile *profile)
 	array = fritzbox_get_phone_list(rm_profile_get_active());
 	if (array) {
 		g_ptr_array_foreach(array, fritzbox_add_phone, NULL);
-		g_ptr_array_unref(array);
+		g_ptr_array_free(array, TRUE);
 	}
 
 	/* Check whether tr64 is available */

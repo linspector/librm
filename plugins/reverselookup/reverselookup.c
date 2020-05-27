@@ -529,7 +529,7 @@ static void reverselookup_country_code_add(RmXmlNode *node)
 static void reverselookup_read_cache(gchar *dir_name)
 {
 #ifndef RL_DEBUG
-	GDir *dir;
+	g_autoptr (GDir) dir = NULL;
 	GError *error = NULL;
 	const gchar *file_name;
 

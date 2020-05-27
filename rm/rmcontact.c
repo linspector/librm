@@ -84,6 +84,47 @@ gpointer rm_contact_copy_addresses(gconstpointer src, gpointer data)
 }
 
 /**
+ * rm_contact_free_address:
+ * @data: pointer to #RmContactAddress
+ *
+ * Frees #RmContactAddress.
+ */
+static void rm_contact_free_address(gpointer data)
+{
+	RmContactAddress *address = data;
+
+	if (!address) {
+		g_debug("%s(): No address at all, exit", __FUNCTION__);
+		return;
+	}
+
+	g_free(address->street);
+	address->street = NULL;
+	g_free(address->zip);
+	address->zip = NULL;
+	g_free(address->city);
+	address->city = NULL;
+
+	g_slice_free(RmContactAddress, address);
+}
+
+/**
+ * rm_contact_free_number:
+ * @data: pointer to #RmPhoneNumber
+ *
+ * Frees #RmPhoneNumber.
+ */
+static void rm_contact_free_number(gpointer data)
+{
+	RmPhoneNumber *number = data;
+
+	g_free(number->number);
+	number->number = NULL;
+
+	g_slice_free(RmPhoneNumber, number);
+}
+
+/**
  * rm_contact_copy:
  * @src: source #RmContact
  * @dst: destination #RmContact
@@ -92,6 +133,21 @@ gpointer rm_contact_copy_addresses(gconstpointer src, gpointer data)
  */
 void rm_contact_copy(RmContact *src, RmContact *dst)
 {
+	g_clear_pointer (&dst->name, g_free);
+	g_clear_object (&dst->image);
+	g_clear_pointer (&dst->company, g_free);
+
+	if (dst->addresses) {
+		g_slist_free_full(g_steal_pointer (&dst->addresses), rm_contact_free_address);
+	}
+	if (dst->numbers) {
+		g_slist_free_full(g_steal_pointer (&dst->numbers), rm_contact_free_number);
+	}
+
+	g_clear_pointer (&dst->street, g_free);
+	g_clear_pointer (&dst->zip, g_free);
+	g_clear_pointer (&dst->city, g_free);
+
 	dst->name = g_strdup(src->name);
 
 	if (src->image) {
@@ -215,47 +271,6 @@ RmContact *rm_contact_find_by_number(gchar *number)
 	}
 
 	return contact;
-}
-
-/**
- * rm_contact_free_address:
- * @data: pointer to #RmContactAddress
- *
- * Frees #RmContactAddress.
- */
-static void rm_contact_free_address(gpointer data)
-{
-	RmContactAddress *address = data;
-
-	if (!address) {
-		g_debug("%s(): No address at all, exit", __FUNCTION__);
-		return;
-	}
-
-	g_free(address->street);
-	address->street = NULL;
-	g_free(address->zip);
-	address->zip = NULL;
-	g_free(address->city);
-	address->city = NULL;
-
-	g_slice_free(RmContactAddress, address);
-}
-
-/**
- * rm_contact_free_number:
- * @data: pointer to #RmPhoneNumber
- *
- * Frees #RmPhoneNumber.
- */
-static void rm_contact_free_number(gpointer data)
-{
-	RmPhoneNumber *number = data;
-
-	g_free(number->number);
-	number->number = NULL;
-
-	g_slice_free(RmPhoneNumber, number);
 }
 
 /**
