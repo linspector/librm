@@ -46,18 +46,15 @@
  */
 static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNode *call)
 {
-	gchar *type;
-	gchar *called;
-	gchar *caller;
-	gchar *name;
-	gchar *port;
-	gchar *date_time;
-	gchar *duration;
-	gchar *path;
-	gchar *remote_name;
-	gchar *remote_number;
-	gchar *local_name;
-	gchar *local_number;
+	g_autofree gchar *type = NULL;
+	g_autofree gchar *port = NULL;
+	g_autofree gchar *date_time = NULL;
+	g_autofree gchar *duration = NULL;
+	g_autofree gchar *path = NULL;
+	g_autofree gchar *remote_name = NULL;
+	g_autofree gchar *remote_number = NULL;
+	g_autofree gchar *local_name = NULL;
+	g_autofree gchar *local_number = NULL;
 	RmXmlNode *tmp;
 	RmCallEntry *call_entry;
 	RmCallEntryTypes call_type;
@@ -65,7 +62,7 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 	tmp = rm_xmlnode_get_child(call, "Type");
 	type = rm_xmlnode_get_data(tmp);
 	tmp = rm_xmlnode_get_child(call, "Name");
-	name = rm_xmlnode_get_data(tmp);
+	remote_name = rm_xmlnode_get_data(tmp);
 	tmp = rm_xmlnode_get_child(call, "Duration");
 	duration = rm_xmlnode_get_data(tmp);
 	tmp = rm_xmlnode_get_child(call, "Date");
@@ -77,24 +74,16 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 	tmp = rm_xmlnode_get_child(call, "Port");
 	port = rm_xmlnode_get_data(tmp);
 
-	remote_name = name;
-
 	if (atoi(type) == 3) {
 		tmp = rm_xmlnode_get_child(call, "CallerNumber");
-		caller = rm_xmlnode_get_data(tmp);
+		local_number = rm_xmlnode_get_data(tmp);
 		tmp = rm_xmlnode_get_child(call, "Called");
-		called = rm_xmlnode_get_data(tmp);
-
-		remote_number = called;
-		local_number = caller;
+		remote_number = rm_xmlnode_get_data(tmp);
 	} else {
 		tmp = rm_xmlnode_get_child(call, "CalledNumber");
-		called = rm_xmlnode_get_data(tmp);
+		local_number = rm_xmlnode_get_data(tmp);
 		tmp = rm_xmlnode_get_child(call, "Caller");
-		caller = rm_xmlnode_get_data(tmp);
-
-		remote_number = caller;
-		local_number = called;
+		remote_number = rm_xmlnode_get_data(tmp);
 	}
 
 	call_type = atoi(type);
@@ -121,8 +110,6 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
 
 	call_entry = rm_call_entry_new(call_type, date_time, remote_name, remote_number, local_name, local_number, duration, g_strdup(path));
 	list = rm_journal_add_call_entry(list, call_entry);
-
-	g_free(date_time);
 
 	return list;
 }

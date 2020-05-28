@@ -281,12 +281,15 @@ RmContact *rm_contact_find_by_number(gchar *number)
  */
 void rm_contact_free(RmContact *contact)
 {
-	g_free(contact->name);
-	g_free(contact->company);
-	g_free(contact->number);
-	g_free(contact->street);
-	g_free(contact->zip);
-	g_free(contact->city);
+	if (!contact)
+		return;
+
+	g_clear_pointer(&contact->name, g_free);
+	g_clear_pointer(&contact->company, g_free);
+	g_clear_pointer(&contact->number, g_free);
+	g_clear_pointer(&contact->street, g_free);
+	g_clear_pointer(&contact->zip, g_free);
+	g_clear_pointer(&contact->city, g_free);
 	if (contact->image) {
 		g_object_unref(contact->image);
 	}
@@ -297,8 +300,6 @@ void rm_contact_free(RmContact *contact)
 	if (contact->numbers) {
 		g_slist_free_full(contact->numbers, rm_contact_free_number);
 	}
-
-	g_slice_free(RmContact, contact);
 }
 
 /**

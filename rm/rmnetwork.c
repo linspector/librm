@@ -239,7 +239,7 @@ SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *c
 		soup_message_headers_append(headers, "SoapAction", header);
 
 		soup_session_send_message(rm_soup_session, msg);
-		g_string_free(request, FALSE);
+		g_string_free(request, TRUE);
 
 		if (msg->status_code != SOUP_STATUS_OK) {
 			g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);

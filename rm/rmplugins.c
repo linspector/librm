@@ -289,7 +289,7 @@ void rm_plugins_disable(RmPlugin *plugin)
 void rm_plugins_enable(RmPlugin *plugin)
 {
 	RmProfile *profile = rm_profile_get_active();
-	gchar **active_plugins;
+	g_auto (GStrv) active_plugins = NULL;
 
 	if (!plugin->enabled) {
 		g_debug("%s(): + %s", __FUNCTION__, plugin->name);

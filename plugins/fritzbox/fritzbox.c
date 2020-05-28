@@ -375,7 +375,7 @@ static GPtrArray *fritzbox_get_phone_list(RmProfile *profile)
 		return array;
 	}
 
-	array = g_ptr_array_new();
+	array = g_ptr_array_new_with_free_func(g_free);
 
 	for (index = 0; index < PORT_MAX - 2; index++) {
 		fon = g_settings_get_string(fritzbox_settings, fritzbox_phone_ports[index].setting_name);

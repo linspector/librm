@@ -159,6 +159,9 @@ gchar *rm_number_format(RmProfile *profile, const gchar *number, RmNumberFormats
 	const gchar *my_prefix;
 	gchar *result = NULL;
 
+	if (!profile)
+		return g_strdup(number);
+
 	/* Check for internal sip numbers first */
 	if (strchr(number, '@')) {
 		return g_strdup(number);
@@ -293,6 +296,8 @@ gchar *rm_number_format(RmProfile *profile, const gchar *number, RmNumberFormats
  */
 gchar *rm_number_full(const gchar *number, gboolean country_code_prefix)
 {
+	RmProfile *profile = rm_profile_get_active();;
+
 	if (RM_EMPTY_STRING(number)) {
 		return NULL;
 	}
@@ -301,6 +306,9 @@ gchar *rm_number_full(const gchar *number, gboolean country_code_prefix)
 	if (number[0] == '*' || number[0] == '#') {
 		return g_strdup(number);
 	}
+
+	if (!profile)
+		return g_strdup(number);
 
 	/* Remove call-by-call (carrier preselect) prefix */
 	number += rm_call_by_call_prefix_length(number);
@@ -314,7 +322,7 @@ gchar *rm_number_full(const gchar *number, gboolean country_code_prefix)
 			return g_strdup(number);
 		}
 
-		my_country_code = rm_router_get_country_code(rm_profile_get_active());
+		my_country_code = rm_router_get_country_code(profile);
 		if (!strncmp(number + 2, my_country_code, strlen(my_country_code))) {
 			out = g_strdup_printf("0%s", number + 4);
 		} else {
@@ -324,5 +332,5 @@ gchar *rm_number_full(const gchar *number, gboolean country_code_prefix)
 		return out;
 	}
 
-	return rm_number_format(rm_profile_get_active(), number, country_code_prefix ? RM_NUMBER_FORMAT_INTERNATIONAL : RM_NUMBER_FORMAT_NATIONAL);
+	return rm_number_format(profile, number, country_code_prefix ? RM_NUMBER_FORMAT_INTERNATIONAL : RM_NUMBER_FORMAT_NATIONAL);
 }
