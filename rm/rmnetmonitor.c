@@ -19,6 +19,7 @@
 
 #include <gio/gio.h>
 #include <rm/rmnetmonitor.h>
+#include <rm/rmobjectemit.h>
 #include <rm/rmprofile.h>
 #include <rm/rmssdp.h>
 #include <rm/rmmain.h>
@@ -173,6 +174,8 @@ static void rm_netmonitor_state_changed(gboolean state)
 				}
 			}
 		}
+
+		rm_object_emit_profile_changed ();
 	}
 }
 

@@ -98,7 +98,7 @@ rm_shared = shared_library('rm',
                         include_directories : rm_inc,
                         dependencies : rm_dep,
                         install : true,
-                        c_args : '-DRM_COMPILATION',
+                        c_args : ['-DRM_COMPILATION', '-DG_LOG_DOMAIN="rm"'],
                         version: rm_version,
                         soversion: '0',
                         link_args : rm_link)

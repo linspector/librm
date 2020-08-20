@@ -349,7 +349,7 @@ static void fritzbox_add_phone(gpointer name, gpointer user_data)
 	phone->dial = dialer_dial;
 	phone->hangup = dialer_hangup;
 
-	phone->name = name;
+	phone->name = g_strdup (name);
 	phone->device = telnet_device;
 
 	g_debug("%s(): Adding '%s'", __FUNCTION__, phone->name);

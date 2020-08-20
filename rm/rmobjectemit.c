@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2020 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -184,4 +184,14 @@ void rm_object_emit_contacts_changed(void)
 void rm_object_emit_authenticate(RmAuthData *auth_data)
 {
 	g_signal_emit(rm_object, rm_object_signals[RM_ACB_AUTHENTICATE], 0, auth_data);
+}
+
+/**
+ * rm_object_emit_profile_changed:
+ *
+ * Emit signal: profile-changed.
+ */
+void rm_object_emit_profile_changed (void)
+{
+	g_signal_emit(rm_object, rm_object_signals[RM_ACB_PROFILE_CHANGED], 0);
 }

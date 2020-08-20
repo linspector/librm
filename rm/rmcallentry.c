@@ -56,25 +56,26 @@ RmCallEntry *rm_call_entry_new(RmCallEntryTypes type, const gchar *date_time, co
 	RmCallEntry *call_entry;
 
 	/* Create new call entry structure */
-	call_entry = g_malloc0(sizeof(RmCallEntry));
+	call_entry = g_slice_new0(RmCallEntry);
 
 	/* Set entries */
 	call_entry->type = type;
 	call_entry->date_time = date_time ? g_strdup(date_time) : g_strdup("");
-
-	call_entry->remote = g_malloc0(sizeof(RmContact));
+	call_entry->remote = g_slice_new0(RmContact);
 	call_entry->remote->image = NULL;
 	call_entry->remote->name = remote_name ? rm_convert_utf8(remote_name, -1) : g_strdup("");
 	call_entry->remote->number = remote_number ? g_strdup(remote_number) : g_strdup("");
-	call_entry->remote->company = g_strdup("");
-	call_entry->remote->city = g_strdup("");
-
-	call_entry->local = g_malloc0(sizeof(RmContact));
+	call_entry->local = g_slice_new0(RmContact);
 	call_entry->local->name = local_name ? rm_convert_utf8(local_name, -1) : g_strdup("");
 	call_entry->local->number = local_number ? g_strdup(local_number) : g_strdup("");
 	call_entry->duration = duration ? g_strdup(duration) : g_strdup("");
 
+	/* Extended */
+	call_entry->remote->company = g_strdup("");
+	call_entry->remote->city = g_strdup("");
 	call_entry->priv = priv;
+
+	//g_debug("%s(): %d / %s / %s / %s", __FUNCTION__, call_entry->type, call_entry->date_time, call_entry->remote->number, call_entry->local->number);
 
 	return call_entry;
 }
@@ -89,12 +90,12 @@ void rm_call_entry_free(gpointer data)
 {
 	RmCallEntry *call_entry = data;
 
-	g_clear_pointer(&call_entry->date_time, g_free);
-	g_clear_pointer(&call_entry->duration, g_free);
-	//g_clear_pointer(&call_entry->priv, g_free);
+	g_free(call_entry->date_time);
+	g_free(call_entry->duration);
+  g_free (call_entry->priv);
 
-	rm_contact_free (call_entry->remote);
-	rm_contact_free (call_entry->local);
+  rm_contact_free (call_entry->remote);
+  rm_contact_free (call_entry->local);
 
-	g_clear_pointer(&call_entry, g_free);
+	g_slice_free(RmCallEntry, call_entry);
 }

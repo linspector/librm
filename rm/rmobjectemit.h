@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2020 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __RM_OBJECTEMIT_H__
-#define __RM_OBJECTEMIT_H__
+#pragma once
 
 #if !defined (__RM_H_INSIDE__) && !defined(RM_COMPILATION)
 #error "Only <rm/rm.h> can be included directly."
@@ -44,7 +43,7 @@ void rm_object_emit_connection_status(gint status, RmConnection *connection);
 void rm_object_emit_message(gchar *title, gchar *message);
 void rm_object_emit_contacts_changed(void);
 void rm_object_emit_authenticate(RmAuthData *auth_data);
+void rm_object_emit_profile_changed (void);
 
 G_END_DECLS
 
-#endif

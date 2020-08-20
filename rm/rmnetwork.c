@@ -31,7 +31,7 @@
 #include <rm/rmlog.h>
 #include <rm/rmutils.h>
 
-#define FIRMWARE_TR64_DEBUG 1
+//#define FIRMWARE_TR64_DEBUG 1
 
 /**
  * SECTION:rmnetwork

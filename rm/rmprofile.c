@@ -200,6 +200,26 @@ static void rm_profile_load(const gchar *name)
 	rm_profile_list = g_slist_prepend(rm_profile_list, profile);
 }
 
+static gboolean rm_profile_set_active_idle(gpointer user_data)
+{
+	RmProfile *profile = user_data;
+
+	rm_router_set_active(profile);
+
+	rm_plugins_bind_loaded_plugins();
+
+	/* Load and initialize action */
+	rm_action_init(profile);
+
+	/* Load and initialize filters */
+	rm_filter_init(profile);
+
+	/* Load journal list */
+	rm_router_load_journal(profile);
+
+	return G_SOURCE_REMOVE;
+}
+
 /**
  * rm_profile_set_active:
  * @profile: a #RmProfile
@@ -232,18 +252,7 @@ void rm_profile_set_active(RmProfile *profile)
 		return;
 	}
 
-	rm_router_set_active(profile);
-
-	rm_plugins_bind_loaded_plugins();
-
-	/* Load and initialize action */
-	rm_action_init(profile);
-
-	/* Load and initialize filters */
-	rm_filter_init(profile);
-
-	/* Load journal list */
-	rm_router_load_journal(profile);
+	g_idle_add (rm_profile_set_active_idle, profile);
 }
 
 /**

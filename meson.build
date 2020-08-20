@@ -80,6 +80,7 @@ cdata.set('RM_NAME', '"rm"')
 cdata.set('RM_VERSION', '"@0@"'.format(rm_version))
 cdata.set('RM_PLUGINS', '"' + rm_plugins_path + '"')
 cdata.set('RM_GETTEXT_PACKAGE', '"rm"')
+cdata.set_quoted('G_LOG_DOMAIN', 'rm')
 
 if os_linux
 	cdata.set('APP_LOCALE', '"' + join_paths(get_option('prefix'), get_option('localedir')) + '"')

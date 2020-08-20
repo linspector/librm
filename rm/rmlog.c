@@ -82,54 +82,56 @@ static void rm_log_handler(const gchar *log_domain, GLogLevelFlags log_level, co
 	gchar *time;
 	gsize len;
 
-	if (debug_state) {
-		datetime = g_date_time_new_now_local();
-		time = g_date_time_format(datetime, "%H:%M:%S");
-		output = g_string_new(time);
-		g_free(time);
-		g_date_time_unref(datetime);
+	if (!debug_state)
+		return;
+
+	datetime = g_date_time_new_now_local();
+	time = g_date_time_format(datetime, "%H:%M:%S");
+	output = g_string_new(time);
+	g_free(time);
+	g_date_time_unref(datetime);
 
 #if GLIB_CHECK_VERSION(2, 49, 0)
-		g_string_append_printf(output, " %s\n", message);
 
-		const GLogField fields[] = { { "MESSAGE", output->str, -1 } };
-		gchar *fmt_str = g_log_writer_format_fields(log_level, fields, G_N_ELEMENTS(fields), TRUE);
+	g_string_append_printf(output, " %s\n", message);
 
-		g_string_free(output, TRUE);
+	const GLogField fields[] = { { "MESSAGE", output->str, -1 } };
+	gchar *fmt_str = g_log_writer_format_fields(log_level, fields, G_N_ELEMENTS(fields), TRUE);
 
-		output = g_string_new("");
-		g_string_append_printf(output, "%s", fmt_str);
-		g_free(fmt_str);
+	g_string_free(output, TRUE);
+
+	output = g_string_new("");
+	g_string_append_printf(output, "%s", fmt_str);
+	g_free(fmt_str);
 #else
-		if (log_domain) {
-			g_string_append_printf(output, " %s:", log_domain);
-		}
+	if (log_domain) {
+		g_string_append_printf(output, " %s:", log_domain);
+	}
 
-		switch (log_level) {
-		case G_LOG_LEVEL_ERROR:
-			g_string_append(output, " Error: ");
-			break;
-		case G_LOG_LEVEL_CRITICAL:
-			g_string_append(output, " Critical: ");
-			break;
-		case G_LOG_LEVEL_WARNING:
-			g_string_append(output, " Warning: ");
-			break;
-		case G_LOG_LEVEL_DEBUG:
-			g_string_append(output, " Debug: ");
-			break;
-		default:
-			break;
-		}
+	switch (log_level) {
+	case G_LOG_LEVEL_ERROR:
+		g_string_append(output, " Error: ");
+		break;
+	case G_LOG_LEVEL_CRITICAL:
+		g_string_append(output, " Critical: ");
+		break;
+	case G_LOG_LEVEL_WARNING:
+		g_string_append(output, " Warning: ");
+		break;
+	case G_LOG_LEVEL_DEBUG:
+		g_string_append(output, " Debug: ");
+		break;
+	default:
+		break;
+	}
 
-		g_string_append_printf(output, "%s\n", message);
+	g_string_append_printf(output, "%s\n", message);
 #endif
 
-		g_print("%s", output->str);
-		g_output_stream_printf(G_OUTPUT_STREAM(rm_file_stream), &len, NULL, NULL, "%s", output->str);
+	g_print("%s", output->str);
+	g_output_stream_printf(G_OUTPUT_STREAM(rm_file_stream), &len, NULL, NULL, "%s", output->str);
 
-		g_string_free(output, TRUE);
-	}
+	g_string_free(output, TRUE);
 
 	if (app_log) {
 		app_log(log_level, message);

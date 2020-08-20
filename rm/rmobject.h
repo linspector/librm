@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2020 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,7 @@ G_BEGIN_DECLS
  * @RM_ACB_MESSAGE: message
  * @RM_ACB_CONTACTS_CHANGED: contacts-changed
  * @RM_ACB_AUTHENTICATE: authenticate
+ * @RM_ACB_PROFILE_CHANGED: profile-changed
  * @RM_ACB_MAX: Max Id
  *
  * RM Callback signal ids
@@ -56,6 +57,7 @@ typedef enum {
 	RM_ACB_MESSAGE,
 	RM_ACB_CONTACTS_CHANGED,
 	RM_ACB_AUTHENTICATE,
+  RM_ACB_PROFILE_CHANGED,
 	RM_ACB_MAX
 } RmCallbackId;
 
@@ -91,6 +93,7 @@ typedef struct _RmObjectClass {
 	void (*message)(gpointer title, gpointer message);
 	void (*contacts_changed)(void);
 	void (*authenticate)(RmAuthData *auth_data);
+  void (*profile_changed)(void);
 } RmObjectClass;
 
 GObject *rm_object_new(void);
