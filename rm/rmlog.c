@@ -85,6 +85,9 @@ static void rm_log_handler(const gchar *log_domain, GLogLevelFlags log_level, co
 	if (!debug_state)
 		return;
 
+	if (!g_strcmp0 (log_domain, "GdkPixbuf"))
+		return;
+
 	datetime = g_date_time_new_now_local();
 	time = g_date_time_format(datetime, "%H:%M:%S");
 	output = g_string_new(time);
