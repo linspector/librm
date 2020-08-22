@@ -179,8 +179,19 @@ SoupMessage *rm_network_tr64_request(RmProfile *profile, gboolean auth, gchar *c
 	g_string_free(request, TRUE);
 
 	if (msg->status_code != SOUP_STATUS_OK) {
+		g_autofree char *error_code = NULL;
+		g_autofree char *error_description = NULL;
+
 		g_debug("%s(): Received status code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
 		rm_log_save_data("tr64-request-error1.xml", msg->response_body->data, -1);
+		error_code = rm_utils_xml_extract_tag(msg->response_body->data, "errorCode");
+		error_description = rm_utils_xml_extract_tag(msg->response_body->data, "errorDescription");
+		if (error_code) {
+			g_warning ("%s(): errorCode = %s", __FUNCTION__, error_code);
+		}
+		if (error_description) {
+			g_warning ("%s(): errorDescription = %s", __FUNCTION__, error_description);
+		}
 		g_object_unref(msg);
 
 		return NULL;
