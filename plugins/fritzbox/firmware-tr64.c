@@ -244,6 +244,7 @@ gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize
 gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *number)
 {
 	g_autoptr(SoupMessage) msg = NULL;
+	g_autofree char *fon = NULL;
 	gint idx = -1;
 	gint i;
 
@@ -258,15 +259,17 @@ gboolean firmware_tr64_dial_number(RmProfile *profile, gint port, const gchar *n
 		return FALSE;
 	}
 
-	msg = rm_network_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialSetConfig", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneName", fritzbox_phone_ports[idx].setting_name, NULL);
-	if (!msg) {
+	fon = g_settings_get_string(fritzbox_settings, fritzbox_phone_ports[idx].setting_name);
+	if (!fon)
 		return FALSE;
-	}
 
-	if (msg->status_code != SOUP_STATUS_OK) {
-		g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
-		rm_log_save_data("tr64-dialsetconfig-error.xml", msg->response_body->data, -1);
-		return FALSE;
+	msg = rm_network_tr64_request(profile, TRUE, "x_voip", "X_AVM-DE_DialSetConfig", "urn:dslforum-org:service:X_VoIP:1", "NewX_AVM-DE_PhoneName", fon, NULL);
+	if (msg) {
+		if (msg->status_code != SOUP_STATUS_OK) {
+			g_debug("%s(): Received status code: %d", __FUNCTION__, msg->status_code);
+			rm_log_save_data("tr64-dialsetconfig-error.xml", msg->response_body->data, -1);
+			return FALSE;
+		}
 	}
 
 	/* Now dial number */
