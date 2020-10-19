@@ -75,6 +75,7 @@ typedef struct {
 typedef struct {
 	/*< private >*/
 	RmPhoneNumberType type;
+	gchar *name; /* name is set in case type is OTHER */
 	gchar *number;
 } RmPhoneNumber;
 
