@@ -1,4 +1,4 @@
-project('rm', 'c', version : '2.1.3', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
+project('rm', 'c', version : '2.1.4', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
 
 # Set internal values
 rm_name = meson.project_name()
