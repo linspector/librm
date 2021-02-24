@@ -588,6 +588,65 @@ gchar *rm_router_load_voice(RmProfile *profile, const gchar *name, gsize *len)
 	return active_router->load_voice(profile, name, len);
 }
 
+typedef struct {
+	RmProfile *profile;
+	char      *name;
+} VoiceMailAsyncData;
+
+static VoiceMailAsyncData *voice_mail_async_data_new (RmProfile *profile, const char *name)
+{
+	VoiceMailAsyncData *data;
+
+	data = g_new0 (VoiceMailAsyncData, 1);
+	data->profile = profile;
+	data->name = g_strdup (name);
+
+	return data;
+}
+
+static void
+voice_mail_async_data_free (VoiceMailAsyncData *data)
+{
+	g_clear_pointer (&data->name, g_free);
+
+	g_free (data);
+}
+
+static void
+load_voice_mail_thread (GTask              *task,
+                        gpointer           *unused,
+                        VoiceMailAsyncData *data,
+                        GCancellable       *cancellable)
+{
+	gsize len;
+	char *bytes = rm_router_load_voice (data->profile, data->name, &len);
+
+	g_task_return_pointer (task, g_bytes_new (bytes, len), NULL);
+}
+
+void rm_router_load_voice_mail_async(RmProfile *profile, const char *name, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data)
+{
+	GTask *task;
+
+	g_assert (profile);
+	g_assert (name);
+	g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+	task = g_task_new (NULL, cancellable, callback, user_data);
+	g_task_set_priority (task, G_PRIORITY_DEFAULT);
+	g_task_set_source_tag (task, rm_router_load_voice_mail_async);
+	g_task_set_task_data (task, voice_mail_async_data_new (profile, name), (GDestroyNotify)voice_mail_async_data_free);
+	g_task_run_in_thread (task, (GTaskThreadFunc)load_voice_mail_thread);
+	g_object_unref (task);
+}
+
+GBytes *rm_router_load_voice_mail_finish(GObject *source, GAsyncResult *result, GError **error)
+{
+	g_assert (g_task_is_valid (result, source));
+
+	return g_task_propagate_pointer (G_TASK (result), error);
+}
+
 /**
  * rm_router_get_ip:
  * @profile: a #RmProfile

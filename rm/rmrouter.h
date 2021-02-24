@@ -143,6 +143,8 @@ gboolean rm_router_register(RmRouter *router);
 
 gchar *rm_router_load_fax(RmProfile *profile, const gchar *name, gsize *len);
 gchar *rm_router_load_voice(RmProfile *profile, const gchar *name, gsize *len);
+void rm_router_load_voice_mail_async(RmProfile *profile, const char *name, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
+GBytes *rm_router_load_voice_mail_finish(GObject *source_object, GAsyncResult *result, GError **error);
 
 gboolean rm_router_info_free(RmRouterInfo *info);
 gboolean rm_router_is_cable(RmProfile *profile);

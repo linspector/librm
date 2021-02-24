@@ -30,7 +30,7 @@ G_BEGIN_DECLS
 
 typedef struct _RmVoxPlayback RmVoxPlayback;
 
-RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error);
+RmVoxPlayback *rm_vox_init(gconstpointer data, gsize len, GError **error);
 gboolean rm_vox_play(RmVoxPlayback *playback);
 gboolean rm_vox_shutdown(RmVoxPlayback *playback);
 gboolean rm_vox_set_pause(RmVoxPlayback *playback, gboolean state);

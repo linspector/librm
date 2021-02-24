@@ -476,7 +476,7 @@ void rm_vox_use_ringtone_audio(RmVoxPlayback *playback, gboolean ringtone)
  *
  * Returns: new #RmVoxPlayback
  */
-RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
+RmVoxPlayback *rm_vox_init(gconstpointer data, gsize len, GError **error)
 {
 	RmVoxPlayback *playback;
 	const SpeexMode *mode;
@@ -489,7 +489,8 @@ RmVoxPlayback *rm_vox_init(gchar *data, gsize len, GError **error)
 
 	/* Create internal structue and store data pointer and data length */
 	playback = g_slice_new0(RmVoxPlayback);
-	playback->data = data;
+	playback->data = g_malloc (len);
+	memcpy (playback->data, data, len);
 	playback->len = len;
 
 	/* Get default audio device */
