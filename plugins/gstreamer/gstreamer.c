@@ -406,14 +406,14 @@ static gsize gstreamer_read(void *priv, guchar *data, gsize size)
 		return read;
 	}
 
-	gst_adapter_push(pipes->adapter, gst_sample_get_buffer(sample));
+	gst_adapter_push(pipes->adapter, gst_buffer_ref (gst_sample_get_buffer(sample)));
 	read = MIN(gst_adapter_available(pipes->adapter), size);
 	if (read != 0) {
 		gst_adapter_copy(pipes->adapter, data, 0, read);
 		gst_adapter_flush(pipes->adapter, read);
 	}
 
-	//gst_sample_unref(sample);
+	gst_sample_unref(sample);
 
 	return read;
 }
