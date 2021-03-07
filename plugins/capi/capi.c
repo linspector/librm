@@ -47,6 +47,17 @@ static unsigned int id = 1024;
 /** cancellable capi loop */
 static GCancellable *capi_loop_cancel = NULL;
 
+static GMainContext *main_context = NULL;
+
+static gboolean
+emit_connect (gpointer user_data)
+{
+	RmConnection *connection = user_data;
+
+	rm_object_emit_connection_connect(connection);
+	return G_SOURCE_REMOVE;
+}
+
 /**
  * \brief Connection ring handler - emit connection-established signal
  * \param connection capi connection structure
@@ -56,8 +67,19 @@ void capi_connection_connect(struct capi_connection *capi_connection)
 	RmConnection *connection = rm_connection_find_by_id(capi_connection->id);
 
 	if (connection) {
-		rm_object_emit_connection_connect(connection);
+		GSource *idle = g_idle_source_new ();
+		g_source_set_callback (idle, emit_connect, connection, NULL);
+		g_source_attach (idle, main_context);
 	}
+}
+
+static gboolean
+emit_disconnect (gpointer user_data)
+{
+	RmConnection *connection = user_data;
+
+	rm_object_emit_connection_disconnect(connection);
+	return G_SOURCE_REMOVE;
 }
 
 /**
@@ -69,8 +91,19 @@ void capi_connection_disconnect(struct capi_connection *capi_connection)
 	RmConnection *connection = rm_connection_find_by_id(capi_connection->id);
 
 	if (connection) {
-		rm_object_emit_connection_disconnect(connection);
+		GSource *idle = g_idle_source_new ();
+		g_source_set_callback (idle, emit_disconnect, connection, NULL);
+		g_source_attach (idle, main_context);
 	}
+}
+
+static gboolean
+emit_incoming (gpointer user_data)
+{
+	RmConnection *connection = user_data;
+
+	rm_object_emit_connection_incoming(connection);
+	return G_SOURCE_REMOVE;
 }
 
 /**
@@ -83,15 +116,14 @@ void connection_ring(struct capi_connection *capi_connection)
 	gchar *target = capi_connection->target;
 	gchar *trg = strchr(target, '#');
 
-	g_debug("connection_ring() src %s trg %s", capi_connection->source, capi_connection->target);
 	connection = rm_connection_add(&capi_phone, capi_connection->id, RM_CONNECTION_TYPE_INCOMING | RM_CONNECTION_TYPE_SOFTPHONE, trg ? trg + 1 : target, capi_connection->source);
 
-	g_debug("connection_ring() connection %p", connection);
 	if (connection) {
-		g_debug("connection_ring() set capi_connection %p", capi_connection);
 		connection->priv = capi_connection;
 
-		rm_object_emit_connection_incoming(connection);
+		GSource *idle = g_idle_source_new ();
+		g_source_set_callback (idle, emit_incoming, connection, NULL);
+		g_source_attach (idle, main_context);
 	}
 }
 
@@ -105,6 +137,16 @@ void connection_code(struct capi_connection *connection, gint code)
 	g_debug("connection_code(): code 0x%x", code);
 }
 
+static gboolean
+emit_status (gpointer user_data)
+{
+	RmConnection *connection = user_data;
+
+	g_print ("%s: FIXME, STATUS MISSING\n", __FUNCTION__);
+	rm_object_emit_connection_status(0, connection);
+	return G_SOURCE_REMOVE;
+}
+
 /**
  * \brief Connection status handlers - emits connection-status signal
  * \param connection capi connection structure
@@ -115,10 +157,11 @@ void connection_status(struct capi_connection *capi_connection, gint status)
 	RmConnection *connection = rm_connection_find_by_id(capi_connection->id);
 
 	if (connection) {
-		rm_object_emit_connection_status(status, connection);
+		GSource *idle = g_idle_source_new ();
+		g_source_set_callback (idle, emit_status, connection, NULL);
+		g_source_attach (idle, main_context);
 	}
 }
-
 
 /**
  * \brief Dump capi error (UNUSED)
@@ -1762,6 +1805,7 @@ struct session *capi_session_init(const char *host, gint controller)
 
 	/* start capi transmission loop */
 	capi_loop_cancel = g_cancellable_new();
+	main_context = g_main_context_get_thread_default ();
 	g_thread_new("capi", capi_loop, capi_loop_cancel);
 
 	return session;
@@ -1805,8 +1849,7 @@ gboolean capi_session_connect(gpointer user_data)
 	RmProfile *profile = rm_profile_get_active();
 	gboolean retry = TRUE;
 
- again:
-	g_debug("%s(): called", __FUNCTION__);
+again:
 	session = capi_session_init(rm_router_get_host(profile), g_settings_get_int(profile->settings, "phone-controller") + 1);
 	if (!session && retry) {
 		/* Maybe the port is closed, try to activate it and try again */
