@@ -43,6 +43,26 @@
 
 #define BUFFER_LENGTH 1024
 
+static GMainContext *main_context = NULL;
+
+static gboolean
+emit_fax_process (gpointer user_data)
+{
+	char *file = user_data;
+
+	rm_object_emit_fax_process(file);
+
+	return G_SOURCE_REMOVE;
+}
+
+void rm_faxserver_emit_fax_process (char *file)
+{
+	GSource *idle = g_idle_source_new ();
+
+	g_source_set_callback (idle, emit_fax_process, g_strdup (file), g_free);
+	g_source_attach (idle, main_context);
+}
+
 /**
  * rm_faxserver_thread:
  * @data: a #GSocket
@@ -57,7 +77,7 @@ gpointer rm_faxserver_thread(gpointer data)
 	GSocket *sock;
 	GError *error = NULL;
 	gsize len;
-	gchar *file_name;
+	g_autofree char *file_name = NULL;
 	char buffer[BUFFER_LENGTH];
 	ssize_t write_result;
 	ssize_t written;
@@ -95,7 +115,7 @@ gpointer rm_faxserver_thread(gpointer data)
 			g_close(file_id, &error);
 			g_debug("%s(): Print job received on socket (%s)", __FUNCTION__, file_name);
 
-			rm_object_emit_fax_process(file_name);
+			rm_faxserver_emit_fax_process (g_steal_pointer (&file_name));
 		}
 
 		g_socket_close(sock, &error);
@@ -151,6 +171,7 @@ gboolean rm_faxserver_init(void)
 
 	g_debug("%s(): Fax Server running on port 9100", __FUNCTION__);
 
+	main_context = g_main_context_default ();
 	g_thread_new("printserver", rm_faxserver_thread, socket);
 
 	return TRUE;
