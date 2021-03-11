@@ -102,7 +102,11 @@ static gchar *fritzfon_load_image(RmProfile *profile, gchar *image_ptr, gsize *l
 
 	*len = msg->response_body->length;
 
+#if GLIB_CHECK_VERSION(2,67,5)
 	return g_memdup2(msg->response_body->data, *len);
+#else
+	return g_memdup(msg->response_body->data, *len);
+#endif
 }
 
 static void parse_person(RmContact *contact, RmXmlNode *person)

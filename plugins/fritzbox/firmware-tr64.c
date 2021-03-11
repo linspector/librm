@@ -220,7 +220,11 @@ gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize
 
 	*len = msg->response_body->length;
 
+#if GLIB_CHECK_VERSION(2,67,5)
 	return g_memdup2(msg->response_body->data, *len);
+#else
+	return g_memdup(msg->response_body->data, *len);
+#endif
 }
 
 /**

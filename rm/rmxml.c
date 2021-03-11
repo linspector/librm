@@ -438,7 +438,11 @@ void rm_xmlnode_insert_data(RmXmlNode *node, const gchar *data, gssize size)
 
 	child = new_node(NULL, RM_XMLNODE_TYPE_DATA);
 
+#if GLIB_CHECK_VERSION(2,67,5)
 	child->data = g_memdup2(data, real_size);
+#else
+	child->data = g_memdup(data, real_size);
+#endif
 	child->data_size = real_size;
 
 	rm_xmlnode_insert_child(node, child);
@@ -1002,7 +1006,11 @@ RmXmlNode *rm_xmlnode_copy(const RmXmlNode *node)
 
 	if (node->data) {
 		if (node->data_size) {
+#if GLIB_CHECK_VERSION(2,67,5)
 			ret->data = g_memdup2(node->data, node->data_size);
+#else
+			ret->data = g_memdup(node->data, node->data_size);
+#endif
 			ret->data_size = node->data_size;
 		} else {
 			ret->data = g_strdup(node->data);
