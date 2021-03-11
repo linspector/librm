@@ -38,7 +38,7 @@ typedef struct {
 	/** Address book plugin name */
 	gchar *name;
 	gchar *(*get_active_book_name)(void);
-	GSList *(*get_contacts)(void);
+	GList *(*get_contacts)(void);
 	gboolean (*remove_contact)(RmContact *contact);
 	gboolean (*save_contact)(RmContact *contact);
 	gchar **(*get_sub_books)(void);
@@ -46,7 +46,7 @@ typedef struct {
 } RmAddressBook;
 
 RmAddressBook *rm_addressbook_get(gchar *name);
-GSList *rm_addressbook_get_contacts(RmAddressBook *book);
+GList *rm_addressbook_get_contacts(RmAddressBook *book);
 gboolean rm_addressbook_remove_contact(RmAddressBook *book, RmContact *contact);
 gboolean rm_addressbook_save_contact(RmAddressBook *book, RmContact *contact);
 gboolean rm_addressbook_can_save(RmAddressBook *book);
@@ -56,7 +56,7 @@ gchar *rm_addressbook_get_name(RmAddressBook *book);
 gchar *rm_addressbook_get_sub_name(RmAddressBook *book);
 gchar **rm_addressbook_get_sub_books(RmAddressBook *book);
 void rm_addressbook_set_sub_book(RmAddressBook *book, gchar *name);
-GSList *rm_addressbook_get_plugins(void);
+GList *rm_addressbook_get_plugins(void);
 
 G_END_DECLS
 

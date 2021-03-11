@@ -92,7 +92,7 @@ typedef struct {
 	gboolean (*login)(RmProfile *profile);
 	gboolean (*logout)(RmProfile *profile, gboolean force);
 	gboolean (*get_settings)(RmProfile *profile);
-	gboolean (*load_journal)(RmProfile *profile);
+	GList *(*load_journal)(RmProfile *profile);
 	gboolean (*clear_journal)(RmProfile *profile);
 	gboolean (*dial_number)(RmProfile *profile, gint port, const gchar *number);
 	gboolean (*hangup)(RmProfile *profile, gint port, const gchar *number);
@@ -116,7 +116,8 @@ gchar *rm_router_get_login_password(RmProfile *profile);
 gchar *rm_router_get_login_user(RmProfile *profile);
 gchar *rm_router_get_ftp_password(RmProfile *profile);
 gchar *rm_router_get_ftp_user(RmProfile *profile);
-gboolean rm_router_load_journal(RmProfile *profile);
+void rm_router_load_journal_async(RmProfile *profile, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data);
+gpointer rm_router_load_journal_finish(GObject *source, GAsyncResult *result, GError **error);
 gboolean rm_router_clear_journal(RmProfile *profile);
 gboolean rm_router_dial_number(RmProfile *profile, gint port, const gchar *number);
 gboolean rm_router_hangup(RmProfile *profile, gint port, const gchar *number);
@@ -137,7 +138,7 @@ void rm_router_shutdown(void);
 
 gchar **rm_router_get_numbers(RmProfile *profile);
 
-void rm_router_process_journal(GSList *journal);
+void rm_router_process_journal(GList *journal);
 
 gboolean rm_router_register(RmRouter *router);
 
@@ -149,10 +150,10 @@ GBytes *rm_router_load_voice_mail_finish(GObject *source_object, GAsyncResult *r
 gboolean rm_router_info_free(RmRouterInfo *info);
 gboolean rm_router_is_cable(RmProfile *profile);
 
-GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal);
-GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal);
+GList *rm_router_load_fax_reports(RmProfile *profile, GList *journal);
+GList *rm_router_load_voice_records(RmProfile *profile, GList *journal);
 
-void rm_router_free_phone_list(GSList *phone_list);
+void rm_router_free_phone_list(GList *phone_list);
 
 gboolean rm_router_get_suppress_state(RmProfile *profile);
 

@@ -68,7 +68,7 @@ void rm_notification_shutdown(void);
 void rm_notification_register(RmNotification *notification);
 void rm_notification_unregister(RmNotification *notification);
 
-GSList *rm_notification_get_plugins(void);
+GList *rm_notification_get_plugins(void);
 gchar *rm_notification_get_name(RmNotification *notification);
 void rm_notification_message_close(RmNotificationMessage *message);
 RmNotificationMessage *rm_notification_message_get(RmConnection *connection);

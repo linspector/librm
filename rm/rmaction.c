@@ -110,7 +110,7 @@ gchar *rm_action_regex(gchar *str, RmConnection *connection)
  */
 static void rm_action_connection_changed_cb(RmObject *object, gint event, RmConnection *connection, gpointer user_data)
 {
-	GSList *list;
+	GList *list;
 	RmProfile *profile = user_data;
 
 	/* Sanity check #1 - profile must be != NULL */
@@ -320,7 +320,7 @@ gchar **rm_action_get_numbers(RmAction *action)
  *
  * Returns: profiles action list
  */
-GSList *rm_action_get_list(RmProfile *profile)
+GList *rm_action_get_list(RmProfile *profile)
 {
 	return profile->action_list;
 }
@@ -333,8 +333,8 @@ GSList *rm_action_get_list(RmProfile *profile)
  */
 static void rm_action_save(RmProfile *profile)
 {
-	GSList *list;
-	gchar **actions = g_new0(gchar *, g_slist_length(profile->action_list) + 1);
+	GList *list;
+	gchar **actions = g_new0(gchar *, g_list_length(profile->action_list) + 1);
 	gchar **current_actions = g_settings_get_strv(profile->settings, "actions");
 	gsize counter = 0;
 
@@ -378,7 +378,7 @@ static RmAction *rm_action_load(RmProfile *profile, const gchar *name)
 	g_free(settings_path);
 
 	/* Add action to list */
-	profile->action_list = g_slist_prepend(profile->action_list, action);
+	profile->action_list = g_list_prepend(profile->action_list, action);
 
 	return action;
 }
@@ -443,7 +443,7 @@ RmAction *rm_action_new(RmProfile *profile)
 void rm_action_remove(RmProfile *profile, RmAction *action)
 {
 	/* Remove profile from action list */
-	profile->action_list = g_slist_remove(profile->action_list, action);
+	profile->action_list = g_list_remove(profile->action_list, action);
 
 	/* Save all actions to profile */
 	rm_action_save(profile);
@@ -496,6 +496,6 @@ void rm_action_shutdown(RmProfile *profile)
 	g_signal_handlers_disconnect_by_func(G_OBJECT(rm_object), G_CALLBACK(rm_action_connection_changed_cb), profile);
 
 	/* Clear action list */
-	g_slist_free_full(profile->action_list, g_object_unref);
+	g_list_free_full(profile->action_list, g_object_unref);
 	profile->action_list = NULL;
 }

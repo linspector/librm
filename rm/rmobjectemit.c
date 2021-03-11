@@ -60,19 +60,6 @@ void rm_object_emit_connection_changed(gint event, RmConnection *connection)
 }
 
 /**
- * rm_object_emit_journal_loaded
- * @journal: new journal that needs to be handled by application
- *
- * Emit signal: journal-loaded.
- */
-void rm_object_emit_journal_loaded(GSList *journal)
-{
-	if (rm_object) {
-		g_signal_emit(rm_object, rm_object_signals[RM_ACB_JOURNAL_LOADED], 0, journal);
-	}
-}
-
-/**
  * rm_object_emit_contact_process:
  * @contact: a #RmContact
  *

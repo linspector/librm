@@ -42,11 +42,11 @@
  */
 
 /** Keeps track of all notification plugins */
-static GSList *rm_notification_plugins = NULL;
+static GList *rm_notification_plugins = NULL;
 /** Global notification signal id connected to connection-changed signal */
 static gint rm_notification_signal_id = 0;
 /** Keeping track of all open notification messages */
-static GSList *rm_notification_messages = NULL;
+static GList *rm_notification_messages = NULL;
 static RmVoxPlayback *vox = NULL;
 
 /**
@@ -101,7 +101,7 @@ void rm_notification_stop_ringtone(void)
  */
 RmNotificationMessage *rm_notification_message_get(RmConnection *connection)
 {
-	GSList *list;
+	GList *list;
 
 	for (list = rm_notification_messages; list != NULL; list = list->next) {
 		RmNotificationMessage *message = list->data;
@@ -130,7 +130,7 @@ static void rm_notification_show_message(RmNotification *notification, RmConnect
 	message->connection = connection;
 	message->notification = notification;
 
-	rm_notification_messages = g_slist_prepend(rm_notification_messages, message);
+	rm_notification_messages = g_list_prepend(rm_notification_messages, message);
 
 	message->priv = notification->show(connection, contact);
 }
@@ -161,7 +161,7 @@ void rm_notification_message_close(RmNotificationMessage *message)
 
 	message->notification->close(message->priv);
 
-	rm_notification_messages = g_slist_remove(rm_notification_messages, message);
+	rm_notification_messages = g_list_remove(rm_notification_messages, message);
 
 	g_slice_free(RmNotificationMessage, message);
 }
@@ -176,7 +176,7 @@ void rm_notification_message_close(RmNotificationMessage *message)
  */
 RmNotification *rm_notification_get(gchar *name)
 {
-	GSList *list;
+	GList *list;
 
 	/* Loop through list and try to find notification plugin */
 	for (list = rm_notification_plugins; list != NULL; list = list->next) {
@@ -341,7 +341,7 @@ static void rm_notification_connection_changed_cb(RmObject *obj, gint event, RmC
  */
 void rm_notification_register(RmNotification *notification)
 {
-	rm_notification_plugins = g_slist_prepend(rm_notification_plugins, notification);
+	rm_notification_plugins = g_list_prepend(rm_notification_plugins, notification);
 }
 
 /**
@@ -352,7 +352,7 @@ void rm_notification_register(RmNotification *notification)
  */
 void rm_notification_unregister(RmNotification *notification)
 {
-	rm_notification_plugins = g_slist_remove(rm_notification_plugins, notification);
+	rm_notification_plugins = g_list_remove(rm_notification_plugins, notification);
 }
 
 /**
@@ -384,9 +384,9 @@ void rm_notification_shutdown(void)
  *
  * Get notification plugin list.
  *
- * Returns: a GSList of notification plugins.
+ * Returns: a GList of notification plugins.
  */
-GSList *rm_notification_get_plugins(void)
+GList *rm_notification_get_plugins(void)
 {
 	return rm_notification_plugins;
 }

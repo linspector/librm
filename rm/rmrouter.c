@@ -44,7 +44,7 @@
 /** Active router structure */
 static RmRouter *active_router = NULL;
 /** Global router plugin list */
-static GSList *rm_router_list = NULL;
+static GList *rm_router_list = NULL;
 /** Router login blocked shield */
 static gboolean rm_router_login_blocked = FALSE;
 
@@ -67,9 +67,9 @@ static void rm_router_free_phone_info(gpointer data)
  *
  * Free full phone list.
  */
-void rm_router_free_phone_list(GSList *phone_list)
+void rm_router_free_phone_list(GList *phone_list)
 {
-	g_slist_free_full(phone_list, rm_router_free_phone_info);
+	g_list_free_full(phone_list, rm_router_free_phone_info);
 }
 
 /**
@@ -95,7 +95,7 @@ gchar **rm_router_get_numbers(RmProfile *profile)
  */
 gboolean rm_router_present(RmRouterInfo *router_info)
 {
-	GSList *list;
+	GList *list;
 
 	if (!rm_router_list) {
 		g_debug("%s(): No router plugin available", __FUNCTION__);
@@ -420,18 +420,40 @@ const gchar *rm_router_get_version(RmProfile *profile)
 	return profile->router_info->version;
 }
 
-/**
- * rm_router_load_journal:
- * @profile: a #RmProfile
- *
- * Get router journal
- *
- * Returns: get journal return state
- */
-gboolean rm_router_load_journal(RmProfile *profile)
+static void
+load_journal_thread (GTask        *task,
+                     gpointer     *unused,
+                     RmProfile    *profile,
+                     GCancellable *cancellable)
 {
-	return active_router ? active_router->load_journal(profile) : FALSE;
+	GList *list = active_router ? active_router->load_journal(profile) : NULL;
+
+	g_task_return_pointer (task, list, (GDestroyNotify) rm_journal_free);
 }
+
+void rm_router_load_journal_async(RmProfile *profile, GCancellable *cancellable, GAsyncReadyCallback callback, gpointer user_data)
+{
+	GTask *task;
+
+	g_assert (profile);
+	g_assert (!cancellable || G_IS_CANCELLABLE (cancellable));
+
+	task = g_task_new (NULL, cancellable, callback, user_data);
+	g_task_set_priority (task, G_PRIORITY_DEFAULT);
+	g_task_set_source_tag (task, rm_router_load_journal_async);
+	g_task_set_task_data (task, profile, NULL);
+	g_task_run_in_thread (task, (GTaskThreadFunc)load_journal_thread);
+	g_object_unref (task);
+}
+
+gpointer rm_router_load_journal_finish(GObject *source, GAsyncResult *result, GError **error)
+{
+	g_return_val_if_fail (g_task_is_valid (result, source), NULL);
+	g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+	return g_task_propagate_pointer (G_TASK (result), error);
+}
+
 
 /**
  * rm_router_clear_journal:
@@ -492,7 +514,7 @@ gboolean rm_router_hangup(RmProfile *profile, gint port, const gchar *number)
  */
 gboolean rm_router_register(RmRouter *router)
 {
-	rm_router_list = g_slist_prepend(rm_router_list, router);
+	rm_router_list = g_list_prepend(rm_router_list, router);
 
 	return TRUE;
 }
@@ -506,7 +528,7 @@ gboolean rm_router_register(RmRouter *router)
  */
 gboolean rm_router_init(void)
 {
-	if (g_slist_length(rm_router_list)) {
+	if (g_list_length(rm_router_list)) {
 		return TRUE;
 	}
 
@@ -523,7 +545,7 @@ void rm_router_shutdown(void)
 {
 	/* Free router list */
 	if (rm_router_list != NULL) {
-		g_slist_free(rm_router_list);
+		g_list_free(rm_router_list);
 		rm_router_list = NULL;
 	}
 
@@ -537,9 +559,9 @@ void rm_router_shutdown(void)
  *
  * Router needs to process a new loaded journal (emit journal-process signal and journal-loaded)
  */
-void rm_router_process_journal(GSList *journal)
+void rm_router_process_journal(GList *journal)
 {
-	GSList *list;
+	GList *list;
 
 	/* Parse offline journal and combine new entries */
 	journal = rm_journal_load(journal);
@@ -553,9 +575,6 @@ void rm_router_process_journal(GSList *journal)
 
 		rm_object_emit_contact_process(call->remote);
 	}
-
-	/* Emit "journal-loaded" signal */
-	rm_object_emit_journal_loaded(journal);
 }
 
 /**
@@ -763,7 +782,7 @@ gboolean rm_router_is_cable(RmProfile *profile)
  *
  * Returns: new journal list with attached fax reports
  */
-GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
+GList *rm_router_load_fax_reports(RmProfile *profile, GList *journal)
 {
 	g_autoptr (GDir) dir = NULL;
 	GError *error = NULL;
@@ -819,7 +838,7 @@ GSList *rm_router_load_fax_reports(RmProfile *profile, GSList *journal)
  *
  * Returns: new journal list with attached voice records
  */
-GSList *rm_router_load_voice_records(RmProfile *profile, GSList *journal)
+GList *rm_router_load_voice_records(RmProfile *profile, GList *journal)
 {
 	g_autoptr(GDir) dir = NULL;
 	GError *error = NULL;

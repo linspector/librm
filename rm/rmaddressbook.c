@@ -44,7 +44,7 @@ static guint rm_addressbook_contacts_changed_id = 0;
 static GHashTable *rm_addressbook_table = NULL;
 
 /** Internal address book list */
-static GSList *rm_addressbook_plugins = NULL;
+static GList *rm_addressbook_plugins = NULL;
 
 /**
  * rm_addressbook_get:
@@ -56,7 +56,7 @@ static GSList *rm_addressbook_plugins = NULL;
  */
 RmAddressBook *rm_addressbook_get(gchar *name)
 {
-	GSList *list;
+	GList *list;
 
 	for (list = rm_addressbook_plugins; list != NULL; list = list->next) {
 		RmAddressBook *ab = list->data;
@@ -77,7 +77,7 @@ RmAddressBook *rm_addressbook_get(gchar *name)
  *
  * Returns: contact list or %NULL if no address book is set.
  */
-GSList *rm_addressbook_get_contacts(RmAddressBook *book)
+GList *rm_addressbook_get_contacts(RmAddressBook *book)
 {
 	if (book) {
 		return book->get_contacts();
@@ -152,7 +152,7 @@ static gint rm_addressbook_number_in_contact(gconstpointer a, gconstpointer b)
 {
 	RmContact *contact = (RmContact*)a;
 	gchar *number = (gchar*)b;
-	GSList *list;
+	GList *list;
 
 	for (list = contact->numbers; list != NULL; list = list->next) {
 		RmPhoneNumber *phone_number = list->data;
@@ -177,7 +177,7 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 {
 	RmAddressBook *book = rm_profile_get_addressbook(rm_profile_get_active());
 	RmContact *tmp_contact;
-	GSList *contacts;
+	GList *contacts;
 	gchar *number = contact->number;
 
 	if (RM_EMPTY_STRING(contact->number)) {
@@ -199,10 +199,10 @@ static void rm_addressbook_contact_process_cb(RmObject *obj, RmContact *contact,
 			return;
 		}
 	} else {
-		GSList *list;
+		GList *list;
 		gchar *full_number = rm_number_full(contact->number, FALSE);
 
-		list = g_slist_find_custom(contacts, full_number, rm_addressbook_number_in_contact);
+		list = g_list_find_custom(contacts, full_number, rm_addressbook_number_in_contact);
 		if (list) {
 			tmp_contact = list->data;
 
@@ -252,7 +252,7 @@ static void rm_addressbook_table_free(void *data)
  */
 void rm_addressbook_register(RmAddressBook *book)
 {
-	rm_addressbook_plugins = g_slist_prepend(rm_addressbook_plugins, book);
+	rm_addressbook_plugins = g_list_prepend(rm_addressbook_plugins, book);
 
 	if (!rm_addressbook_contact_process_id) {
 		rm_addressbook_table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, rm_addressbook_table_free);
@@ -269,9 +269,9 @@ void rm_addressbook_register(RmAddressBook *book)
  */
 void rm_addressbook_unregister(RmAddressBook *book)
 {
-	rm_addressbook_plugins = g_slist_remove(rm_addressbook_plugins, book);
+	rm_addressbook_plugins = g_list_remove(rm_addressbook_plugins, book);
 
-	if (g_slist_length(rm_addressbook_plugins) < 1) {
+	if (g_list_length(rm_addressbook_plugins) < 1) {
 		g_signal_handler_disconnect(G_OBJECT(rm_object), rm_addressbook_contact_process_id);
 		g_signal_handler_disconnect(G_OBJECT(rm_object), rm_addressbook_contacts_changed_id);
 		g_hash_table_destroy(rm_addressbook_table);
@@ -316,7 +316,7 @@ gchar *rm_addressbook_get_sub_name(RmAddressBook *book)
  *
  * Returns: list of address book plugins
  */
-GSList *rm_addressbook_get_plugins(void)
+GList *rm_addressbook_get_plugins(void)
 {
 	return rm_addressbook_plugins;
 }

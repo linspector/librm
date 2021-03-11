@@ -52,9 +52,9 @@
  *
  * Returns: %TRUE on success, otherwise %FALSE
  */
-gboolean rm_journal_save_as(GSList *journal, gchar *file_name)
+gboolean rm_journal_save_as(GList *journal, gchar *file_name)
 {
-	GSList *list;
+	GList *list;
 	RmCallEntry *call;
 	FILE *file;
 
@@ -102,7 +102,7 @@ gboolean rm_journal_save_as(GSList *journal, gchar *file_name)
  *
  * Returns: %TRUE on success, otherwise %FALSE
  */
-gboolean rm_journal_save(GSList *journal)
+gboolean rm_journal_save(GList *journal)
 {
 	RmProfile *profile = rm_profile_get_active();
 	gchar *dir;
@@ -134,7 +134,7 @@ gboolean rm_journal_save(GSList *journal)
  */
 static inline gpointer rm_journal_csv_parse_rm(gpointer ptr, gchar **split)
 {
-	GSList *list = ptr;
+	GList *list = ptr;
 
 	if (g_strv_length(split) == 7) {
 		RmCallEntry *call = rm_call_entry_new(atoi(split[0]), split[1], split[2], split[3], split[4], split[5], split[6], NULL);
@@ -154,7 +154,7 @@ static inline gpointer rm_journal_csv_parse_rm(gpointer ptr, gchar **split)
  *
  * Returns: new journal call list
  */
-static GSList *rm_journal_csv_parse(GSList *list, const gchar *data)
+static GList *rm_journal_csv_parse(GList *list, const gchar *data)
 {
 	list = rm_csv_parse_data(data, RM_JOURNAL_HEADER, rm_journal_csv_parse_rm, list);
 
@@ -170,11 +170,11 @@ static GSList *rm_journal_csv_parse(GSList *list, const gchar *data)
  *
  * Returns: filled journal list
  */
-GSList *rm_journal_load(GSList *journal)
+GList *rm_journal_load(GList *journal)
 {
 	gchar *file_name;
 	gchar *file_data;
-	GSList *list = journal;
+	GList *list = journal;
 	RmProfile *profile = rm_profile_get_active();
 
 	file_name = g_build_filename(rm_get_user_data_dir(), profile->name, "journal.csv", NULL);
@@ -255,9 +255,9 @@ gint rm_journal_sort_by_date(gconstpointer a, gconstpointer b)
  *
  * Returns: new call list with appended call structure
  */
-GSList *rm_journal_add_call_entry(GSList *journal, RmCallEntry *call)
+GList *rm_journal_add_call_entry(GList *journal, RmCallEntry *call)
 {
-	GSList *list = journal;
+	GList *list = journal;
 	RmCallEntry *journal_call;
 
 	/* Search through list and find duplicates */
@@ -284,8 +284,25 @@ GSList *rm_journal_add_call_entry(GSList *journal, RmCallEntry *call)
 	}
 
 	/* Append call sorted to the list */
-	list = g_slist_insert_sorted(journal, call, rm_journal_sort_by_date);
+	list = g_list_insert_sorted(journal, call, rm_journal_sort_by_date);
 
 	/* Return new call list */
 	return list;
 }
+
+static gpointer copy_journal_data(gconstpointer src, gpointer data)
+{
+	return rm_call_entry_dup ((RmCallEntry *)src);
+}
+
+GList *rm_journal_dup(GList *journal)
+{
+	return g_list_copy_deep(journal, copy_journal_data, NULL);
+}
+
+void rm_journal_free(GList *journal)
+{
+	g_list_free_full (journal, rm_call_entry_free);
+}
+
+

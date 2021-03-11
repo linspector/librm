@@ -75,6 +75,7 @@ typedef struct {
 
 RmCallEntry *rm_call_entry_new(RmCallEntryTypes type, const gchar *date_time, const gchar *remote_name, const gchar *remote_number, const gchar *local_name, const gchar *local_number, const gchar *duration, gpointer priv);
 void rm_call_entry_free(gpointer data);
+RmCallEntry *rm_call_entry_dup (RmCallEntry *src);
 
 G_END_DECLS
 

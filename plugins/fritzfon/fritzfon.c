@@ -26,7 +26,7 @@
 
 #include <rm/rm.h>
 
-static GSList *contacts = NULL;
+static GList *contacts = NULL;
 static GSettings *fritzfon_settings = NULL;
 
 static RmXmlNode *master_node = NULL;
@@ -39,10 +39,10 @@ struct fritzfon_book {
 struct fritzfon_priv {
 	gchar *unique_id;
 	gchar *image_url;
-	GSList *nodes;
+	GList *nodes;
 };
 
-static GSList *fritzfon_books = NULL;
+static GList *fritzfon_books = NULL;
 
 static gchar *fritzfon_load_image_ftp(RmProfile *profile, gchar *image_ptr, gsize *len)
 {
@@ -102,7 +102,7 @@ static gchar *fritzfon_load_image(RmProfile *profile, gchar *image_ptr, gsize *l
 
 	*len = msg->response_body->length;
 
-	return g_memdup(msg->response_body->data, *len);
+	return g_memdup2(msg->response_body->data, *len);
 }
 
 static void parse_person(RmContact *contact, RmXmlNode *person)
@@ -186,7 +186,7 @@ static void parse_telephony(RmContact *contact, RmXmlNode *telephony)
 				g_debug("Unhandled phone number type: '%s'", type);
 			}
 			phone_number->number = rm_number_full(number, FALSE);
-			contact->numbers = g_slist_prepend(contact->numbers, phone_number);
+			contact->numbers = g_list_prepend(contact->numbers, phone_number);
 		}
 
 		g_free(number);
@@ -218,11 +218,11 @@ static void contact_add(RmProfile *profile, RmXmlNode *node, gint count)
 			/* empty */
 		} else {
 			/* Unhandled node, save it */
-			priv->nodes = g_slist_prepend(priv->nodes, rm_xmlnode_copy(tmp));
+			priv->nodes = g_list_prepend(priv->nodes, rm_xmlnode_copy(tmp));
 		}
 	}
 
-	contacts = g_slist_insert_sorted(contacts, contact, rm_contact_name_compare);
+	contacts = g_list_insert_sorted(contacts, contact, rm_contact_name_compare);
 }
 
 static void phonebook_add(RmProfile *profile, RmXmlNode *node)
@@ -365,9 +365,9 @@ static gint fritzfon_read_book(void)
 	return fritzfon_read_book_tr64();
 }
 
-GSList *fritzfon_get_contacts(void)
+GList *fritzfon_get_contacts(void)
 {
-	GSList *list = contacts;
+	GList *list = contacts;
 
 	return list;
 }
@@ -428,7 +428,7 @@ static gint fritzfon_get_books_ftp(void)
 			book->id = num;
 			book->name = name;
 
-			fritzfon_books = g_slist_prepend(fritzfon_books, book);
+			fritzfon_books = g_list_prepend(fritzfon_books, book);
 		} else {
 			break;
 		}
@@ -439,12 +439,12 @@ static gint fritzfon_get_books_ftp(void)
 	g_object_unref(msg);
 
  end:
-	if (g_slist_length(fritzfon_books) == 0) {
+	if (g_list_length(fritzfon_books) == 0) {
 		book = g_slice_new(struct fritzfon_book);
 		book->id = g_strdup("0");
 		book->name = g_strdup("Telefonbuch");
 
-		fritzfon_books = g_slist_prepend(fritzfon_books, book);
+		fritzfon_books = g_list_prepend(fritzfon_books, book);
 	}
 
 	//rm_router_logout(profile);
@@ -482,7 +482,7 @@ static gint fritzfon_get_books_tr64(void)
 		book->id = g_strdup_printf("%d", i);
 		book->name = name;
 
-		fritzfon_books = g_slist_prepend(fritzfon_books, book);
+		fritzfon_books = g_list_prepend(fritzfon_books, book);
 
 		rm_log_save_data("tr64-getphonebook.xml", msg->response_body->data, msg->response_body->length);
 	}
@@ -528,7 +528,7 @@ static RmXmlNode *contact_to_xmlnode(RmContact *contact)
 	RmXmlNode *image_node;
 	RmXmlNode *telephony_node;
 	RmXmlNode *tmp_node;
-	GSList *list;
+	GList *list;
 	gchar *tmp;
 	struct fritzfon_priv *priv = contact->priv;
 
@@ -556,7 +556,7 @@ static RmXmlNode *contact_to_xmlnode(RmContact *contact)
 	if (contact->numbers) {
 		gboolean first = TRUE;
 		gint id = 0;
-		gchar *tmp = g_strdup_printf("%d", g_slist_length(contact->numbers));
+		gchar *tmp = g_strdup_printf("%d", g_list_length(contact->numbers));
 
 		telephony_node = rm_xmlnode_new("telephony");
 		rm_xmlnode_set_attrib(telephony_node, "nid", tmp);
@@ -635,7 +635,7 @@ RmXmlNode *phonebook_to_xmlnode(void)
 	RmXmlNode *node;
 	RmXmlNode *child;
 	RmXmlNode *book;
-	GSList *list;
+	GList *list;
 
 	/* Create general phonebooks node */
 	node = rm_xmlnode_new("phonebooks");
@@ -715,7 +715,7 @@ gboolean fritzfon_save(void)
 
 gboolean fritzfon_remove_contact(RmContact *contact)
 {
-	contacts = g_slist_remove(contacts, contact);
+	contacts = g_list_remove(contacts, contact);
 	return fritzfon_save();
 }
 
@@ -758,7 +758,7 @@ gboolean fritzfon_save_contact(RmContact *contact)
 		if (contact->image) {
 			fritzfon_set_image(contact);
 		}
-		contacts = g_slist_insert_sorted(contacts, contact, rm_contact_name_compare);
+		contacts = g_list_insert_sorted(contacts, contact, rm_contact_name_compare);
 	} else {
 		if (contact->image) {
 			fritzfon_set_image(contact);
@@ -774,7 +774,7 @@ gchar *fritzfon_get_active_book_name(void)
 
 gchar **fritzfon_get_sub_books(void)
 {
-	GSList *list;
+	GList *list;
 	gchar **ret = NULL;
 
 	for (list = fritzfon_books; list != NULL; list = list->next) {
@@ -788,7 +788,7 @@ gchar **fritzfon_get_sub_books(void)
 
 gboolean fritzfon_set_sub_book(gchar *name)
 {
-	GSList *list;
+	GList *list;
 
 	for (list = fritzfon_books; list != NULL; list = list->next) {
 		struct fritzfon_book *book = list->data;

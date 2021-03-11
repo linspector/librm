@@ -180,15 +180,15 @@ gint number_compare(gconstpointer a, gconstpointer b)
  * \param msn_str msn string to lookup
  * \return TRUE on success, otherwise FALSE
  */
-gboolean extract_number_05_50(GSList **number_list, const gchar *data, gchar *msn_str)
+gboolean extract_number_05_50(GList **number_list, const gchar *data, gchar *msn_str)
 {
 	gchar *fon;
 
 	fon = xml_extract_list_value(data, msn_str);
 	if (!RM_EMPTY_STRING(fon) && isdigit(fon[0])) {
-		if (!g_slist_find_custom(*number_list, fon, number_compare)) {
+		if (!g_list_find_custom(*number_list, fon, number_compare)) {
 			if (strlen(fon) > 2) {
-				*number_list = g_slist_prepend(*number_list, fon);
+				*number_list = g_list_prepend(*number_list, fon);
 			}
 		} else {
 			g_free(fon);
@@ -211,7 +211,7 @@ static void fritzbox_detect_controller_05_50(RmProfile *profile, const gchar *da
 	gint index;
 	gint type = -1;
 	gint port;
-	GSList *number_list = NULL;
+	GList *number_list = NULL;
 
 	/* POTS first! */
 	if (extract_number_05_50(&number_list, data, "telcfg:settings/MSN/POTS")) {
@@ -721,7 +721,7 @@ gboolean fritzbox_get_settings_05_50(RmProfile *profile)
  */
 void fritzbox_journal_05_50_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
-	GSList *journal = NULL;
+	GList *journal = NULL;
 	RmProfile *profile = user_data;
 
 	if (msg->status_code != SOUP_STATUS_OK) {

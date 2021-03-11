@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 
 /**
  * RmCallbackId
- * @RM_ACB_JOURNAL_LOADED: journal-loaded
  * @RM_ACB_CONNECTION_CHANGED: connection-changed
  * @RM_ACB_CONTACT_PROCESS: contact-process
  * @RM_ACB_FAX_PROCESS: fax-process
@@ -49,7 +48,6 @@ G_BEGIN_DECLS
  * RM Callback signal ids
  */
 typedef enum {
-	RM_ACB_JOURNAL_LOADED,
 	RM_ACB_CONNECTION_CHANGED,
 	RM_ACB_CONTACT_PROCESS,
 	RM_ACB_FAX_PROCESS,

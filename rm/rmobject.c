@@ -84,18 +84,6 @@ static void marshal_VOID__POINTER_POINTER(GClosure *closure, GValue *return_valu
  */
 static void rm_object_create_signals(GObjectClass *g_object_class)
 {
-	rm_object_signals[RM_ACB_JOURNAL_LOADED] = g_signal_new(
-		"journal-loaded",
-		G_OBJECT_CLASS_TYPE(g_object_class),
-		G_SIGNAL_RUN_FIRST,
-		G_STRUCT_OFFSET(RmObjectClass, journal_loaded),
-		NULL,
-		NULL,
-		g_cclosure_marshal_VOID__POINTER,
-		G_TYPE_NONE,
-		1,
-		G_TYPE_POINTER);
-
 	rm_object_signals[RM_ACB_CONNECTION_CHANGED] = g_signal_new(
 		"connection-changed",
 		G_OBJECT_CLASS_TYPE(g_object_class),

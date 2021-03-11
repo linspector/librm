@@ -66,7 +66,7 @@ struct _RmPhone {
 void rm_phone_register(RmPhone *phone);
 void rm_phone_unregister(RmPhone *phone);
 
-GSList *rm_phone_get_plugins(void);
+GList *rm_phone_get_plugins(void);
 RmPhone *rm_phone_get(const gchar *name);
 gchar *rm_phone_get_name(RmPhone *phone);
 

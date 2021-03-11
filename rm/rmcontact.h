@@ -61,9 +61,9 @@ struct _RmContact {
 	gchar *company;
 
 	/* Phone numbers */
-	GSList *numbers;
+	GList *numbers;
 	/* Addresses */
-	GSList *addresses;
+	GList *addresses;
 
 	/* currently active number */
 	gchar *number;

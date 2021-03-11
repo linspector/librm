@@ -44,7 +44,7 @@
  *
  * Returns: Updated journal @list
  */
-static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNode *call)
+static GList *firmware_tr64_add_call(GList *list, RmProfile *profile, RmXmlNode *call)
 {
 	g_autofree gchar *type = NULL;
 	g_autofree gchar *port = NULL;
@@ -124,31 +124,55 @@ static GSList *firmware_tr64_add_call(GSList *list, RmProfile *profile, RmXmlNod
  */
 void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
-	GSList *journal = NULL;
-	RmProfile *profile = user_data;
+}
+
+/**
+ * firmware_tr64_load_journal:
+ * @profile: a #RmProfile
+ *
+ * Load journal using x_contact interface
+ *
+ * Returns: #GList
+ */
+GList *firmware_tr64_load_journal(RmProfile *profile)
+{
+	g_autoptr (SoupMessage) url_msg = NULL;
+	g_autoptr (SoupMessage) msg = NULL;
+	g_autofree char *url = NULL;
+	guint status;
+	GList *journal = NULL;
 	RmXmlNode *child;
 
-	if (msg->status_code != SOUP_STATUS_OK) {
+	url_msg = rm_network_tr64_request(profile, TRUE, "x_contact", "GetCallList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
+	if (url_msg == NULL)
+		return journal;
+
+	url = rm_utils_xml_extract_tag(url_msg->response_body->data, "NewCallListURL");
+	if (RM_EMPTY_STRING(url))
+		return journal;
+
+	rm_log_save_data("tr64-getcalllist.xml", url_msg->response_body->data, url_msg->response_body->length);
+
+	msg = soup_message_new(SOUP_METHOD_GET, url);
+
+	status = soup_session_send_message(rm_soup_session, msg);
+
+	if (status != SOUP_STATUS_OK) {
 		g_debug("%s(): Got invalid data, return code: %d (%s)", __FUNCTION__, msg->status_code, soup_status_get_phrase(msg->status_code));
-		g_object_unref(msg);
-		return;
+		return journal;
 	}
 
 	rm_log_save_data("tr64-callist.xml", msg->response_body->data, msg->response_body->length);
 
 	RmXmlNode *node = rm_xmlnode_from_str(msg->response_body->data, msg->response_body->length);
-	if (node == NULL) {
-		g_object_unref(msg);
-		return;
-	}
+	if (node == NULL)
+		return journal;
 
 	for (child = rm_xmlnode_get_child(node, "Call"); child != NULL; child = rm_xmlnode_get_next_twin(child)) {
 		journal = firmware_tr64_add_call(journal, profile, child);
 	}
 
 	rm_xmlnode_free(node);
-
-	g_debug("%s(): process journal (%d)", __FUNCTION__, g_slist_length(journal));
 
 	/* Load fax reports */
 	journal = rm_router_load_fax_reports(profile, journal);
@@ -158,40 +182,8 @@ void firmware_tr64_journal_cb(SoupSession *session, SoupMessage *msg, gpointer u
 
 	/* Process journal list */
 	rm_router_process_journal(journal);
-}
 
-/**
- * firmware_tr64_load_journal:
- * @profile: a #RmProfile
- *
- * Load journal using x_contact interface
- *
- * Returns: %TRUE on success, otherwise %FALSE
- */
-gboolean firmware_tr64_load_journal(RmProfile *profile)
-{
-	g_autoptr(SoupMessage) url_msg = NULL;
-	SoupMessage *msg = NULL;
-	g_autofree gchar *url = NULL;
-
-	url_msg = rm_network_tr64_request(profile, TRUE, "x_contact", "GetCallList", "urn:dslforum-org:service:X_AVM-DE_OnTel:1", NULL);
-	if (url_msg == NULL) {
-		return FALSE;
-	}
-
-	url = rm_utils_xml_extract_tag(url_msg->response_body->data, "NewCallListURL");
-	if (RM_EMPTY_STRING(url)) {
-		return FALSE;
-	}
-
-	rm_log_save_data("tr64-getcalllist.xml", url_msg->response_body->data, url_msg->response_body->length);
-
-	msg = soup_message_new(SOUP_METHOD_GET, url);
-
-	/* Queue message to session */
-	soup_session_queue_message(rm_soup_session, msg, firmware_tr64_journal_cb, profile);
-
-	return TRUE;
+	return journal;
 }
 
 /**
@@ -228,7 +220,7 @@ gchar *firmware_tr64_load_voice(RmProfile *profile, const gchar *filename, gsize
 
 	*len = msg->response_body->length;
 
-	return g_memdup(msg->response_body->data, *len);
+	return g_memdup2(msg->response_body->data, *len);
 }
 
 /**

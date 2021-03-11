@@ -75,12 +75,12 @@ typedef struct {
 	gchar *name;
 	gchar *file;
 	gboolean compare_or;
-	GSList *rules;
+	GList *rules;
 } RmFilter;
 
 void rm_filter_init(RmProfile *profile);
 void rm_filter_shutdown(RmProfile *profile);
-GSList *rm_filter_get_list(RmProfile *profile);
+GList *rm_filter_get_list(RmProfile *profile);
 
 RmFilter *rm_filter_new(RmProfile *profile, const gchar *name);
 void rm_filter_remove(RmProfile *profile, RmFilter *filter);

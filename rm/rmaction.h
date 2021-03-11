@@ -91,7 +91,7 @@ typedef GSettings RmAction;
 
 void rm_action_init(RmProfile *profile);
 void rm_action_shutdown(RmProfile *profile);
-GSList *rm_action_get_list(RmProfile *profile);
+GList *rm_action_get_list(RmProfile *profile);
 RmAction *rm_action_new(RmProfile *profile);
 void rm_action_remove(RmProfile *profile, RmAction *action);
 void rm_action_set_name(RmAction *action, const gchar *name);

@@ -531,7 +531,7 @@ gint fritzbox_get_dialport(gint type)
  * \param journal journal call list
  * \return journal list with added faxbox
  */
-GSList *fritzbox_load_faxbox(GSList *journal)
+GList *fritzbox_load_faxbox(GList *journal)
 {
 	RmProfile *profile = rm_profile_get_active();
 	RmFtp *client;
@@ -624,7 +624,7 @@ GSList *fritzbox_load_faxbox(GSList *journal)
  * \param len length of data
  * \return journal call list with voicebox data
  */
-static GSList *fritzbox_parse_voice_data(GSList *journal, const gchar *data, gsize len)
+static GList *fritzbox_parse_voice_data(GList *journal, const gchar *data, gsize len)
 {
 	gint index;
 
@@ -661,7 +661,7 @@ static GSList *fritzbox_parse_voice_data(GSList *journal, const gchar *data, gsi
  * \param journal journal call list
  * \return journal list with added voicebox
  */
-GSList *fritzbox_load_voicebox(GSList *journal)
+GList *fritzbox_load_voicebox(GList *journal)
 {
 	RmFtp *client;
 	gchar *path;

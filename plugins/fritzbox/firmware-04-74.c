@@ -198,14 +198,14 @@ gint number_compare_04_74(gconstpointer a, gconstpointer b)
  * \param msn_str string we want to lookup
  * \return TRUE on success, otherwise FALSE
  */
-gboolean extract_number_04_74(GSList **number_list, const gchar *data, gchar *msn_str)
+gboolean extract_number_04_74(GList **number_list, const gchar *data, gchar *msn_str)
 {
 	gchar *fon;
 
 	fon = xml_extract_input_value(data, msn_str);
 	if (!RM_EMPTY_STRING(fon) && isdigit(fon[0])) {
-		if (!g_slist_find_custom(*number_list, fon, number_compare_04_74)) {
-			*number_list = g_slist_prepend(*number_list, fon);
+		if (!g_list_find_custom(*number_list, fon, number_compare_04_74)) {
+			*number_list = g_list_prepend(*number_list, fon);
 		} else {
 			g_free(fon);
 		}
@@ -224,14 +224,14 @@ gboolean extract_number_04_74(GSList **number_list, const gchar *data, gchar *ms
  * \param len len of string to copy
  * \return TRUE on success, otherwise FALSE
  */
-gboolean copy_number_04_74(GSList **number_list, const gchar *data, gsize len)
+gboolean copy_number_04_74(GList **number_list, const gchar *data, gsize len)
 {
 	gchar *fon;
 
 	fon = g_strndup(data, len);
 	if (!RM_EMPTY_STRING(fon) && isdigit(fon[0])) {
-		if (!g_slist_find_custom(*number_list, fon, number_compare_04_74)) {
-			*number_list = g_slist_prepend(*number_list, fon);
+		if (!g_list_find_custom(*number_list, fon, number_compare_04_74)) {
+			*number_list = g_list_prepend(*number_list, fon);
 		} else {
 			g_free(fon);
 		}
@@ -253,8 +253,8 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 	gint index;
 	gint type = -1;
 	gint port;
-	GSList *number_list = NULL;
-	GSList *list;
+	GList *number_list = NULL;
+	GList *list;
 	gchar **numbers;
 	gint counter = 0;
 	gchar *skip = NULL;
@@ -383,7 +383,7 @@ void fritzbox_extract_numbers_04_74(RmProfile *profile, const gchar *data)
 		}
 	}
 
-	numbers = g_malloc(sizeof(gchar *) * (g_slist_length(number_list) + 1));
+	numbers = g_malloc(sizeof(gchar *) * (g_list_length(number_list) + 1));
 	for (list = number_list; list; list = list->next) {
 		gchar *scramble = rm_number_scramble(list->data);
 		g_debug("Adding MSN '%s'", scramble);
@@ -626,7 +626,7 @@ gboolean fritzbox_get_settings_04_74(RmProfile *profile)
  */
 void fritzbox_journal_04_74_cb(SoupSession *session, SoupMessage *msg, gpointer user_data)
 {
-	GSList *journal = NULL;
+	GList *journal = NULL;
 	RmProfile *profile = user_data;
 
 	/* Parse journal */

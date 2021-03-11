@@ -145,21 +145,21 @@ gboolean fritzbox_get_settings(RmProfile *profile)
  *
  * Returns: %TRUE when journal is loaded, %FALSE otherwise
  */
-gboolean fritzbox_load_journal(RmProfile *profile)
+GList *fritzbox_load_journal(RmProfile *profile)
 {
-	gboolean ret = FALSE;
+	GList *journal = NULL;
 
 	g_debug("%s(): called (%d.%d.%d)", __FUNCTION__, profile->router_info->box_id, profile->router_info->maj_ver_id, profile->router_info->min_ver_id);
 
 	if (fritzbox_use_tr64) {
-		ret = firmware_tr64_load_journal(profile);
-	} else if (FIRMWARE_IS(5, 50)) {
+		journal = firmware_tr64_load_journal(profile);
+	}/* else if (FIRMWARE_IS(5, 50)) {
 		ret = fritzbox_load_journal_05_50(profile, NULL);
 	} else if (FIRMWARE_IS(4, 0)) {
 		ret = fritzbox_load_journal_04_74(profile, NULL);
-	}
+	}*/
 
-	return ret;
+	return journal;
 }
 
 /**

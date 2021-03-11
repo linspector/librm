@@ -92,10 +92,37 @@ void rm_call_entry_free(gpointer data)
 
 	g_free(call_entry->date_time);
 	g_free(call_entry->duration);
-  g_free (call_entry->priv);
+	g_free (call_entry->priv);
 
-  rm_contact_free (call_entry->remote);
-  rm_contact_free (call_entry->local);
+	rm_contact_free (call_entry->remote);
+	rm_contact_free (call_entry->local);
 
 	g_slice_free(RmCallEntry, call_entry);
+}
+
+RmCallEntry *rm_call_entry_dup (RmCallEntry *src)
+{
+	RmCallEntry *call_entry;
+
+	/* Create new call entry structure */
+	call_entry = g_slice_new0(RmCallEntry);
+
+	/* Set entries */
+	call_entry->type = src->type;
+	call_entry->date_time = g_strdup(src->date_time);
+	call_entry->remote = g_slice_new0(RmContact);
+	call_entry->remote->image = NULL;
+	call_entry->remote->name = g_strdup (src->remote->name);
+	call_entry->remote->number = g_strdup(src->remote->number);
+	call_entry->local = g_slice_new0(RmContact);
+	call_entry->local->name = g_strdup (src->local->name);
+	call_entry->local->number = g_strdup (src->local->number);
+	call_entry->duration = g_strdup (src->duration);
+
+	/* Extended */
+	call_entry->remote->company = g_strdup("");
+	call_entry->remote->city = g_strdup("");
+	call_entry->priv = src->priv;
+
+	return call_entry;
 }

@@ -36,7 +36,7 @@
  */
 
 /** Internal phone list */
-static GSList *rm_phone_plugins = NULL;
+static GList *rm_phone_plugins = NULL;
 
 /**
  * rm_phone_get:
@@ -48,7 +48,7 @@ static GSList *rm_phone_plugins = NULL;
  */
 RmPhone *rm_phone_get(const gchar *name)
 {
-	GSList *list;
+	GList *list;
 
 	for (list = rm_phone_plugins; list != NULL; list = list->next) {
 		RmPhone *phone = list->data;
@@ -211,7 +211,7 @@ void rm_phone_record(RmPhone *phone, RmConnection *connection, gboolean record)
 void rm_phone_register(RmPhone *phone)
 {
 	g_debug("%s(): Registering %s", __FUNCTION__, phone->name);
-	rm_phone_plugins = g_slist_prepend(rm_phone_plugins, phone);
+	rm_phone_plugins = g_list_prepend(rm_phone_plugins, phone);
 }
 
 /**
@@ -223,17 +223,17 @@ void rm_phone_register(RmPhone *phone)
 void rm_phone_unregister(RmPhone *phone)
 {
 	g_debug("%s(): Unregister %s", __FUNCTION__, phone->name);
-	rm_phone_plugins = g_slist_remove(rm_phone_plugins, phone);
+	rm_phone_plugins = g_list_remove(rm_phone_plugins, phone);
 }
 
 /**
  * rm_phone_get_plugins:
  *
- * Retrieves #GSList of phone plugins
+ * Retrieves #GList of phone plugins
  *
  * Returns: a list of phone plugins
  */
-GSList *rm_phone_get_plugins(void)
+GList *rm_phone_get_plugins(void)
 {
 	return rm_phone_plugins;
 }

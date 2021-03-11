@@ -48,13 +48,13 @@ typedef struct {
 
 	GSettings *settings;
 
-	GSList *action_list;
-	GSList *filter_list;
+	GList *action_list;
+	GList *filter_list;
 } RmProfile;
 
 gboolean rm_profile_init(void);
 void rm_profile_shutdown(void);
-GSList *rm_profile_get_list(void);
+GList *rm_profile_get_list(void);
 RmProfile *rm_profile_add(const gchar *name);
 void rm_profile_remove(RmProfile *profile);
 

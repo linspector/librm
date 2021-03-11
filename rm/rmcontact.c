@@ -138,10 +138,10 @@ void rm_contact_copy(RmContact *src, RmContact *dst)
 	g_clear_pointer (&dst->company, g_free);
 
 	if (dst->addresses) {
-		g_slist_free_full(g_steal_pointer (&dst->addresses), rm_contact_free_address);
+		g_list_free_full(g_steal_pointer (&dst->addresses), rm_contact_free_address);
 	}
 	if (dst->numbers) {
-		g_slist_free_full(g_steal_pointer (&dst->numbers), rm_contact_free_number);
+		g_list_free_full(g_steal_pointer (&dst->numbers), rm_contact_free_number);
 	}
 
 	g_clear_pointer (&dst->street, g_free);
@@ -157,13 +157,13 @@ void rm_contact_copy(RmContact *src, RmContact *dst)
 	}
 
 	if (src->numbers) {
-		dst->numbers = g_slist_copy_deep(src->numbers, rm_contact_copy_numbers, NULL);
+		dst->numbers = g_list_copy_deep(src->numbers, rm_contact_copy_numbers, NULL);
 	} else {
 		dst->numbers = NULL;
 	}
 
 	if (src->addresses) {
-		dst->addresses = g_slist_copy_deep(src->addresses, rm_contact_copy_addresses, NULL);
+		dst->addresses = g_list_copy_deep(src->addresses, rm_contact_copy_addresses, NULL);
 	} else {
 		dst->addresses = NULL;
 	}
@@ -222,8 +222,8 @@ gint rm_contact_name_compare(gconstpointer a, gconstpointer b)
 RmContact *rm_contact_find_by_number(gchar *number)
 {
 	RmContact *contact = g_slice_new0(RmContact);
-	GSList *numbers;
-	GSList *addresses;
+	GList *numbers;
+	GList *addresses;
 	gint type = -1;
 
 	/** Ask for contact information */
@@ -295,10 +295,10 @@ void rm_contact_free(RmContact *contact)
 	}
 
 	if (contact->addresses) {
-		g_slist_free_full(contact->addresses, rm_contact_free_address);
+		g_list_free_full(contact->addresses, rm_contact_free_address);
 	}
 	if (contact->numbers) {
-		g_slist_free_full(contact->numbers, rm_contact_free_number);
+		g_list_free_full(contact->numbers, rm_contact_free_number);
 	}
 }
 

@@ -48,7 +48,7 @@
  */
 
 /** Internal profile list */
-static GSList *rm_profile_list = NULL;
+static GList *rm_profile_list = NULL;
 /** Internal pointer to active profile */
 static RmProfile *rm_profile_active = NULL;
 /** Global application settings */
@@ -74,12 +74,12 @@ const gchar *rm_profile_get_name(RmProfile *profile)
  */
 static void rm_profile_save(void)
 {
-	GSList *plist = rm_profile_get_list();
-	GSList *list;
+	GList *plist = rm_profile_get_list();
+	GList *list;
 	gchar **profiles;
 	gint counter = 0;
 
-	profiles = g_new0(gchar *, (g_slist_length(plist) + 1));
+	profiles = g_new0(gchar *, (g_list_length(plist) + 1));
 	for (list = plist; list != NULL; list = list->next) {
 		RmProfile *current_profile = list->data;
 
@@ -100,7 +100,7 @@ static void rm_profile_save(void)
  */
 void rm_profile_remove(RmProfile *profile)
 {
-	rm_profile_list = g_slist_remove(rm_profile_list, profile);
+	rm_profile_list = g_list_remove(rm_profile_list, profile);
 
 	if (profile->settings) {
 		g_object_unref(profile->settings);
@@ -133,7 +133,7 @@ RmProfile *rm_profile_get_active(void)
  *
  * Returns: profile list
  */
-GSList *rm_profile_get_list(void)
+GList *rm_profile_get_list(void)
 {
 	return rm_profile_list;
 }
@@ -164,7 +164,7 @@ RmProfile *rm_profile_add(const gchar *name)
 
 	g_free(settings_path);
 
-	rm_profile_list = g_slist_prepend(rm_profile_list, profile);
+	rm_profile_list = g_list_prepend(rm_profile_list, profile);
 
 	rm_profile_save();
 
@@ -197,7 +197,7 @@ static void rm_profile_load(const gchar *name)
 
 	g_free(settings_path);
 
-	rm_profile_list = g_slist_prepend(rm_profile_list, profile);
+	rm_profile_list = g_list_prepend(rm_profile_list, profile);
 }
 
 static gboolean rm_profile_set_active_idle(gpointer user_data)
@@ -213,9 +213,6 @@ static gboolean rm_profile_set_active_idle(gpointer user_data)
 
 	/* Load and initialize filters */
 	rm_filter_init(profile);
-
-	/* Load journal list */
-	rm_router_load_journal(profile);
 
 	return G_SOURCE_REMOVE;
 }
@@ -247,8 +244,6 @@ void rm_profile_set_active(RmProfile *profile)
 
 	/* If we have no active profile, exit */
 	if (!rm_profile_active) {
-		/* Clear journal list */
-		rm_object_emit_journal_loaded(NULL);
 		return;
 	}
 
@@ -264,7 +259,7 @@ void rm_profile_set_active(RmProfile *profile)
  */
 RmProfile *rm_profile_detect(void)
 {
-	GSList *list = rm_profile_get_list();
+	GList *list = rm_profile_get_list();
 	RmProfile *profile;
 	RmRouterInfo *router_info;
 	gchar *requested_profile = rm_get_requested_profile();
@@ -363,7 +358,7 @@ void rm_profile_shutdown(void)
 
 	if (rm_profile_list) {
 		/* Free profile list */
-		g_slist_free_full(rm_profile_list, rm_profile_free_entry);
+		g_list_free_full(rm_profile_list, rm_profile_free_entry);
 	}
 
 	/* Clear settings object */
@@ -429,7 +424,7 @@ RmAddressBook *rm_profile_get_addressbook(RmProfile *profile)
 	if (!RM_EMPTY_STRING(name)) {
 		book = rm_addressbook_get(name);
 	} else {
-		GSList *books = rm_addressbook_get_plugins();
+		GList *books = rm_addressbook_get_plugins();
 
 		if (books) {
 			g_debug("%s(): Address book not set, setting it to first one", __FUNCTION__);
@@ -501,7 +496,7 @@ RmNotification *rm_profile_get_notification(RmProfile *profile)
 
 	notification = rm_notification_get(name);
 	if (!notification) {
-		GSList *notifications = rm_notification_get_plugins();
+		GList *notifications = rm_notification_get_plugins();
 
 		if (notifications) {
 			notification = notifications->data;
@@ -588,7 +583,7 @@ RmPhone *rm_profile_get_phone(RmProfile *profile)
 	g_free(name);
 
 	if (!phone) {
-		GSList *phones = rm_phone_get_plugins();
+		GList *phones = rm_phone_get_plugins();
 
 		if (phones) {
 			phone = phones->data;

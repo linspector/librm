@@ -98,7 +98,7 @@ static inline gboolean rm_filter_compare(RmFilterRule *rule, const gchar *compar
  */
 gboolean rm_filter_rule_match(RmFilter *filter, RmCallEntry *call)
 {
-	GSList *list;
+	GList *list;
 	gint result = 0;
 	gint dates = 0;
 	gint dates_valid = 0;
@@ -310,7 +310,7 @@ void rm_filter_rule_add(RmFilter *filter, gint type, gint sub_type, gchar *entry
 	rule->sub_type = sub_type;
 	rule->entry = g_strdup(entry);
 
-	filter->rules = g_slist_append(filter->rules, rule);
+	filter->rules = g_list_append(filter->rules, rule);
 }
 
 /**
@@ -343,7 +343,7 @@ void rm_filter_free(gpointer data)
 	RmFilter *filter = data;
 
 	/* Free filter rules */
-	g_slist_free_full(filter->rules, rm_filter_rules_free);
+	g_list_free_full(filter->rules, rm_filter_rules_free);
 
 	/* Free filter name */
 	g_free(filter->name);
@@ -369,7 +369,7 @@ RmFilter *rm_filter_new(RmProfile *profile, const gchar *name)
 	filter->compare_or = FALSE;
 	filter->rules = NULL;
 
-	profile->filter_list = g_slist_insert_sorted(profile->filter_list, filter, rm_filter_sort_by_name);
+	profile->filter_list = g_list_insert_sorted(profile->filter_list, filter, rm_filter_sort_by_name);
 
 	return filter;
 }
@@ -383,7 +383,7 @@ RmFilter *rm_filter_new(RmProfile *profile, const gchar *name)
  */
 void rm_filter_remove(RmProfile *profile, RmFilter *filter)
 {
-	profile->filter_list = g_slist_remove(profile->filter_list, filter);
+	profile->filter_list = g_list_remove(profile->filter_list, filter);
 
 	if (filter->file) {
 		if (g_remove(filter->file) == -1) {
@@ -404,7 +404,7 @@ void rm_filter_remove(RmProfile *profile, RmFilter *filter)
  *
  * Returns: filter list or %NULL if profile is not set
  */
-GSList *rm_filter_get_list(RmProfile *profile)
+GList *rm_filter_get_list(RmProfile *profile)
 {
 	if (!profile) {
 		return NULL;
@@ -479,7 +479,7 @@ static void rm_filter_load(RmProfile *profile)
  */
 static inline gchar *rm_filter_to_data(RmFilter *filter)
 {
-	GSList *rules;
+	GList *rules;
 	gchar *data = g_strdup("# Filter file\n\n");
 	gint counter;
 
@@ -505,7 +505,7 @@ static inline gchar *rm_filter_to_data(RmFilter *filter)
  */
 static void rm_filter_save(RmProfile *profile)
 {
-	GSList *list;
+	GList *list;
 	gchar *path;
 
 	list = profile->filter_list;
@@ -597,6 +597,6 @@ void rm_filter_shutdown(RmProfile *profile)
 	}
 
 	rm_filter_save(profile);
-	g_slist_free_full(profile->filter_list, rm_filter_free);
+	g_list_free_full(profile->filter_list, rm_filter_free);
 	profile->filter_list = NULL;
 }

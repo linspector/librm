@@ -38,7 +38,7 @@
  */
 static inline gpointer csv_parse_fritzbox(gpointer ptr, gchar **split)
 {
-	GSList *list = ptr;
+	GList *list = ptr;
 
 	if (g_strv_length(split) == 7) {
 		RmCallEntry *call;
@@ -87,9 +87,9 @@ static inline gpointer csv_parse_fritzbox(gpointer ptr, gchar **split)
  *
  * Returns: call list
  */
-GSList *csv_parse_fritzbox_journal_data(GSList *list, const gchar *data)
+GList *csv_parse_fritzbox_journal_data(GList *list, const gchar *data)
 {
-	GSList *new_list = NULL;
+	GList *new_list = NULL;
 
 	new_list = rm_csv_parse_data(data, CSV_FRITZBOX_JOURNAL_DE, csv_parse_fritzbox, list);
 	if (!new_list) {
