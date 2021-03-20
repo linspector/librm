@@ -214,6 +214,7 @@ static gboolean rm_profile_set_active_idle(gpointer user_data)
 	/* Load and initialize filters */
 	rm_filter_init(profile);
 
+	rm_object_emit_profile_changed ();
 	return G_SOURCE_REMOVE;
 }
 

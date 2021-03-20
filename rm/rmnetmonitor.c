@@ -174,8 +174,6 @@ static void rm_netmonitor_state_changed(gboolean state)
 				}
 			}
 		}
-
-		rm_object_emit_profile_changed ();
 	}
 }
 
