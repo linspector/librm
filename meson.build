@@ -1,4 +1,6 @@
-project('rm', 'c', version : '2.1.4', license : 'LGPL-2.1+', default_options : ['prefix=/usr', 'G_LOG_DOMAIN=rm'])
+project('rm', 'c', version : '2.1.4', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
+
+add_global_arguments('-DG_LOG_DOMAIN="rm"', language : 'c')
 
 # Set internal values
 rm_name = meson.project_name()
@@ -80,7 +82,6 @@ cdata.set_quoted('RM_NAME', 'rm')
 cdata.set_quoted('RM_VERSION', rm_version)
 cdata.set_quoted('RM_PLUGINS', rm_plugins_path)
 cdata.set_quoted('RM_GETTEXT_PACKAGE', 'rm')
-cdata.set_quoted('G_LOG_DOMAIN', 'rm')
 
 if os_linux
 	cdata.set('APP_LOCALE', '"' + join_paths(get_option('prefix'), get_option('localedir')) + '"')
