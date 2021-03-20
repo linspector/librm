@@ -85,9 +85,6 @@ static void rm_log_handler(const gchar *log_domain, GLogLevelFlags log_level, co
 	if (!debug_state)
 		return;
 
-	if (!g_strcmp0 (log_domain, "GdkPixbuf"))
-		return;
-
 	datetime = g_date_time_new_now_local();
 	time = g_date_time_format(datetime, "%H:%M:%S");
 	output = g_string_new(time);
@@ -148,7 +145,10 @@ static void rm_log_handler(const gchar *log_domain, GLogLevelFlags log_level, co
  */
 void rm_log_init(void)
 {
-	g_log_set_default_handler(rm_log_handler, NULL);
+	//g_log_set_default_handler(rm_log_handler, NULL);
+	g_log_set_handler ("Gtk", G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, rm_log_handler, NULL);
+	g_log_set_handler ("GLib", G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, rm_log_handler, NULL);
+	g_log_set_handler ("rm", G_LOG_LEVEL_CRITICAL | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, rm_log_handler, NULL);
 }
 
 /**

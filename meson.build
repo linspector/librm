@@ -1,4 +1,4 @@
-project('rm', 'c', version : '2.1.4', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
+project('rm', 'c', version : '2.1.4', license : 'LGPL-2.1+', default_options : ['prefix=/usr', 'G_LOG_DOMAIN=rm'])
 
 # Set internal values
 rm_name = meson.project_name()
@@ -76,10 +76,10 @@ endif
 
 # Set config data
 cdata = configuration_data()
-cdata.set('RM_NAME', '"rm"')
-cdata.set('RM_VERSION', '"@0@"'.format(rm_version))
-cdata.set('RM_PLUGINS', '"' + rm_plugins_path + '"')
-cdata.set('RM_GETTEXT_PACKAGE', '"rm"')
+cdata.set_quoted('RM_NAME', 'rm')
+cdata.set_quoted('RM_VERSION', rm_version)
+cdata.set_quoted('RM_PLUGINS', rm_plugins_path)
+cdata.set_quoted('RM_GETTEXT_PACKAGE', 'rm')
 cdata.set_quoted('G_LOG_DOMAIN', 'rm')
 
 if os_linux
