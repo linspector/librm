@@ -1,6 +1,6 @@
 project('rm', 'c', version : '2.2.0', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
 
-add_global_arguments('-DG_LOG_DOMAIN="rm"', language : 'c')
+add_project_arguments('-DG_LOG_DOMAIN="rm"', language : 'c')
 
 # Set internal values
 rm_name = meson.project_name()
