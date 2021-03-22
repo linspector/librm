@@ -173,6 +173,8 @@ static void rm_netmonitor_state_changed(gboolean state)
 					event->is_connected = event->connect(event->user_data);
 				}
 			}
+		} else {
+			rm_object_emit_profile_changed ();
 		}
 	}
 }
