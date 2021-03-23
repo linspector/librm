@@ -20,6 +20,8 @@
 #ifndef RM_UTILS_H
 #define RM_UTILS_H
 
+G_BEGIN_DECLS
+
 gchar *rm_utils_xml_extract_tag(const gchar *data, gchar *tag);
 
 G_END_DECLS
