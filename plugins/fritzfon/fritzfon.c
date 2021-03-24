@@ -185,9 +185,12 @@ static void parse_telephony(RmContact *contact, RmXmlNode *telephony)
 				phone_number->type = RM_PHONE_NUMBER_TYPE_FAX_HOME;
 			} else if (strcmp(type, "pager") == 0) {
 				phone_number->type = RM_PHONE_NUMBER_TYPE_PAGER;
+			} else if (strncmp(type, "label:", 6) == 0) {
+				phone_number->name = g_strdup (type + 6);
+				phone_number->type = RM_PHONE_NUMBER_TYPE_OTHER;
 			} else {
 				phone_number->type = -1;
-				g_debug("Unhandled phone number type: '%s'", type);
+				g_debug("Unhandled phone number type: '%s' / %s", type, number);
 			}
 			phone_number->number = rm_number_full(number, FALSE);
 			contact->numbers = g_list_prepend(contact->numbers, phone_number);
