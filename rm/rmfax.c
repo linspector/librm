@@ -85,6 +85,9 @@ gchar *rm_fax_get_name(RmFax *fax)
  */
 gboolean rm_fax_get_status(RmFax *fax, RmConnection *connection, RmFaxStatus *status)
 {
+	if (!connection)
+		return FALSE;
+
 	return fax ? fax->get_status(connection, status) : FALSE;
 }
 
