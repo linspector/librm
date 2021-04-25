@@ -90,12 +90,12 @@ void rm_call_entry_free(gpointer data)
 {
 	RmCallEntry *call_entry = data;
 
-	g_free(call_entry->date_time);
-	g_free(call_entry->duration);
-	g_free (call_entry->priv);
+	g_clear_pointer (&call_entry->date_time, g_free);
+	g_clear_pointer (&call_entry->duration, g_free);
+	g_clear_pointer (&call_entry->priv, g_free);
 
-	rm_contact_free (call_entry->remote);
-	rm_contact_free (call_entry->local);
+	g_clear_pointer (&call_entry->remote, rm_contact_free);
+	g_clear_pointer (&call_entry->local, rm_contact_free);
 
 	g_slice_free(RmCallEntry, call_entry);
 }
