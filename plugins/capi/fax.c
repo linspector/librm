@@ -294,10 +294,11 @@ static gint capi_fax_spandsp_tx(fax_state_t *fax_state, guchar *buf, gsize len)
 	guchar *alaw;
 	gint err, i;
 
+	memset(buf_in, 0, sizeof (buf_in));
 	err = fax_tx(fax_state, buf_in, CAPI_PACKETS);
 	alaw = buf;
 
-	for (i = 0; i != len; ++i, ++alaw) {
+	for (i = 0; i != len && i < CAPI_PACKETS; ++i, ++alaw) {
 		*alaw = _linear16_2_law[(int16_t)buf_in[i]];
 	}
 
