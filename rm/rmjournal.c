@@ -275,7 +275,7 @@ GList *rm_journal_add_call_entry(GList *journal, RmCallEntry *call)
 			/* Found same call with different type (voice/fax): merge them */
 			if (call->type == RM_CALL_ENTRY_TYPE_VOICE || call->type == RM_CALL_ENTRY_TYPE_FAX) {
 				journal_call->type = call->type;
-				journal_call->priv = call->priv;
+				journal_call->priv = g_strdup (call->priv);
 
 				rm_call_entry_free (call);
 				return journal;
