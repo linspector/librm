@@ -1,4 +1,4 @@
-project('rm', 'c', version : '2.2.2', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
+project('rm', 'c', version : '2.2.3', license : 'LGPL-2.1+', default_options : ['prefix=/usr'])
 
 add_project_arguments('-DG_LOG_DOMAIN="rm"', language : 'c')
 
