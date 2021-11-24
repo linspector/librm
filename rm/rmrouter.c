@@ -224,6 +224,12 @@ gchar *rm_router_get_login_password(RmProfile *profile)
 	return rm_password_get(profile, "login-password");
 }
 
+void rm_router_set_login_password(RmProfile *profile,
+                                  char      *password)
+{
+	rm_password_set(profile, "login-password", password);
+}
+
 /**
  * rm_router_get_login_user:
  * @profile: a #RmProfile

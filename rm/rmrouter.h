@@ -113,6 +113,7 @@ const gchar *rm_router_get_name(RmProfile *profile);
 const gchar *rm_router_get_version(RmProfile *profile);
 gchar *rm_router_get_host(RmProfile *profile);
 gchar *rm_router_get_login_password(RmProfile *profile);
+void rm_router_set_login_password(RmProfile *profile, char *password);
 gchar *rm_router_get_login_user(RmProfile *profile);
 gchar *rm_router_get_ftp_password(RmProfile *profile);
 gchar *rm_router_get_ftp_user(RmProfile *profile);
