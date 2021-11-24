@@ -18,3 +18,7 @@ if get_option('enable-secret')
 endif
 
 subdir('simple_pwd')
+
+if host_machine.system().contains('windows')
+subdir('wincred')
+endif
