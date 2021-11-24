@@ -1,6 +1,6 @@
 /*
  * The rm project
- * Copyright (c) 2012-2017 Jan-Michael Brummer
+ * Copyright (c) 2012-2021 Jan-Michael Brummer
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,107 +27,80 @@
 
 #include <rm/rm.h>
 
-/**
- * wincred_store_password:
- * @profile: a #RmProfile
- * @name: password name
- * @password: password
- *
- * Store password
- */
-static void wincred_store_password(RmProfile *profile, const gchar *name, const gchar *password)
+static void
+wincred_store_password(RmProfile *profile,
+					   const char *name,
+					   const char *password)
 {
-	CREDENTIALA cred = { 0 };
+	CREDENTIALA cred = {0};
 	WCHAR *wide_password = NULL;
-	gchar *cred_name;
+	g_autofree char *cred_name = NULL;
 	int length;
 
-	if (!name || !profile || !profile->name || !password) {
+	if (!name || !profile || !profile->name || !password)
 		return;
-	}
 
-	length = strlen(password);
+	length = strlen (password);
 
-	wide_password = malloc(length * sizeof(WCHAR));
-	swprintf(wide_password, length, L"%S", password);
+	wide_password = g_malloc (length * sizeof(WCHAR));
+	swprintf (wide_password, length, L"%S", password);
 
-	cred_name = g_strdup_printf("%s/%s", profile->name, name);
+	cred_name = g_strdup_printf ("%s/%s", profile->name, name);
 
 	cred.Type = CRED_TYPE_GENERIC;
 	cred.Persist = CRED_PERSIST_LOCAL_MACHINE;
 	cred.TargetName = cred_name;
 	cred.UserName = cred_name;
-	cred.CredentialBlob = (BYTE*)wide_password;
-	cred.CredentialBlobSize = sizeof(BYTE) * sizeof(WCHAR) * length;
+	cred.CredentialBlob = (BYTE *)wide_password;
+	cred.CredentialBlobSize = sizeof (BYTE) * sizeof (WCHAR) * length;
 
-	CredWrite(&cred, 0);
+	CredWrite (&cred, 0);
 
-	g_free(cred_name);
 	g_free(wide_password);
 }
 
-/**
- * wincred_get_password:
- * @profile: a #RmProfile
- * @name: password name
- *
- * Get password
- *
- * Returns: password
- */
-static gchar *wincred_get_password(RmProfile *profile, const gchar *name)
+static char *
+wincred_get_password (RmProfile  *profile,
+                      const char *name)
 {
-	PCREDENTIALA cred;
+	PCREDENTIALA cred = NULL;
 	BOOL result;
-	gchar *cred_name;
-	gchar *secret_password = NULL;
+	g_autofree char *cred_name = NULL;
+	g_autofree char *secret_password = NULL;
 
-	if (!profile || !profile->name || !name) {
+	if (!profile || !profile->name || !name)
 		return NULL;
-	}
 
 	cred_name = g_strdup_printf("%s/%s", profile->name, name);
 	result = CredReadA(cred_name, CRED_TYPE_GENERIC, 0, &cred);
-	g_free(cred_name);
+	if (result == TRUE)
+	{
+		secret_password = g_strdup_printf("%s", cred->CredentialBlob);
 
-	if (result == TRUE) {
-		secret_password = g_strdup_printf("%S", (WCHAR*)cred->CredentialBlob);
-
-		if (cred->CredentialBlobSize > 1) {
-			secret_password[ cred->CredentialBlobSize / 2 ] = '\0';
-		}
+		if (cred->CredentialBlobSize > 1)
+			secret_password[cred->CredentialBlobSize / 2] = '\0';
 	}
 
-	CredFree(cred);
+	g_clear_pointer(&cred, CredFree);
 
-	return g_strdup(secret_password);
+	return g_steal_pointer(&secret_password);
 }
 
-/**
- * wincred_remove_password:
- * @profile: a #RmProfile
- * @name: password name
- *
- * Remove password
- *
- * Returns: %TRUE on success, otherwise %FALSE
- */
-static gboolean wincred_remove_password(RmProfile *profile, const gchar *name)
+static gboolean
+wincred_remove_password (RmProfile  *profile,
+                         const char *name)
 {
 	PCREDENTIALA cred;
 	BOOL result;
-	gchar *cred_name;
+	g_autofree char *cred_name = NULL;
 
-	if (!profile || !profile->name || !name) {
+	if (!profile || !profile->name || !name)
 		return FALSE;
-	}
 
 	cred_name = g_strdup_printf("%s/%s", profile->name, name);
 	result = CredRead(cred_name, CRED_TYPE_GENERIC, 0, &cred);
-	g_free(cred_name);
-	if (result == TRUE) {
+	if (result == TRUE)
 		CredDelete(cred->TargetName, cred->Type, 0);
-	}
 
 	return result;
 }
@@ -139,30 +112,16 @@ RmPasswordManager wincred = {
 	wincred_remove_password,
 };
 
-/**
- * wincred_plugin_init:
- * @plugin: a #RmPlugin
- *
- * Activate plugin - register windows credential password manager
- *
- * Returns: %TRUE
- */
-gboolean wincred_plugin_init(RmPlugin *plugin)
+gboolean
+wincred_plugin_init (RmPlugin *plugin)
 {
-	rm_password_register(&wincred);
+	rm_password_register (&wincred);
 
 	return TRUE;
 }
 
-/**
- * wincred_plugin_shutdown:
- * @plugin: a #RmPlugin
- *
- * Deactivate plugin
- *
- * Returns: %TRUE
- */
-gboolean wincred_plugin_shutdown(RmPlugin *plugin)
+gboolean
+wincred_plugin_shutdown (RmPlugin *plugin)
 {
 	return TRUE;
 }
