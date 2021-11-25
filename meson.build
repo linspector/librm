@@ -54,11 +54,15 @@ rm_dep += dependency('gmodule-2.0')
 rm_dep += dependency('sndfile')
 
 gupnp10_dep = dependency('gupnp-1.0', required : false)
+gupnp12_dep = dependency('gupnp-1.2', required : false)
 if gupnp10_dep.found()
   rm_dep += gupnp10_dep
   rm_dep += dependency('gssdp-1.0')
+elif gupnp12_dep.found()
+  rm_dep += gupnp12_dep
+  rm_dep += dependency('gssdp-1.2')
 else
-  rm_dep += dependency('gupnp-1.2')
+  rm_dep += dependency('gupnp-1.6')
   rm_dep += dependency('gssdp-1.2')
 endif
 
