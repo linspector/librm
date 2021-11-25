@@ -63,7 +63,7 @@ elif gupnp12_dep.found()
   rm_dep += dependency('gssdp-1.2')
 else
   rm_dep += dependency('gupnp-1.6')
-  rm_dep += dependency('gssdp-1.2')
+  rm_dep += dependency('gssdp-1.6')
 endif
 
 # Include GTK integration libs for OS X
